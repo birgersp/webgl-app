@@ -34,8 +34,7 @@ function main() {
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
-    var vertexPositionAttribute;
-
+    var shaderProgram = gl.createProgram();
 
 
     // Load shaders
@@ -53,8 +52,6 @@ function main() {
         for (var i in loader.files) {
             shaderSources[loader.files[i].name] = loader.files[i].text;
         }
-
-        var shaderProgram = gl.createProgram();
 
         var vertexShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertexShader, shaderSources[SHADER_FILENAMES.VSHADER]);
@@ -76,6 +73,11 @@ function main() {
 
     // Start
     function start() {
+
+        var a_Position = gl.getAttribLocation(shaderProgram, 'position');
+
+        // Pass vertex position to attribute variable
+        gl.vertexAttrib3f(a_Position, -1, 0.0, 0.0);
 
         // Specify the color for clearing <canvas>
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
