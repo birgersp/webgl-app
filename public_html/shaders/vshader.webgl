@@ -1,5 +1,6 @@
-attribute vec4 a_Position;
+uniform mat4 mvMatrix;
+attribute vec3 position;
 void main() {
-  gl_Position = a_Position;
+  gl_Position = mvMatrix * vec4(position, 1);
   gl_PointSize = 5.0;
 }

@@ -76,10 +76,9 @@ function main() {
     function start() {
 
         var vertices = new Float32Array([
-            -0.5, 0.5,
-            -0.5, -0.5,
-            0.5, 0.5, 
-            0.5, -0.5
+            -0.5, 0.5, 0,
+            -0.5, -0.5, 0,
+            0.5, 0.5, 0
         ]);
 
         // Create a buffer object
@@ -92,39 +91,37 @@ function main() {
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
         // Obtain attribute location (pointer)
-        var position = gl.getAttribLocation(shaderProgram, 'a_Position');
+        var position = gl.getAttribLocation(shaderProgram, "position");
 
         // Assign the buffer object to a_Position variable
-        gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
 
         // Enable the assignment to a_Position variable
         gl.enableVertexAttribArray(position);
 
-        // Specify the color for clearing <canvas>
         gl.clearColor(0, 0, 0, 1);
 
-        // Clear <canvas>
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        var z = 0;
 
-        // Draw the rectangle
-        gl.drawArrays(gl.POINTS, 0, 4);
+        var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
 
+        function renderLoop() {
+            z+= 0.005;
+            var mvArray = [
+                Math.cos(z), -Math.sin(z), 0, 0,
+                Math.sin(z), Math.cos(z), 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            ];
 
-
-//        var position = gl.getAttribLocation(shaderProgram, "position");
-//
-//        gl.vertexAttrib4f(position, 0, 0, 0, 1)
-//
-//
-//        // Specify the color for clearing <canvas>
-//        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-//
-//        // Clear <canvas>
-//        gl.clear(gl.COLOR_BUFFER_BIT);
-//
-//        // Draw a point
-//        gl.drawArrays(gl.POINTS, 0, 1);
-//
+            gl.uniformMatrix4fv(mvMatrixL, false, new Float32Array(mvArray));
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            setTimeout(function () {
+                window.requestAnimationFrame(renderLoop);
+            }, 1000 / 60);
+        }
+        renderLoop();
     }
 }
 
