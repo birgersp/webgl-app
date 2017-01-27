@@ -69,9 +69,6 @@ function main() {
         gl.linkProgram(shaderProgram);
         gl.useProgram(shaderProgram);
 
-        vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
-        gl.enableVertexAttribArray(vertexPositionAttribute);
-
         start();
     });
 
@@ -80,32 +77,14 @@ function main() {
     // Start
     function start() {
 
-        // Create a buffer for the square's vertices.
+        // Specify the color for clearing <canvas>
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-        squareVerticesBuffer = gl.createBuffer();
+        // Clear <canvas>
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-        // Select the squareVerticesBuffer as the one to apply vertex
-        // operations to from here out.
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-
-        // Now create an array of vertices for the square. Note that the Z
-        // coordinate is always 0 here.
-
-        var vertices = [
-            1.0, 1.0, 0.0,
-            -1.0, 1.0, 0.0,
-            1.0, -1.0, 0.0,
-            -1.0, -1.0, 0.0
-        ];
-
-        // Now pass the list of vertices into WebGL to build the shape. We
-        // do this by creating a Float32Array from the JavaScript array,
-        // then use it to fill the current vertex buffer.
-
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        // Draw a point
+        gl.drawArrays(gl.POINTS, 0, 1);
 
     }
 }
