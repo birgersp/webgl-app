@@ -1,22 +1,33 @@
 
-// This function should override the Float32Array constructor
-var Matrix4 = function() {
-    Float32Array.call(this, 16);
-};
+class Matrix4 extends Float32Array {
+    
+    static xyzRotation(x, y, z) {
+    
+        var c = Math.cos;
+        var s = Math.sin;
+        return new Matrix4([
+            c(y) * c(z), c(z) * s(x) * s(y) - c(x) * s(z), s(x) * s(z) + c(x) * c(z) * s(y), 0,
+            c(y) * s(z), c(x) * c(z) + s(x) * s(y) * s(z), c(x) * s(y) * s(z) - c(z) * s(x), 0,
+            -s(y), c(y) * s(x), c(x) * c(y), 0,
+            0, 0, 0, 1
+        ]);
+    }
 
-Matrix4.prototype = new Float32Array;
-
-Matrix4.prototype.sayHello = function() {
-    console.log("!");
-};
-
-//var matrix = {
-//    xyzRotation(x, y, z) {
-//        return [
-//            cos(y) * cos(z), cos(z) * sin(x) * sin(y) - cos(x) * sin(z), sin(x) * sin(z) + cos(x) * cos(z) * sin(y), 1,
-//            cos(y) * sin(z), cos(x) * cos(z) + sin(x) * sin(y) * sin(z), cos(x) * sin(y) * sin(z) - cos(z) * sin(x), 0,
-//            -sin(y), cos(y) * sin(x), cos(x) * cos(y), 0,
-//            0, 0, 0, 1
-//        ];
-//    }
-//};
+    static identity() {
+        
+        return new Matrix4([
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            0,0,0,1
+        ]);
+    }
+    
+    constructor(array) {
+        
+        if (array)
+            super(array);
+        else
+            super(16);
+    }
+}

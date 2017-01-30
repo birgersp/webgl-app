@@ -1,6 +1,6 @@
 "use strict";
 
-const DEPENDENCIES = ["util", "loader"];
+const DEPENDENCIES = ["util", "loader", "matrix4"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -107,14 +107,9 @@ function main() {
 
         function renderLoop() {
             z+= 0.005;
-            var mvArray = [
-                Math.cos(z), -Math.sin(z), 0, 0,
-                Math.sin(z), Math.cos(z), 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            ];
+            var mvMatrix = Matrix4.xyzRotation(0, 0, z);
 
-            gl.uniformMatrix4fv(mvMatrixL, false, new Float32Array(mvArray));
+            gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT);
             gl.drawArrays(gl.TRIANGLES, 0, 3);
             setTimeout(function () {
