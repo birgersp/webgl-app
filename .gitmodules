@@ -1,0 +1,4 @@
+[submodule "public_html/binaries"]
+	path = public_html/binaries
+	url = git@github.com:birgersp/webgl-bin.git
+	branch = master
