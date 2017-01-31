@@ -20,13 +20,11 @@ class Loader {
     /**
      * 
      * @param {String} filename
-     * @param {Number} w
-     * @param {Number} h
      * @return {Loader.Image}
      */
-    addImageFile(filename, w, h) {
+    addImageFile(filename) {
 
-        var file = new Loader.Image(filename, w, h);
+        var file = new Loader.Image(filename);
         this.files.push(file);
         return file;
     }
@@ -81,9 +79,9 @@ Loader.Image = class extends Loader.File {
      * @member {Image} image
      */
     
-    constructor(name, w, h) {
+    constructor(name) {
         
         super(name);
-        this.image = new Image(w, h);
+        this.image = new Image();
     }
 };
