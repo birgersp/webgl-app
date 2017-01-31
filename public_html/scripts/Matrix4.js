@@ -1,13 +1,13 @@
 
 class Matrix4 extends Float32Array {
-    
+
     /**
      * 
      * @param {Float32Array} vector
      * @returns {Matrix4}
      */
     static translation(vector) {
-        
+
         var matrix = Matrix4.identity();
         matrix[3] = vector[0];
         matrix[7] = vector[1];
@@ -21,7 +21,7 @@ class Matrix4 extends Float32Array {
      * @returns {Matrix4}
      */
     static rotation(vector) {
-        
+
         var x = vector[0];
         var y = vector[1];
         var z = vector[2];
@@ -63,16 +63,13 @@ class Matrix4 extends Float32Array {
     }
 
     /**
-     * 
      * @param {Matrix4} matrix
-     * @returns {Matrix4}
      */
-    times(matrix) {
-        
+    multiply(matrix) {
+
         var a = this;
         var b = matrix;
-        var result = new Matrix4();
-        result.set([
+        this.set([
             a[0] * b[0] + a[4] * b[1] + a[8] * b[2] + a[12] * b[3],
             a[1] * b[0] + a[5] * b[1] + a[9] * b[2] + a[13] * b[3],
             a[2] * b[0] + a[6] * b[1] + a[10] * b[2] + a[14] * b[3],
@@ -90,7 +87,31 @@ class Matrix4 extends Float32Array {
             a[2] * b[12] + a[6] * b[13] + a[10] * b[14] + a[14] * b[15],
             a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15]
         ]);
+    }
+
+    /**
+     * 
+     * @param {Matrix4} matrix
+     * @returns {Matrix4}
+     */
+    times(matrix) {
+
+        var result = new Matrix4();
+        result.set(this);
+        result.multiply(matrix);
         return result;
+    }
+
+    /**
+     * 
+     * @param {Number} column
+     * @param {Number} row
+     * @param {Number} value
+     * @returns {Matrix4}
+     */
+    setCell(column, row, value) {
+        this[column + row * 4] = value;
+        return this;
     }
 }
 
