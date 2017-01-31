@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["util", "Loader", "Matrix4", "Vector3"];
+const DEPENDENCIES = ["util", "Loader", "Matrix4", "Camera"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -31,7 +31,7 @@ function main() {
     var canvas = document.createElement("canvas");
     canvas.id = "canvas";
     document.body.appendChild(canvas);
-    var onResize = function() {
+    var onResize = function () {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
     };
@@ -61,7 +61,7 @@ function main() {
 
 
     // Compile shaders
-    loader.load(function() {
+    loader.load(function () {
 
         // Compile vertex shader
         var vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -92,16 +92,17 @@ function main() {
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
+        var FSIZE = Float32Array.BYTES_PER_ELEMENT;
+
+
+        // Per scene object:
+
         var vertices = new Float32Array([
             0.5, 0.5, 0, 1, 1,
             -0.5, 0.5, 0, 0, 1,
             -0.5, -0.5, 0, 0, 0,
-            -0.5, -0.5, 0, 0, 0,
             0.5, -0.5, 0, 1, 0,
-            0.5, 0.5, 0, 1, 1
         ]);
-
-        var FSIZE = Float32Array.BYTES_PER_ELEMENT;
 
         // Create a buffer object
         var vertexBuffer = gl.createBuffer();
@@ -130,11 +131,17 @@ function main() {
         // Release buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
+
+        var indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
+
+        var indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
         // 
         var useColor = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.USE_COLOR);
-
-
-        var z = 0;
+        gl.uniform1f(useColor, 1);
 
         var mvMatrixL = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.MV_MATRIX);
 
@@ -146,27 +153,28 @@ function main() {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, crateWallImage.image);
         gl.uniform1i(samplerL, 0);
 
-        function renderLoop() {
-//            z += 0.005;
-            var mvMatrix = Matrix4.rotation([0, 0, z]);
+        var mvMatrix = Matrix4.identity();
+        gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
 
-            gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
+        function renderLoop() {
+
             gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.uniform1f(useColor, 1);
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-            gl.uniform1f(useColor, 0);
-            gl.drawArrays(gl.LINE_LOOP, 0, 6);
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+            gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+            
             return;
-            setTimeout(function() {
+            setTimeout(function () {
                 window.requestAnimationFrame(renderLoop);
             }, 1000 / 60);
         }
         renderLoop();
     }
+
+
 }
 
 require(DEPENDENCIES, main);
