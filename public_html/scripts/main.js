@@ -1,6 +1,6 @@
 "use strict";
 
-const DEPENDENCIES = ["util", "loader", "Matrix4", "Vector3"];
+const DEPENDENCIES = ["util", "Loader", "Matrix4", "Vector3"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -46,7 +46,7 @@ function main() {
     // Load shaders
     var loader = new Loader();
     for (var i in SHADER_FILENAMES) {
-        loader.add(SHADER_FILENAMES[i]);
+        loader.addTextFile(SHADER_FILENAMES[i]);
     }
 
 
