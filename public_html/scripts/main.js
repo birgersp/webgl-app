@@ -1,6 +1,6 @@
 "use strict";
 
-const DEPENDENCIES = ["util", "loader", "matrix4"];
+const DEPENDENCIES = ["util", "loader", "Matrix4", "Vector3"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -111,8 +111,8 @@ function main() {
         var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
 
         function renderLoop() {
-            z += 0.005;
-            var mvMatrix = Matrix4.xyzRotation(0, 0, z);
+            z += 0.0001;
+            var mvMatrix = Matrix4.rotation([0, 0, z]);
 
             gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -123,8 +123,6 @@ function main() {
         }
         renderLoop();
     }
-
-
 }
 
 require(DEPENDENCIES, main);
