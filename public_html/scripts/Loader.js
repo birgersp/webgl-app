@@ -20,11 +20,13 @@ class Loader {
     /**
      * 
      * @param {String} filename
+     * @param {Number} w
+     * @param {Number} h
      * @return {Loader.Image}
      */
-    addImageFile(filename) {
+    addImageFile(filename, w, h) {
 
-        var file = new Loader.Image(filename);
+        var file = new Loader.Image(filename, w, h);
         this.files.push(file);
         return file;
     }
@@ -48,12 +50,10 @@ class Loader {
                     });
                 } else
                 if (file instanceof Loader.Image) {
-                    var image = new Image();
-                    image.onload = function() {
-                        file.image = image;
+                    file.image.onload = function() {
                         loadFileLoop();
                     };
-                    image.src = file.name;
+                    file.image.src = file.name;
                 }
             } else {
                 callback();
@@ -76,5 +76,14 @@ Loader.Text = class extends Loader.File {
 };
 
 Loader.Image = class extends Loader.File {
-    /** @member {Image} image */
+
+    /**
+     * @member {Image} image
+     */
+    
+    constructor(name, w, h) {
+        
+        super(name);
+        this.image = new Image(w, h);
+    }
 };

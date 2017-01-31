@@ -53,7 +53,7 @@ function main() {
 
 
     // Load images
-    var crateWallImage = loader.addImageFile("https://s-media-cache-ak0.pinimg.com/564x/61/0e/8f/610e8f8dc5ca9382cec568d3d55cb00e.jpg");
+    var crateWallImage = loader.addImageFile("binaries/crate.jpg", 128, 128);
 
 
     // Compile shaders
@@ -74,6 +74,11 @@ function main() {
         // Link and use shader program
         gl.linkProgram(shaderProgram);
         gl.useProgram(shaderProgram);
+
+        // Add texture
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, crateWallImage.image);
 
         start();
     });
