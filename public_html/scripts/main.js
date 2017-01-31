@@ -1,5 +1,3 @@
-"use strict";
-
 const DEPENDENCIES = ["util", "Loader", "Matrix4", "Vector3"];
 
 const SHADER_FILENAMES = {
@@ -43,32 +41,37 @@ function main() {
 
 
 
-    // Load shaders
+    // Loader
     var loader = new Loader();
+
+
+    // Load shaders
+    var shaderFiles = {};
     for (var i in SHADER_FILENAMES) {
-        loader.addTextFile(SHADER_FILENAMES[i]);
+        shaderFiles[SHADER_FILENAMES[i]] = loader.addTextFile(SHADER_FILENAMES[i]);
     }
 
+
+    // Load images
+    var crateWallImage = loader.addImageFile("https://s-media-cache-ak0.pinimg.com/564x/61/0e/8f/610e8f8dc5ca9382cec568d3d55cb00e.jpg");
 
 
     // Compile shaders
     loader.load(function() {
 
-        var shaderSources = {};
-        for (var i in loader.files) {
-            shaderSources[loader.files[i].name] = loader.files[i].text;
-        }
-
+        // Compile vertex shader
         var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-        gl.shaderSource(vertexShader, shaderSources[SHADER_FILENAMES.VSHADER]);
+        gl.shaderSource(vertexShader, shaderFiles[SHADER_FILENAMES.VSHADER].text);
         gl.compileShader(vertexShader);
         gl.attachShader(shaderProgram, vertexShader);
 
+        // Compile fragment shader
         var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragmentShader, shaderSources[SHADER_FILENAMES.FSHADER]);
+        gl.shaderSource(fragmentShader, shaderFiles[SHADER_FILENAMES.FSHADER].text);
         gl.compileShader(fragmentShader);
         gl.attachShader(shaderProgram, fragmentShader);
 
+        // Link and use shader program
         gl.linkProgram(shaderProgram);
         gl.useProgram(shaderProgram);
 
