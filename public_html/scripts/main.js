@@ -25,6 +25,11 @@ function main() {
     var canvas = document.createElement("canvas");
     canvas.id = "canvas";
     document.body.appendChild(canvas);
+    var onResize = function() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+    };
+    onResize();
 
 
 
@@ -47,7 +52,7 @@ function main() {
 
 
     // Compile shaders
-    loader.load(function () {
+    loader.load(function() {
 
         var shaderSources = {};
         for (var i in loader.files) {
@@ -106,18 +111,20 @@ function main() {
         var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
 
         function renderLoop() {
-            z+= 0.005;
+            z += 0.005;
             var mvMatrix = Matrix4.xyzRotation(0, 0, z);
 
             gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT);
             gl.drawArrays(gl.TRIANGLES, 0, 3);
-            setTimeout(function () {
+            setTimeout(function() {
                 window.requestAnimationFrame(renderLoop);
             }, 1000 / 60);
         }
         renderLoop();
     }
+
+
 }
 
 require(DEPENDENCIES, main);
