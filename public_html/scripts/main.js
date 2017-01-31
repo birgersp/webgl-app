@@ -81,10 +81,12 @@ function main() {
     function start() {
 
         var vertices = new Float32Array([
-            -0.5, 0.5, 0,
-            -0.5, -0.5, 0,
-            0.5, 0.5, 0
+            -0.5, 0.5, 0, 1, 0, 0,
+            -0.5, -0.5, 0, 0, 1, 0,
+            0.5, 0.5, 0, 0, 0, 1
         ]);
+
+        var FSIZE = Float32Array.BYTES_PER_ELEMENT;
 
         // Create a buffer object
         var vertexBuffer = gl.createBuffer();
@@ -95,16 +97,27 @@ function main() {
         // Write date into the buffer object
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-        // Obtain attribute location (pointer)
+
+
+        // Obtain vertex attribute location
         var position = gl.getAttribLocation(shaderProgram, "position");
+        
+        // Specify data format and location of position vertex attribute
+        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, FSIZE * 6, 0);
 
-        // Assign the buffer object to a_Position variable
-        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
-
-        // Enable the assignment to a_Position variable
+        // Enable positino vertex attribute array
         gl.enableVertexAttribArray(position);
 
+
+
+        // Obtain color attribute location
+        var color = gl.getAttribLocation(shaderProgram, "color");
+        gl.vertexAttribPointer(color, 3, gl.FLOAT, false, FSIZE * 6, FSIZE * 3);
+        gl.enableVertexAttribArray(color);
+        
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.clearColor(0, 0, 0, 1);
+
 
         var z = 0;
 
