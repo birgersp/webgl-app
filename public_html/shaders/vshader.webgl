@@ -1,5 +1,4 @@
 uniform mat4 mvMatrix;
-uniform bool useColor;
 
 attribute vec3 position;
 attribute vec3 color;
@@ -8,9 +7,5 @@ varying vec4 vColor;
 void main() {
     gl_Position = mvMatrix * vec4(position, 1);
 
-    if (useColor == true) {
-        vColor = vec4(color, 1);
-    } else {
-        vColor = vec4(0, 0, 0, 1);
-    }
+    vColor = vec4(color, 1);
 }

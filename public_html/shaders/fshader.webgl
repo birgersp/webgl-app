@@ -2,8 +2,14 @@
 precision mediump float;
 #endif
 
+uniform bool useColor;
+
 varying vec4 vColor;
 
 void main() {
-  gl_FragColor = vColor;
+    if (useColor == true) {
+      gl_FragColor = vColor;
+    } else {
+        gl_FragColor = vec4(0,0,0,1);
+    }
 }
