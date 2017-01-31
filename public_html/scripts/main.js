@@ -35,7 +35,7 @@ function main() {
 
     // 
     var gl = canvas.getContext("webgl");
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+    gl.clearColor(1, 1, 1, 1);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
@@ -101,7 +101,7 @@ function main() {
 
         // Obtain vertex attribute location
         var position = gl.getAttribLocation(shaderProgram, "position");
-        
+
         // Specify data format and location of position vertex attribute
         gl.vertexAttribPointer(position, 3, gl.FLOAT, false, FSIZE * 6, 0);
 
@@ -114,9 +114,13 @@ function main() {
         var color = gl.getAttribLocation(shaderProgram, "color");
         gl.vertexAttribPointer(color, 3, gl.FLOAT, false, FSIZE * 6, FSIZE * 3);
         gl.enableVertexAttribArray(color);
-        
+
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        gl.clearColor(0, 0, 0, 1);
+
+
+
+        // 
+        var useColor = gl.getUniformLocation(shaderProgram, "useColor");
 
 
         var z = 0;
@@ -124,12 +128,15 @@ function main() {
         var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
 
         function renderLoop() {
-            z += 0.0001;
+            z += 0.005;
             var mvMatrix = Matrix4.rotation([0, 0, z]);
 
             gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            gl.uniform1f(useColor, 1);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
+            gl.uniform1f(useColor, 0);
+            gl.drawArrays(gl.LINE_LOOP, 0, 3);
             setTimeout(function() {
                 window.requestAnimationFrame(renderLoop);
             }, 1000 / 60);
