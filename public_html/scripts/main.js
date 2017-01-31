@@ -89,9 +89,12 @@ function main() {
     function start() {
 
         var vertices = new Float32Array([
+            0.5, 0.5, 0, 0, 0, 1,
             -0.5, 0.5, 0, 1, 0, 0,
             -0.5, -0.5, 0, 0, 1, 0,
-            0.5, 0.5, 0, 0, 0, 1
+            -0.5, -0.5, 0, 0, 1, 0,
+            0.5, -0.5, 0, 0, 0, 0,
+            0.5, 0.5, 0, 0, 0, 1,
         ]);
 
         var FSIZE = Float32Array.BYTES_PER_ELEMENT;
@@ -136,15 +139,15 @@ function main() {
         var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
 
         function renderLoop() {
-            z += 0.005;
+//            z += 0.005;
             var mvMatrix = Matrix4.rotation([0, 0, z]);
 
             gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT);
             gl.uniform1f(useColor, 1);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
             gl.uniform1f(useColor, 0);
-            gl.drawArrays(gl.LINE_LOOP, 0, 3);
+            gl.drawArrays(gl.LINE_LOOP, 0, 6);
             setTimeout(function() {
                 window.requestAnimationFrame(renderLoop);
             }, 1000 / 60);
