@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["util", "Loader", "Matrix4", "Camera"];
+const DEPENDENCIES = ["util", "FileLoader", "Matrix4", "Camera"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -45,8 +45,8 @@ function main() {
 
 
 
-    // Loader
-    var loader = new Loader();
+    // FileLoader
+    var loader = new FileLoader();
 
 
     // Load shaders
@@ -147,13 +147,15 @@ function main() {
 
         // Add texture
         var texture = gl.createTexture();
-        var samplerL = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.SAMPLER);
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, crateWallImage.image);
+
+        var samplerL = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.SAMPLER);
+        // Select which texture to use
         gl.uniform1i(samplerL, 0);
 
         var mvMatrix = Matrix4.identity();

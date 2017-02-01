@@ -1,4 +1,4 @@
-class Loader {
+class FileLoader {
 
     constructor() {
 
@@ -8,11 +8,11 @@ class Loader {
     /**
      * 
      * @param {String} filename
-     * @return {Loader.Text}
+     * @return {FileLoader.Text}
      */
     addTextFile(filename) {
 
-        var file = new Loader.Text(filename);
+        var file = new FileLoader.Text(filename);
         this.files.push(file);
         return file;
     }
@@ -20,11 +20,11 @@ class Loader {
     /**
      * 
      * @param {String} filename
-     * @return {Loader.Image}
+     * @return {FileLoader.Image}
      */
     addImageFile(filename) {
 
-        var file = new Loader.Image(filename);
+        var file = new FileLoader.Image(filename);
         this.files.push(file);
         return file;
     }
@@ -41,13 +41,13 @@ class Loader {
             index++;
             if (index < files.length) {
                 var file = files[index];
-                if (file instanceof Loader.Text) {
+                if (file instanceof FileLoader.Text) {
                     loadFile(file.name, function(text) {
                         file.text = text;
                         loadFileLoop();
                     });
                 } else
-                if (file instanceof Loader.Image) {
+                if (file instanceof FileLoader.Image) {
                     file.image.onload = function() {
                         loadFileLoop();
                     };
@@ -61,7 +61,7 @@ class Loader {
     }
 }
 
-Loader.File = class {
+FileLoader.File = class {
 
     constructor(name) {
 
@@ -69,11 +69,11 @@ Loader.File = class {
     }
 };
 
-Loader.Text = class extends Loader.File {
+FileLoader.Text = class extends FileLoader.File {
     /** @member {String} text */
 };
 
-Loader.Image = class extends Loader.File {
+FileLoader.Image = class extends FileLoader.File {
 
     /**
      * @member {Image} image
