@@ -20,10 +20,10 @@ function main() {
     document.head.appendChild(style);
     style.appendChild(document.createTextNode(""));
     style.sheet.insertRule("body {padding:0px; margin:0px;}", 0);
-    style.sheet.insertRule("canvas {"
-            + "padding:0px; margin:0px;"
-            + "width:100%; height:100%;"
-            + "}", 0);
+//    style.sheet.insertRule("canvas {"
+//            + "padding:0px; margin:0px;"
+//            + "width:100%; height:100%;"
+//            + "}", 0);
 
 
 
@@ -31,7 +31,7 @@ function main() {
     var canvas = document.createElement("canvas");
     canvas.id = "canvas";
     document.body.appendChild(canvas);
-    var onResize = function () {
+    var onResize = function() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
     };
@@ -58,10 +58,11 @@ function main() {
 
     // Load texture
     var crateWallImage = loader.addImageFile("binaries/crate.jpg");
+    var grassImage = loader.addImageFile("binaries/grass.jpg");
 
 
     // Compile shaders
-    loader.load(function () {
+    loader.load(function() {
 
         // Compile vertex shader
         var vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -87,93 +88,65 @@ function main() {
     // Start
     function start() {
 
-        gl.clearColor(1, 1, 1, 1);
-        gl.clearDepth(1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-
         var FSIZE = Float32Array.BYTES_PER_ELEMENT;
-
-
-        // Per scene object:
-
-        var vertices = new Float32Array([
-            0.5, 0.5, 0, 1, 1,
-            -0.5, 0.5, 0, 0, 1,
-            -0.5, -0.5, 0, 0, 0,
-            0.5, -0.5, 0, 1, 0,
-        ]);
-
-        // Create a buffer object
-        var vertexBuffer = gl.createBuffer();
-
-        // Obtain vertex attribute location
-        var position = gl.getAttribLocation(shaderProgram, SHADER_VARIABLES.POSITION);
-
-        // Obtain texture coordinate attribute location
-        var textureCoor = gl.getAttribLocation(shaderProgram, SHADER_VARIABLES.TEXTURE_COORD);
-
-        // Bind the buffer object to target
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-
-        // Specify data format and location of position vertex attribute
-        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, FSIZE * 5, 0);
-
-        // Enable positino vertex attribute array
-        gl.enableVertexAttribArray(position);
-
-        gl.vertexAttribPointer(textureCoor, 2, gl.FLOAT, false, FSIZE * 5, FSIZE * 3);
-        gl.enableVertexAttribArray(textureCoor);
-
-        // Write date into the buffer object
-        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-        // Release buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-
-        var indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
-
-        var indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-
-        // 
-        var useColor = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.USE_COLOR);
-        gl.uniform1f(useColor, 1);
-
-        var mvMatrixL = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.MV_MATRIX);
-
-        // Add texture
-        var texture = gl.createTexture();
-
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, crateWallImage.image);
-
-        var samplerL = gl.getUniformLocation(shaderProgram, SHADER_VARIABLES.SAMPLER);
-        // Select which texture to use
-        gl.uniform1i(samplerL, 0);
-
-        var mvMatrix = Matrix4.identity();
+        gl.clearColor(1, 1, 1, 1);
+        var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
+        var mvMatrix = Matrix4.rotation([0, 0, 0]);
         gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
+        var positionL = gl.getAttribLocation(shaderProgram, SHADER_VARIABLES.POSITION);
+        gl.enableVertexAttribArray(positionL);
 
-        function renderLoop() {
 
-            gl.clear(gl.COLOR_BUFFER_BIT);
 
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-            
-            return;
-            setTimeout(function () {
-                window.requestAnimationFrame(renderLoop);
-            }, 1000 / 60);
-        }
-        renderLoop();
+        var vertices1 = new Float32Array([
+            0, -1, 0,
+            1, -1, 0,
+            1, 0, 0
+        ]);
+        var vertexBuffer1 = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer1);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices1, gl.STATIC_DRAW);
+
+        var indices = new Uint16Array([
+            0, 1, 2
+        ]);
+        var indexBuffer1 = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer1);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+
+
+        var vertices2 = new Float32Array([
+            -0.5, 0.5, 0,
+            -0.5, -0.5, 0,
+            0.5, 0.5, 0
+        ]);
+        var vertexBuffer2 = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices2, gl.STATIC_DRAW);
+
+        var indices2 = new Uint16Array([
+            0, 1, 2
+        ]);
+        var indexBuffer2 = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer2);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices2, gl.STATIC_DRAW);
+
+
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer1);
+        gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer1);
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
+        gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer2);
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
     }
 
 
