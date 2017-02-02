@@ -1,7 +1,11 @@
 uniform mat4 mvMatrix;
 
 attribute vec4 position;
+attribute vec4 color;
+
+varying vec4 vColor;
 void main() {
 
     gl_Position = mvMatrix * position;
+    vColor = color;
 }
