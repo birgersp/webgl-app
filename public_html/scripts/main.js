@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["util", "FileLoader", "Matrix4", "Camera"];
+const DEPENDENCIES = ["FileLoader"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -12,7 +12,7 @@ const SHADER_VARIABLES = {
     MV_MATRIX: "mvMatrix",
     SAMPLER: "sampler",
     COLOR: "color"
-};
+}
 
 function main() {
 
@@ -21,10 +21,10 @@ function main() {
     document.head.appendChild(style);
     style.appendChild(document.createTextNode(""));
     style.sheet.insertRule("body {padding:0px; margin:0px;}", 0);
-//    style.sheet.insertRule("canvas {"
-//            + "padding:0px; margin:0px;"
-//            + "width:100%; height:100%;"
-//            + "}", 0);
+    //    style.sheet.insertRule("canvas {"
+    //            + "padding:0px; margin:0px;"
+    //            + "width:100%; height:100%;"
+    //            + "}", 0);
 
 
 
@@ -40,7 +40,7 @@ function main() {
 
 
 
-    // 
+    //
     var gl = canvas.getContext("webgl");
     var shaderProgram = gl.createProgram();
 
@@ -59,7 +59,6 @@ function main() {
 
     // Load texture
     var crateWallImage = loader.addImageFile("binaries/crate.jpg");
-    var grassImage = loader.addImageFile("binaries/grass.jpg");
 
 
     // Compile shaders
@@ -91,13 +90,10 @@ function main() {
 
         var FSIZE = Float32Array.BYTES_PER_ELEMENT;
         gl.clearColor(1, 1, 1, 1);
-        var mvMatrixL = gl.getUniformLocation(shaderProgram, "mvMatrix");
-        var mvMatrix = Matrix4.rotation([0, 0, 0]);
-        gl.uniformMatrix4fv(mvMatrixL, false, mvMatrix);
-        
+
         var positionL = gl.getAttribLocation(shaderProgram, SHADER_VARIABLES.POSITION);
         gl.enableVertexAttribArray(positionL);
-        
+
         var colorL = gl.getAttribLocation(shaderProgram, SHADER_VARIABLES.COLOR);
         gl.enableVertexAttribArray(colorL);
 
@@ -127,8 +123,8 @@ function main() {
 
 
         var vertices2 = new Float32Array([
-            0, 1, 0,
-            -1, 1, 0,
+            0, 1, 0, //
+            -1, 1, 0, //
             -1, 0, 0
         ]);
         var vertexBuffer2 = gl.createBuffer();
@@ -152,21 +148,21 @@ function main() {
 
 
         gl.clear(gl.COLOR_BUFFER_BIT);
-        
+
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer1);
         gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, 0, 0);
-        
+
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer1);
         gl.vertexAttribPointer(colorL, 4, gl.FLOAT, false, 0, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer2);
         gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
-        
-        
+
+
 
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
         gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, 0, 0);
-        
+
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer2);
         gl.vertexAttribPointer(colorL, 4, gl.FLOAT, false, 0, 0);
 

@@ -6,7 +6,7 @@ class FileLoader {
     }
 
     /**
-     * 
+     *
      * @param {String} filename
      * @return {FileLoader.Text}
      */
@@ -18,7 +18,7 @@ class FileLoader {
     }
 
     /**
-     * 
+     *
      * @param {String} filename
      * @return {FileLoader.Image}
      */
@@ -30,19 +30,43 @@ class FileLoader {
     }
 
     /**
+     * @param {String} name
+     * @param {Function} callback
+     */
+    loadFile(name, callback) {
+        var loader = this;
+        var request = new XMLHttpRequest();
+        var origin = (window.location.origin + window.location.pathname);
+        var path = origin.substring(0, origin.lastIndexOf("/") + 1);
+        var fullUrl = path + name;
+        request.open('GET', fullUrl);
+        request.onreadystatechange = function() {
+            if (request.readyState == 4) {
+                if (request.status === 200 || request.status === 'OK') {
+                    callback(request.responseText);
+                } else {
+                    loader.throwFileNotFoundError(name);
+                }
+            }
+        };
+        request.send();
+    }
+
+    /**
      * @param {Function} callback
      */
     load(callback) {
 
+        var loader = this;
         var files = this.files;
-
         var index = -1;
+
         function loadFileLoop() {
             index++;
             if (index < files.length) {
                 var file = files[index];
                 if (file instanceof FileLoader.Text) {
-                    loadFile(file.name, function(text) {
+                    loader.loadFile(file.name, function(text) {
                         file.text = text;
                         loadFileLoop();
                     });
@@ -51,6 +75,9 @@ class FileLoader {
                     file.image.onload = function() {
                         loadFileLoop();
                     };
+                    file.image.onerror = function() {
+                        loader.throwFileNotFoundError(file.name);
+                    };
                     file.image.src = file.name;
                 }
             } else {
@@ -58,6 +85,13 @@ class FileLoader {
             }
         }
         loadFileLoop();
+    }
+
+    /**
+     * @param {String} name
+     */
+    throwFileNotFoundError(name) {
+        throw new Error("File \"" + name + "\" not found");
     }
 }
 
@@ -78,9 +112,9 @@ FileLoader.Image = class extends FileLoader.File {
     /**
      * @member {Image} image
      */
-    
+
     constructor(name) {
-        
+
         super(name);
         this.image = new Image();
     }
