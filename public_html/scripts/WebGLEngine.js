@@ -8,7 +8,7 @@ var WebGLEngine = class {
     }
 
     initialize(vertexShaderSource, fragmentShaderSource) {
-        
+
         var gl = this.gl;
         var shaderProgram = gl.createProgram();
 
@@ -34,7 +34,7 @@ var WebGLEngine = class {
 
         // Set vertex attribute pointer for position
         var positionL = gl.getAttribLocation(shaderProgram, WebGLEngine.ShaderVariables.POSITION);
-        gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 3, 0);
+        gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(positionL);
 
         // Create and bind index buffer
@@ -59,7 +59,7 @@ var WebGLEngine = class {
         var verticesData = new Float32Array(this.vertices);
         gl.bufferData(gl.ARRAY_BUFFER, verticesData, gl.STATIC_DRAW);
 
-        var indicesData = new Uint16Array(this.indices);
+        var indicesData = new Uint8Array(this.indices);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indicesData, gl.STATIC_DRAW);
     }
 
@@ -67,7 +67,7 @@ var WebGLEngine = class {
 
         var gl = this.gl;
         var offset = bufferedModel.indexOffset;
-        gl.drawElements(gl.TRIANGLES, bufferedModel.indexCount, gl.UNSIGNED_SHORT, offset);
+        gl.drawElements(gl.LINE_STRIP, bufferedModel.indexCount, gl.UNSIGNED_BYTE, offset);
     }
 };
 
