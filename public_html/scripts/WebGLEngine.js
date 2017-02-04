@@ -1,10 +1,13 @@
-var WebGLEngine = class {
+class WebGLEngine {
 
     constructor(gl) {
 
         this.gl = gl;
-        this.vertices = [];
-        this.indices = [];
+        this.positionAttribL = null;
+        this.vertexBuffers = [];
+        this.indexBuffers = [];
+        this.modelIndices = [];
+        this.lastBoundModel = -1;
     }
 
     initialize(vertexShaderSource, fragmentShaderSource) {
@@ -28,58 +31,37 @@ var WebGLEngine = class {
         gl.linkProgram(shaderProgram);
         gl.useProgram(shaderProgram);
 
-        // Create and bind vertex buffer
-        var vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-
         // Set vertex attribute pointer for position
-        var positionL = gl.getAttribLocation(shaderProgram, WebGLEngine.ShaderVariables.POSITION);
-        gl.vertexAttribPointer(positionL, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(positionL);
-
-        // Create and bind index buffer
-        var indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        this.positionAttribL = gl.getAttribLocation(shaderProgram, "position");
     }
 
-    addModel(vertices, indices) {
-
-        var bufferedModel = new WebGLEngine.BufferedModel(this.indices.length, indices.length);
-
-        this.vertices = this.vertices.concat(vertices);
-        this.indices = this.indices.concat(indices);
-
-        return bufferedModel;
-    }
-
-    writeToBuffers() {
+    bindBuffer(id) {
 
         var gl = this.gl;
-
-        var verticesData = new Float32Array(this.vertices);
-        gl.bufferData(gl.ARRAY_BUFFER, verticesData, gl.STATIC_DRAW);
-
-        var indicesData = new Uint8Array(this.indices);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indicesData, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[id]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffers[id]);
+        gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.positionAttribL);
+        this.lastBoundModel = id;
     }
 
-    renderModel(bufferedModel) {
+    bufferModel(vertices, indices) {
 
         var gl = this.gl;
-        var offset = bufferedModel.indexOffset;
-        gl.drawElements(gl.LINE_STRIP, bufferedModel.indexCount, gl.UNSIGNED_BYTE, offset);
+        var id = this.modelIndices.length;
+
+        // Add buffers and index count
+        this.vertexBuffers.push(gl.createBuffer());
+        this.indexBuffers.push(gl.createBuffer());
+        this.modelIndices.push(indices.length);
+
+        // Bind buffers
+        this.bindBuffer(id);
+
+        // Write buffer data
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Float32Array(indices), gl.STATIC_DRAW);
+
+        return id;
     }
-};
-
-WebGLEngine.ShaderVariables = {
-    POSITION: "position"
-};
-
-WebGLEngine.BufferedModel = class {
-
-    constructor(indexOffset, indexCount) {
-
-        this.indexOffset = indexOffset;
-        this.indexCount = indexCount;
-    }
-};
+}
