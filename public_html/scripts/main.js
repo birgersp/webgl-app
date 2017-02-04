@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["FileLoader", "WebGLEngine"];
+const DEPENDENCIES = ["FileLoader", "WebGLEngine", "Matrix4"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -68,20 +68,13 @@ function main() {
         ];
         var indices1 = [0, 1, 2];
 
-        var vertices2 = [
-            -1, 1, 0,
-            -1, 0, 0,
-            0, 1, 0
-        ];
-        var indices2 = [0, 1, 2];
-
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         var model1 = engine.bufferModelData(vertices1, indices1);
-        var model2 = engine.bufferModelData(vertices2, indices2);
-
-        engine.draw(model1);
-        engine.draw(model2);
+        var object = new WebGLEngine.Object(model1);
+        engine.addObject(object);
+        
+        engine.drawObjects();
     });
 }
 

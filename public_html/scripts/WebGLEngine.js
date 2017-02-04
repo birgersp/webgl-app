@@ -4,10 +4,8 @@ class WebGLEngine {
 
         this.gl = gl;
         this.positionAttribL = null;
-        this.vertexBuffers = [];
-        this.indexBuffers = [];
-        this.modelIndices = [];
-        this.lastBoundModel = -1;
+        this.lastBoundModel = null;
+        this.objects = [];
     }
 
     initialize(vertexShaderSource, fragmentShaderSource) {
@@ -38,39 +36,68 @@ class WebGLEngine {
     bufferModelData(vertices, indices) {
 
         var gl = this.gl;
-        var id = this.modelIndices.length;
 
         // Add buffers and index count
-        this.vertexBuffers.push(gl.createBuffer());
-        this.indexBuffers.push(gl.createBuffer());
-        this.modelIndices.push(indices.length);
+        var vertexBuffer = gl.createBuffer();
+        var indexBuffer = gl.createBuffer();
+        var model = new WebGLEngine.BufferedModel(vertexBuffer, indexBuffer, indices.length);
 
         // Bind buffers
-        this.bindBuffer(id);
+        this.bindModel(model);
 
         // Write buffer data
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
 
-        return id;
+        return model;
     }
 
-    bindBuffer(id) {
+    bindModel(model) {
 
         var gl = this.gl;
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[id]);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffers[id]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.vertexBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
         gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.positionAttribL);
-        this.lastBoundModel = id;
+        this.lastBoundModel = model;
     }
 
-    draw(modelID) {
+    addObject(object) {
 
-        if (this.lastBoundModel !== modelID)
-            this.bindBuffer(modelID);
+        var i = 0;
+        while (i < this.objects.length && this.objects[i].model !== object.model)
+            i++;
+        this.objects.splice(i, 0, object);
+    }
 
-        var gl = this.gl;
-        gl.drawElements(gl.LINE_STRIP, this.modelIndices[modelID], gl.UNSIGNED_BYTE, 0);
+    drawObjects() {
+
+        for (var objectI in this.objects) {
+            var object = this.objects[objectI];
+            if (this.lastBoundModel !== object.model)
+                this.bindModel(model);
+
+            var gl = this.gl;
+            gl.drawElements(gl.TRIANGLES, object.model.indexCount, gl.UNSIGNED_BYTE, 0);
+        }
     }
 }
+
+WebGLEngine.BufferedModel = class {
+
+    constructor(vertexBuffer, indexBuffer, indexCount) {
+
+        this.vertexBuffer = vertexBuffer;
+        this.indexBuffer = indexBuffer;
+        this.indexCount = indexCount;
+    }
+};
+
+WebGLEngine.Object = class {
+
+    constructor(model) {
+
+        this.model = model;
+        this.transform = new Matrix4();
+    }
+};
