@@ -35,16 +35,6 @@ class WebGLEngine {
         this.positionAttribL = gl.getAttribLocation(shaderProgram, "position");
     }
 
-    bindBuffer(id) {
-
-        var gl = this.gl;
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[id]);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffers[id]);
-        gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.positionAttribL);
-        this.lastBoundModel = id;
-    }
-
     bufferModel(vertices, indices) {
 
         var gl = this.gl;
@@ -60,8 +50,18 @@ class WebGLEngine {
 
         // Write buffer data
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Float32Array(indices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
 
         return id;
+    }
+
+    bindBuffer(id) {
+
+        var gl = this.gl;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[id]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffers[id]);
+        gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.positionAttribL);
+        this.lastBoundModel = id;
     }
 }
