@@ -35,7 +35,7 @@ class WebGLEngine {
         this.positionAttribL = gl.getAttribLocation(shaderProgram, "position");
     }
 
-    bufferModel(vertices, indices) {
+    bufferModelData(vertices, indices) {
 
         var gl = this.gl;
         var id = this.modelIndices.length;
@@ -63,5 +63,14 @@ class WebGLEngine {
         gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.positionAttribL);
         this.lastBoundModel = id;
+    }
+
+    draw(modelID) {
+
+        if (this.lastBoundModel !== modelID)
+            this.bindBuffer(modelID);
+
+        var gl = this.gl;
+        gl.drawElements(gl.LINE_STRIP, this.modelIndices[modelID], gl.UNSIGNED_BYTE, 0);
     }
 }

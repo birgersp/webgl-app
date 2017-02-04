@@ -76,15 +76,12 @@ function main() {
         var indices2 = [0, 1, 2];
 
         gl.clear(gl.COLOR_BUFFER_BIT);
-        
-        var model1 = engine.addModel(vertices1, indices1);
-        var model2 = engine.addModel(vertices2, indices2);
 
-        engine.writeToBuffers();
+        var model1 = engine.bufferModelData(vertices1, indices1);
+        var model2 = engine.bufferModelData(vertices2, indices2);
 
-        engine.renderModel(model1);
-        engine.renderModel(model2);
-
+        engine.draw(model1);
+        engine.draw(model2);
     });
 }
 
