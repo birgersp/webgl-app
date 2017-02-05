@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["FileLoader", "WebGLEngine", "Matrix4", "Cube", "Vector3", "Transform"];
+const DEPENDENCIES = ["FileLoader", "WebGLEngine", "Matrix4", "Cube", "Vector3", "Transform", "Camera"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -60,13 +60,15 @@ function main() {
                 );
 
         var object1 = new WebGLEngine.Object(new Cube());
-        object1.transform.setTranslation(new Vector3(0.5, 0, 0));
         engine.addObject(object1);
 
         var rot = 0.1;
+        var pos = 0;
         function renderLoop() {
             rot += 0.01;
-            object1.transform.setRotation(new Vector3(rot/3, rot, 0));
+            pos += 0.02;
+            object1.transform.setRotation(new Vector3(0, rot, 0));
+            object1.transform.setTranslation(new Vector3(2*Math.sin(pos), 0, -5));
             engine.drawObjects();
             requestAnimationFrame(renderLoop);
         }
