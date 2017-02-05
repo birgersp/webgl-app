@@ -13,37 +13,34 @@ class WebGLEngine {
 
     initialize(vertexShaderSource, fragmentShaderSource) {
 
-        var gl = this.gl;
-        var shaderProgram = gl.createProgram();
+        var shaderProgram = this.gl.createProgram();
 
         // Compile vertex shader
-        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-        gl.shaderSource(vertexShader, vertexShaderSource);
-        gl.compileShader(vertexShader);
-        gl.attachShader(shaderProgram, vertexShader);
+        var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
+        this.gl.shaderSource(vertexShader, vertexShaderSource);
+        this.gl.compileShader(vertexShader);
+        this.gl.attachShader(shaderProgram, vertexShader);
 
         // Compile fragment shader
-        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragmentShader, fragmentShaderSource);
-        gl.compileShader(fragmentShader);
-        gl.attachShader(shaderProgram, fragmentShader);
+        var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+        this.gl.shaderSource(fragmentShader, fragmentShaderSource);
+        this.gl.compileShader(fragmentShader);
+        this.gl.attachShader(shaderProgram, fragmentShader);
 
         // Link and use shader program
-        gl.linkProgram(shaderProgram);
-        gl.useProgram(shaderProgram);
+        this.gl.linkProgram(shaderProgram);
+        this.gl.useProgram(shaderProgram);
 
         // Set vertex attribute pointer for position
-        this.positionAttribL = gl.getAttribLocation(shaderProgram, "position");
-        this.transformUniformL = gl.getUniformLocation(shaderProgram, "transform");
-        this.useColorUniformL = gl.getUniformLocation(shaderProgram, "useColor");
+        this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
+        this.transformUniformL = this.gl.getUniformLocation(shaderProgram, "transform");
+        this.useColorUniformL = this.gl.getUniformLocation(shaderProgram, "useColor");
     }
 
     bufferGeometry(geometry) {
 
-        var gl = this.gl;
-
-        var vertexBuffer = gl.createBuffer();
-        var indexBuffer = gl.createBuffer();
+        var vertexBuffer = this.gl.createBuffer();
+        var indexBuffer = this.gl.createBuffer();
         var bufferedGeometry = new WebGLEngine.BufferedGeometry(geometry, vertexBuffer, indexBuffer);
 
         this.bindBufferedGeometry(bufferedGeometry);
@@ -55,19 +52,17 @@ class WebGLEngine {
 
     bindBufferedGeometry(bufferedGeometry) {
 
-        var gl = this.gl;
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferedGeometry.vertexBuffer);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
-        gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.positionAttribL);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, bufferedGeometry.vertexBuffer);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
+        this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.positionAttribL);
         this.lastBoundGeometry = bufferedGeometry;
     }
 
     writeBufferedGeometryData(bufferedGeometry) {
 
-        var gl = this.gl;
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bufferedGeometry.geometry.vertices), gl.STATIC_DRAW);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(bufferedGeometry.geometry.indices), gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(bufferedGeometry.geometry.vertices), this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(bufferedGeometry.geometry.indices), this.gl.STATIC_DRAW);
     }
 
     getBufferedGeometry(geometry) {
@@ -94,8 +89,7 @@ class WebGLEngine {
 
     drawObjects() {
 
-        var gl = this.gl;
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         for (var geometryIndex in this.bufferedGeometries) {
             var bufferedGeometry = this.bufferedGeometries[geometryIndex];
 
@@ -108,13 +102,13 @@ class WebGLEngine {
 
                 var object = bufferedGeometry.objects[objectIndex];
 
-                gl.uniformMatrix4fv(this.transformUniformL, false, object.transform.getMatrix());
+                this.gl.uniformMatrix4fv(this.transformUniformL, false, object.transform.getMatrix());
 
-                gl.uniform1f(this.useColorUniformL, 1.0);
-                gl.drawElements(gl.TRIANGLES, indices, gl.UNSIGNED_BYTE, 0);
+                this.gl.uniform1f(this.useColorUniformL, 1.0);
+                this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
 
-                gl.uniform1f(this.useColorUniformL, 0.0);
-                gl.drawElements(gl.LINE_STRIP, indices, gl.UNSIGNED_BYTE, 0);
+                this.gl.uniform1f(this.useColorUniformL, 0.0);
+                this.gl.drawElements(this.gl.LINE_STRIP, indices, this.gl.UNSIGNED_BYTE, 0);
             }
         }
     }
