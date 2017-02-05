@@ -3,6 +3,7 @@ class WebGLEngine {
     constructor(gl) {
 
         this.gl = gl;
+        this.gl.enable(gl.DEPTH_TEST);
         this.positionAttribL = null;
         this.transformUniformL = null;
         this.useColorUniformL = null;
@@ -89,7 +90,8 @@ class WebGLEngine {
 
     drawObjects() {
 
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
         for (var geometryIndex in this.bufferedGeometries) {
             var bufferedGeometry = this.bufferedGeometries[geometryIndex];
 
@@ -106,9 +108,6 @@ class WebGLEngine {
 
                 this.gl.uniform1f(this.useColorUniformL, 1.0);
                 this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
-
-                this.gl.uniform1f(this.useColorUniformL, 0.0);
-                this.gl.drawElements(this.gl.LINE_STRIP, indices, this.gl.UNSIGNED_BYTE, 0);
             }
         }
     }

@@ -60,15 +60,15 @@ function main() {
                 );
 
         var object1 = new WebGLEngine.Object(new Cube());
-        object1.transform.setTranslation(new Vector3(0, 1, 0));
+        object1.transform.setTranslation(new Vector3(0.5, 0, 0));
         engine.addObject(object1);
 
-        var z = 0;
+        var rot = 0.1;
         function renderLoop() {
-//            z += 0.01;
-            object1.transform.setRotation(new Vector3(0, 0, z));
+            rot += 0.01;
+            object1.transform.setRotation(new Vector3(rot/3, rot, 0));
             engine.drawObjects();
-            setTimeout(requestAnimationFrame(renderLoop), 1000 / 60);
+            requestAnimationFrame(renderLoop);
         }
         renderLoop();
     });
