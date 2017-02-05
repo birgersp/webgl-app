@@ -59,25 +59,13 @@ function main() {
                 shaderFiles[SHADER_FILENAMES.FSHADER].text
                 );
 
-
-        var vertices1 = [
-            0.5, 0.5, 0,
-            -0.5, 0.5, 0,
-            -0.5, -0.5, 0,
-            0.5, -0.5, 0
-        ];
-        var indices1 = [0, 1, 2, 2, 3, 0];
-
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        var geometry1 = new WebGLEngine.Geometry(vertices1, indices1);
-
         var object1 = new WebGLEngine.Object(new Cube());
+        object1.transform.setTranslation(new Vector3(0, 1, 0));
         engine.addObject(object1);
 
         var z = 0;
         function renderLoop() {
-            z += 0.01;
+//            z += 0.01;
             object1.transform.setRotation(new Vector3(0, 0, z));
             engine.drawObjects();
             setTimeout(requestAnimationFrame(renderLoop), 1000 / 60);

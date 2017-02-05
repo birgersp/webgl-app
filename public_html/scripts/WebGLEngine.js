@@ -95,6 +95,7 @@ class WebGLEngine {
     drawObjects() {
 
         var gl = this.gl;
+        gl.clear(gl.COLOR_BUFFER_BIT);
         for (var geometryIndex in this.bufferedGeometries) {
             var bufferedGeometry = this.bufferedGeometries[geometryIndex];
 
