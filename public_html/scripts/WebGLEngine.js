@@ -107,7 +107,7 @@ class WebGLEngine {
 
                 var object = bufferedGeometry.objects[objectIndex];
 
-                gl.uniformMatrix4fv(this.transformUniformL, false, object.transform);
+                gl.uniformMatrix4fv(this.transformUniformL, false, object.transform.getMatrix());
 
                 gl.uniform1f(this.useColorUniformL, 1.0);
                 gl.drawElements(gl.TRIANGLES, indices, gl.UNSIGNED_BYTE, 0);
@@ -144,6 +144,6 @@ WebGLEngine.Object = class {
     constructor(geometry) {
 
         this.geometry = geometry;
-        this.transform = Matrix4.identity();
+        this.transform = new Transform();
     }
 };
