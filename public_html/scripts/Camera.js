@@ -14,16 +14,12 @@ class Camera {
      */
     getProjectionMatrix() {
 
-        var s = this.scale;
-        var n = this.n;
-        var f = this.f;
-
         var matrix = new Matrix4();
-        matrix.setCell(0, 0, s);
-        matrix.setCell(1, 1, s);
-        matrix.setCell(2, 2, -f / (f - n));
+        matrix.setCell(0, 0, this.s);
+        matrix.setCell(1, 1, this.s);
+        matrix.setCell(2, 2, -this.f / (this.f - this.n));
         matrix.setCell(3, 2, -1);
-        matrix.setCell(2, 3, -f * n / (f - n));
+        matrix.setCell(2, 3, -this.f * this.n / (this.f - this.n));
 
         return matrix;
     }
