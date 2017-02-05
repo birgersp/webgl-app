@@ -10,6 +10,7 @@ class WebGLEngine {
         this.viewTransform = Matrix4.identity();
         this.bufferedGeometries = [];
         this.lastBoundGeometry = null;
+        this.camera = new Camera(70);
     }
 
     initialize(vertexShaderSource, fragmentShaderSource) {
@@ -36,11 +37,7 @@ class WebGLEngine {
         this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
         this.transformUniformL = this.gl.getUniformLocation(shaderProgram, "transform");
         this.useColorUniformL = this.gl.getUniformLocation(shaderProgram, "useColor");
-
-
-        var camera = new Camera(70);
-        var projectionUniformL = this.gl.getUniformLocation(shaderProgram, "projection");
-        this.gl.uniformMatrix4fv(projectionUniformL, false, camera.getProjectionMatrix());
+        this.projectionUniformL = this.gl.getUniformLocation(shaderProgram, "projection");
     }
 
     bufferGeometry(geometry) {
@@ -96,6 +93,8 @@ class WebGLEngine {
     drawObjects() {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+        this.gl.uniformMatrix4fv(this.projectionUniformL, false, this.camera.getViewProjectionMatrix());
 
         for (var geometryIndex in this.bufferedGeometries) {
             var bufferedGeometry = this.bufferedGeometries[geometryIndex];

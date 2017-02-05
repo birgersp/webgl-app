@@ -54,6 +54,7 @@ function main() {
 
         var gl = canvas.getContext("webgl");
         var engine = new WebGLEngine(gl);
+        engine.camera.setAspectRatio(canvas.clientWidth / canvas.clientHeight);
         engine.initialize(
                 shaderFiles[SHADER_FILENAMES.VSHADER].text,
                 shaderFiles[SHADER_FILENAMES.FSHADER].text

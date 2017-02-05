@@ -1,10 +1,18 @@
 class Camera {
 
-    constructor(fieldOfView) {
+    constructor() {
 
-        this.n = 0.1;
-        this.f = 1000;
-        this.scale = 0;
+        this.n = 0;
+        this.f = 0;
+        this.frustumLength = 0;
+        this.ar = 0;
+        this.fov = 0;
+        this.scaleX = 0;
+        this.scaleY = 0;
+
+        this.setNear(0.1);
+        this.setFar(1000);
+        this.setAspectRatio(1);
         this.setFieldOfView(Math.PI / 3);
     }
 
@@ -12,19 +20,44 @@ class Camera {
      * 
      * @returns {Float32Array}
      */
-    getProjectionMatrix() {
-        
+    getViewProjectionMatrix() {
+
         var matrix = new Matrix4();
-        matrix.setCell(0, 0, this.scale); // X-scale goes here
-        matrix.setCell(1, 1, this.scale); // Y-scale goes here
-        matrix.setCell(2, 2, -this.f / (this.f - this.n));
+        matrix.setCell(0, 0, this.scaleX); // X-scale goes here
+        matrix.setCell(1, 1, this.scaleY); // Y-scale goes here
+        matrix.setCell(2, 2, -this.f / (this.frustumLength));
         matrix.setCell(2, 3, -1);
-        matrix.setCell(3, 2, -2 * this.f * this.n / (this.f - this.n));
+        matrix.setCell(3, 2, -2 * this.f * this.n / (this.frustumLength));
         return matrix;
+    }
+
+    updateScales() {
+
+        this.scaleX = 1 / Math.tan(this.fov / 2);
+        this.scaleY = this.scaleX * this.ar;
     }
 
     setFieldOfView(angle) {
 
-        this.scale = 1 / Math.tan(angle / 2);
+        this.fov = angle;
+        this.updateScales();
+    }
+
+    setAspectRatio(ratio) {
+
+        this.ar = ratio;
+        this.updateScales();
+    }
+
+    setNear(value) {
+
+        this.n = value;
+        this.frustumLength = this.f - this.n;
+    }
+
+    setFar(value) {
+
+        this.f = value;
+        this.frustumLength = this.f - this.n;
     }
 }
