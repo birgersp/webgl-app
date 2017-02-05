@@ -4,6 +4,8 @@ class WebGLEngine {
 
         this.gl = gl;
         this.positionAttribL = null;
+        this.transformUniformL = null;
+        this.useColorUniformL = null;
         this.lastBoundModel = null;
         this.objects = [];
     }
@@ -31,6 +33,8 @@ class WebGLEngine {
 
         // Set vertex attribute pointer for position
         this.positionAttribL = gl.getAttribLocation(shaderProgram, "position");
+        this.transformUniformL = gl.getUniformLocation(shaderProgram, "transform");
+        this.useColorUniformL = gl.getUniformLocation(shaderProgram, "useColor");
     }
 
     bufferModelData(vertices, indices) {
@@ -78,7 +82,13 @@ class WebGLEngine {
                 this.bindModel(model);
 
             var gl = this.gl;
+            gl.uniformMatrix4fv(this.transformUniformL, false, object.transform);
+            
+            gl.uniform1f(this.useColorUniformL, 1.0);
             gl.drawElements(gl.TRIANGLES, object.model.indexCount, gl.UNSIGNED_BYTE, 0);
+            
+            gl.uniform1f(this.useColorUniformL, 0.0);
+            gl.drawElements(gl.LINE_STRIP, object.model.indexCount, gl.UNSIGNED_BYTE, 0);
         }
     }
 }
@@ -98,6 +108,6 @@ WebGLEngine.Object = class {
     constructor(model) {
 
         this.model = model;
-        this.transform = new Matrix4();
+        this.transform = Matrix4.identity();
     }
 };

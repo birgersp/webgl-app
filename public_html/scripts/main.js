@@ -62,19 +62,27 @@ function main() {
                 );
 
         var vertices1 = [
-            0, -1, 0,
-            1, -1, 0,
-            1, 0, 0
+            0.5, 0.5, 0,
+            -0.5, 0.5, 0,
+            -0.5, -0.5, 0,
+            0.5, -0.5, 0
         ];
-        var indices1 = [0, 1, 2];
+        var indices1 = [0, 1, 2, 2, 3, 0];
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         var model1 = engine.bufferModelData(vertices1, indices1);
         var object = new WebGLEngine.Object(model1);
         engine.addObject(object);
-        
-        engine.drawObjects();
+
+        var z = 0;
+        function renderLoop() {
+            z += 0.01;
+            object.transform = Matrix4.rotation([0,0,z]);
+            engine.drawObjects();
+            setTimeout(requestAnimationFrame(renderLoop), 1000 / 60);
+        }
+        renderLoop();
     });
 }
 
