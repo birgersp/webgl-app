@@ -6,8 +6,9 @@ class WebGLEngine {
         this.positionAttribL = null;
         this.transformUniformL = null;
         this.useColorUniformL = null;
-        this.lastBoundModel = null;
-        this.objects = [];
+        this.viewTransform = Matrix4.identity();
+        this.bufferedGeometries = [];
+        this.lastBoundGeometry = null;
     }
 
     initialize(vertexShaderSource, fragmentShaderSource) {
@@ -37,77 +38,112 @@ class WebGLEngine {
         this.useColorUniformL = gl.getUniformLocation(shaderProgram, "useColor");
     }
 
-    bufferModelData(vertices, indices) {
+    bufferGeometry(geometry) {
 
         var gl = this.gl;
 
-        // Add buffers and index count
         var vertexBuffer = gl.createBuffer();
         var indexBuffer = gl.createBuffer();
-        var model = new WebGLEngine.BufferedModel(vertexBuffer, indexBuffer, indices.length);
+        var bufferedGeometry = new WebGLEngine.BufferedGeometry(geometry, vertexBuffer, indexBuffer);
 
-        // Bind buffers
-        this.bindModel(model);
+        this.bindBufferedGeometry(bufferedGeometry);
+        this.writeBufferedGeometryData(bufferedGeometry);
 
-        // Write buffer data
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
-
-        return model;
+        this.bufferedGeometries.push(bufferedGeometry);
+        return bufferedGeometry;
     }
 
-    bindModel(model) {
+    bindBufferedGeometry(bufferedGeometry) {
 
         var gl = this.gl;
-        gl.bindBuffer(gl.ARRAY_BUFFER, model.vertexBuffer);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferedGeometry.vertexBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
         gl.vertexAttribPointer(this.positionAttribL, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.positionAttribL);
-        this.lastBoundModel = model;
+        this.lastBoundGeometry = bufferedGeometry;
+    }
+
+    writeBufferedGeometryData(bufferedGeometry) {
+
+        var gl = this.gl;
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bufferedGeometry.geometry.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(bufferedGeometry.geometry.indices), gl.STATIC_DRAW);
+    }
+
+    getBufferedGeometry(geometry) {
+
+        var bufferedGeometry = null;
+        var geometryIndex = 0;
+        while (geometryIndex < this.bufferedGeometries.length && !bufferedGeometry)
+            if (this.bufferedGeometries[geometryIndex].geometry === geometry)
+                bufferedGeometry = this.bufferedGeometries[geometryIndex];
+            else
+                geometryIndex++;
+
+        if (!bufferedGeometry)
+            bufferedGeometry = this.bufferGeometry(geometry);
+
+        return bufferedGeometry;
     }
 
     addObject(object) {
 
-        var i = 0;
-        while (i < this.objects.length && this.objects[i].model !== object.model)
-            i++;
-        this.objects.splice(i, 0, object);
+        var bufferedGeometry = this.getBufferedGeometry(object.geometry);
+        bufferedGeometry.objects.push(object);
     }
 
     drawObjects() {
 
-        for (var objectI in this.objects) {
-            var object = this.objects[objectI];
-            if (this.lastBoundModel !== object.model)
-                this.bindModel(model);
+        var gl = this.gl;
+        for (var geometryIndex in this.bufferedGeometries) {
+            var bufferedGeometry = this.bufferedGeometries[geometryIndex];
 
-            var gl = this.gl;
-            gl.uniformMatrix4fv(this.transformUniformL, false, object.transform);
-            
-            gl.uniform1f(this.useColorUniformL, 1.0);
-            gl.drawElements(gl.TRIANGLES, object.model.indexCount, gl.UNSIGNED_BYTE, 0);
-            
-            gl.uniform1f(this.useColorUniformL, 0.0);
-            gl.drawElements(gl.LINE_STRIP, object.model.indexCount, gl.UNSIGNED_BYTE, 0);
+            if (this.lastBoundGeometry !== bufferedGeometry)
+                this.bindBufferedGeometry(bufferedGeometry);
+
+            var indices = bufferedGeometry.geometry.indices.length;
+
+            for (var objectIndex in bufferedGeometry.objects) {
+
+                var object = bufferedGeometry.objects[objectIndex];
+
+                gl.uniformMatrix4fv(this.transformUniformL, false, object.transform);
+
+                gl.uniform1f(this.useColorUniformL, 1.0);
+                gl.drawElements(gl.TRIANGLES, indices, gl.UNSIGNED_BYTE, 0);
+
+                gl.uniform1f(this.useColorUniformL, 0.0);
+                gl.drawElements(gl.LINE_STRIP, indices, gl.UNSIGNED_BYTE, 0);
+            }
         }
     }
 }
 
-WebGLEngine.BufferedModel = class {
+WebGLEngine.BufferedGeometry = class {
 
-    constructor(vertexBuffer, indexBuffer, indexCount) {
+    constructor(geometry, vertexBuffer, indexBuffer) {
 
+        this.geometry = geometry;
         this.vertexBuffer = vertexBuffer;
         this.indexBuffer = indexBuffer;
-        this.indexCount = indexCount;
+        this.objects = [];
+    }
+};
+
+WebGLEngine.Geometry = class {
+
+    constructor(vertices, indices) {
+
+        this.vertices = vertices;
+        this.indices = indices;
     }
 };
 
 WebGLEngine.Object = class {
 
-    constructor(model) {
+    constructor(geometry) {
 
-        this.model = model;
+        this.geometry = geometry;
         this.transform = Matrix4.identity();
     }
 };

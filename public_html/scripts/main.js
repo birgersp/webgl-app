@@ -21,12 +21,10 @@ function main() {
     document.head.appendChild(style);
     style.appendChild(document.createTextNode(""));
     style.sheet.insertRule("body {padding:0px; margin:0px;}", 0);
-    //    style.sheet.insertRule("canvas {"
-    //            + "padding:0px; margin:0px;"
-    //            + "width:100%; height:100%;"
-    //            + "}", 0);
-
-
+    style.sheet.insertRule("canvas {"
+            + "padding:0px; margin:0px;"
+            + "width:100%; height:100%;"
+            + "}", 0);
 
     // Create canvas
     var canvas = document.createElement("canvas");
@@ -61,6 +59,7 @@ function main() {
                 shaderFiles[SHADER_FILENAMES.FSHADER].text
                 );
 
+
         var vertices1 = [
             0.5, 0.5, 0,
             -0.5, 0.5, 0,
@@ -71,14 +70,17 @@ function main() {
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        var model1 = engine.bufferModelData(vertices1, indices1);
-        var object = new WebGLEngine.Object(model1);
-        engine.addObject(object);
+        var geometry1 = new WebGLEngine.Geometry(vertices1, indices1);
+        
+        var object1 = new WebGLEngine.Object(geometry1);
+        var object2 = new WebGLEngine.Object(geometry1);
+        engine.addObject(object2);
+        engine.addObject(object1);
 
         var z = 0;
         function renderLoop() {
             z += 0.01;
-            object.transform = Matrix4.rotation([0,0,z]);
+            object1.transform = Matrix4.rotation([0, 0, z]);
             engine.drawObjects();
             setTimeout(requestAnimationFrame(renderLoop), 1000 / 60);
         }
