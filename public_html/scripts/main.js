@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["FileLoader", "WebGLEngine", "Matrix4"];
+const DEPENDENCIES = ["FileLoader", "WebGLEngine", "Matrix4", "Cube"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -72,14 +72,12 @@ function main() {
 
         var geometry1 = new WebGLEngine.Geometry(vertices1, indices1);
         
-        var object1 = new WebGLEngine.Object(geometry1);
-        var object2 = new WebGLEngine.Object(geometry1);
-        engine.addObject(object2);
+        var object1 = new WebGLEngine.Object(new Cube());
         engine.addObject(object1);
 
         var z = 0;
         function renderLoop() {
-            z += 0.01;
+//            z += 0.01;
             object1.transform = Matrix4.rotation([0, 0, z]);
             engine.drawObjects();
             setTimeout(requestAnimationFrame(renderLoop), 1000 / 60);
