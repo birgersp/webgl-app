@@ -31,23 +31,23 @@ class Transform {
 
         this.m.set([
             this.s[0] * Math.cos(this.r[1]) * Math.cos(this.r[2]),
-            -this.s[1] * Math.cos(this.r[1]) * Math.sin(this.r[2]),
-            this.s[2] * Math.sin(this.r[1]),
-            this.t[0],
-
             this.s[0] * (Math.cos(this.r[0]) * Math.sin(this.r[2]) + Math.cos(this.r[2]) * Math.sin(this.r[0]) * Math.sin(this.r[1])),
-            this.s[1] * (Math.cos(this.r[0]) * Math.cos(this.r[2]) - Math.sin(this.r[0]) * Math.sin(this.r[1]) * Math.sin(this.r[2])),
-            -this.s[2] * Math.cos(this.r[1]) * Math.sin(this.r[0]),
-            this.t[1],
-
             this.s[0] * (Math.sin(this.r[0]) * Math.sin(this.r[2]) - Math.cos(this.r[0]) * Math.cos(this.r[2]) * Math.sin(this.r[1])),
-            this.s[1] * (Math.cos(this.r[2]) * Math.sin(this.r[0]) + Math.cos(this.r[0]) * Math.sin(this.r[1]) * Math.sin(this.r[2])),
-            this.s[2] * Math.cos(this.r[0]) * Math.cos(this.r[1]),
-            this.t[2],
+            0,
 
+            -this.s[1] * Math.cos(this.r[1]) * Math.sin(this.r[2]),
+            this.s[1] * (Math.cos(this.r[0]) * Math.cos(this.r[2]) - Math.sin(this.r[0]) * Math.sin(this.r[1]) * Math.sin(this.r[2])),
+            this.s[1] * (Math.cos(this.r[2]) * Math.sin(this.r[0]) + Math.cos(this.r[0]) * Math.sin(this.r[1]) * Math.sin(this.r[2])),
             0,
+
+            this.s[2] * Math.sin(this.r[1]),
+            -this.s[2] * Math.cos(this.r[1]) * Math.sin(this.r[0]),
+            this.s[2] * Math.cos(this.r[0]) * Math.cos(this.r[1]),
             0,
-            0,
+
+            this.t[0],
+            this.t[1],
+            this.t[2],
             1
         ]);
         this.updated = true;
