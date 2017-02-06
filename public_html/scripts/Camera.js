@@ -14,22 +14,28 @@ class Camera {
         this.sY = 0;
         this.r = new Vector3();
         this.t = new Vector3();
+        this.m = new Matrix4();
 
         this.setNear(0.1);
         this.setFar(100);
         this.setAspectRatio(1);
         this.setFieldOfView(Math.PI / 3);
+        this.updateMatrix();
+    }
+    
+    updateMatrix() {
+        
+        this.m = new Matrix4();
+        this.m.setCell(0, 0, this.sX); // X-scale goes here
+        this.m.setCell(1, 1, this.sY); // Y-scale goes here
+        this.m.setCell(2, 2, -this.f / (this.fl));
+        this.m.setCell(2, 3, -1);
+        this.m.setCell(3, 2, -2 * this.f * this.n / (this.fl));
     }
 
     getViewProjectionMatrix() {
 
-        var matrix = new Matrix4();
-        matrix.setCell(0, 0, this.scaleX); // X-scale goes here
-        matrix.setCell(1, 1, this.scaleY); // Y-scale goes here
-        matrix.setCell(2, 2, -this.f / (this.frustumLength));
-        matrix.setCell(2, 3, -1);
-        matrix.setCell(3, 2, -2 * this.f * this.n / (this.frustumLength));
-        return matrix;
+        return this.m;
     }
 
     updateScales() {
