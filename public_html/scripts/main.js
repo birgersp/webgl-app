@@ -77,20 +77,9 @@ function main() {
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
 
-        var t = new Transform();
-        t.setTranslation(new Vector3(0, -5, -5));
-        t.updateMatrix();
+        engine.camera.setTranslation(new Vector3(0, 2, 6));
+        engine.camera.setRotation(new Vector3(0, 0.4, 0));
 
-        var r = new Transform();
-        r.setRotation(new Vector3(Math.PI / 4, 0, 0));
-        r.updateMatrix();
-        
-        var m = Matrix4.identity();
-        m.multiply(r.m);
-        m.multiply(t.m);
-        
-        engine.camera.m.multiply(m);
-        
         function renderLoop() {
             engine.drawObjects();
             setTimeout(function () {

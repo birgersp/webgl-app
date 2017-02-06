@@ -15,6 +15,7 @@ class Camera {
         this.r = new Vector3();
         this.t = new Vector3();
         this.m = new Matrix4();
+        this.updated = false;
 
         this.setNear(0.1);
         this.setFar(100);
@@ -22,19 +23,47 @@ class Camera {
         this.setFieldOfView(Math.PI / 3);
         this.updateMatrix();
     }
-    
+
     updateMatrix() {
-        
-        this.m = new Matrix4();
-        this.m.setCell(0, 0, this.sX); // X-scale goes here
-        this.m.setCell(1, 1, this.sY); // Y-scale goes here
-        this.m.setCell(2, 2, -this.f / (this.fl));
-        this.m.setCell(2, 3, -1);
-        this.m.setCell(3, 2, -2 * this.f * this.n / (this.fl));
+
+        var crX = Math.cos(this.r[0]);
+        var crY = Math.cos(this.r[1]);
+        var crZ = Math.cos(this.r[2]);
+
+        var srX = Math.sin(this.r[0]);
+        var srY = Math.sin(this.r[1]);
+        var srZ = Math.sin(this.r[2]);
+
+        this.m.set([
+            this.sX * crY * crZ,
+            -this.sY * (crX * srZ - crZ * srX * srY),
+            -(this.f * (srX * srZ + crX * crZ * srY)) / this.fl,
+            -srX * srZ - crX * crZ * srY,
+
+            this.sX * crY * srZ,
+            this.sY * (crX * crZ + srX * srY * srZ),
+            (this.f * (crZ * srX - crX * srY * srZ)) / this.fl,
+            crZ * srX - crX * srY * srZ,
+
+            -this.sX * srY,
+            this.sY * crY * srX,
+            -(this.f * crX * crY) / this.fl,
+            -crX * crY,
+
+            this.sX * this.t[2] * srY - this.sX * this.t[1] * crY * srZ - this.sX * this.t[0] * crY * crZ,
+            this.sY * this.t[0] * (crX * srZ - crZ * srX * srY) - this.sY * this.t[1] * (crX * crZ + srX * srY * srZ) - this.sY * this.t[2] * crY * srX,
+            (this.f * this.t[0] * (srX * srZ + crX * crZ * srY)) / this.fl - (2 * this.f * this.n) / this.fl - (this.f * this.t[1] * (crZ * srX - crX * srY * srZ)) / this.fl + (this.f * this.t[2] * crX * crY) / this.fl,
+            this.t[0] * (srX * srZ + crX * crZ * srY) - this.t[1] * (crZ * srX - crX * srY * srZ) + this.t[2] * crX * crY
+        ]);
+
+        this.updated = true;
     }
 
     getViewProjectionMatrix() {
 
+        if (!this.updated) {
+            this.updateMatrix();
+        }
         return this.m;
     }
 
@@ -42,6 +71,12 @@ class Camera {
 
         this.sX = 1 / Math.tan(this.fov / 2);
         this.sY = this.sX * this.ar;
+        this.setNotUpdated();
+    }
+
+    setNotUpdated() {
+
+        this.updated = false;
     }
 
     setFieldOfView(angle) {
@@ -60,11 +95,23 @@ class Camera {
 
         this.n = value;
         this.fl = this.f - this.n;
+        this.setNotUpdated();
     }
 
     setFar(value) {
 
         this.f = value;
         this.fl = this.f - this.n;
+        this.setNotUpdated();
+    }
+
+    setRotation(vector) {
+        this.r = vector;
+        this.setNotUpdated();
+    }
+
+    setTranslation(vector) {
+        this.t = vector;
+        this.setNotUpdated();
     }
 }
