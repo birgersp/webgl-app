@@ -7,22 +7,20 @@ class Camera {
 
         this.n = 0;
         this.f = 0;
-        this.frustumLength = 0;
+        this.fl = 0;
         this.ar = 0;
         this.fov = 0;
-        this.scaleX = 0;
-        this.scaleY = 0;
+        this.sX = 0;
+        this.sY = 0;
+        this.r = new Vector3();
+        this.t = new Vector3();
 
         this.setNear(0.1);
-        this.setFar(1000);
+        this.setFar(100);
         this.setAspectRatio(1);
         this.setFieldOfView(Math.PI / 3);
     }
 
-    /**
-     * 
-     * @returns {Float32Array}
-     */
     getViewProjectionMatrix() {
 
         var matrix = new Matrix4();
@@ -36,8 +34,8 @@ class Camera {
 
     updateScales() {
 
-        this.scaleX = 1 / Math.tan(this.fov / 2);
-        this.scaleY = this.scaleX * this.ar;
+        this.sX = 1 / Math.tan(this.fov / 2);
+        this.sY = this.sX * this.ar;
     }
 
     setFieldOfView(angle) {
@@ -55,12 +53,12 @@ class Camera {
     setNear(value) {
 
         this.n = value;
-        this.frustumLength = this.f - this.n;
+        this.fl = this.f - this.n;
     }
 
     setFar(value) {
 
         this.f = value;
-        this.frustumLength = this.f - this.n;
+        this.fl = this.f - this.n;
     }
 }
