@@ -1,4 +1,6 @@
-const DEPENDENCIES = ["util/FileLoader", "WebGLEngine", "Matrix4", "Cube", "Vector3", "Transform", "Camera"];
+include("util/FileLoader");
+include("WebGLEngine");
+include("Cube");
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -76,5 +78,3 @@ function main() {
         renderLoop();
     });
 }
-
-require(DEPENDENCIES, main);

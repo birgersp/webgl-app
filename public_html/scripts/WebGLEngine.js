@@ -1,3 +1,6 @@
+include("Transform");
+include("Camera");
+
 class WebGLEngine {
 
     constructor(gl) {

@@ -1,3 +1,6 @@
+include("Matrix4");
+include("Vector3");
+
 class Transform {
 
     constructor() {

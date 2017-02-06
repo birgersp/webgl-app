@@ -1,3 +1,5 @@
+include("WebGLEngine");
+
 class Cube extends WebGLEngine.Geometry {
 
     constructor() {
