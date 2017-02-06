@@ -32,6 +32,9 @@ include.prefix = "";
             mainScript = script.getAttribute("data-main");
     }
 
+    if (!mainScript)
+        throw new Error("Main script not defined.");
+
     function loadScript(name) {
         include.prefix = "";
         var prefixNameSplit = name.split("/");
@@ -45,14 +48,19 @@ include.prefix = "";
             include.filesLoaded++;
             if (include.filesLoaded < include.files.length)
                 loadScript(include.files[include.filesLoaded]);
-            else
+            else {
+                if (window.main === null || typeof window.main !== "function") {
+                    throw new Error("Could not invoke function \"main\"");
+                }
                 main();
+            }
+        };
+        scriptElement.onerror = function (evt) {
+            throw new Error("Could not load script \"" + name + ".js\"");
         };
         include.headElement.appendChild(scriptElement);
     }
 
-    if (mainScript) {
-        include(mainScript);
-        loadScript(mainScript);
-    }
+    include(mainScript);
+    loadScript(mainScript);
 })();
