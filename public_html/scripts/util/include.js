@@ -10,7 +10,8 @@
 function include(name) {
 
     var fixedName = (include.prefix + name).replace(/\/.*?\/\.\./g, "");
-    include.files.push(fixedName);
+    if (include.files.indexOf(fixedName) === -1)
+        include.files.push(fixedName);
 }
 
 include.filesLoaded = 0;
