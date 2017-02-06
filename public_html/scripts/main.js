@@ -63,17 +63,17 @@ function main() {
                 );
 
         var object1 = new WebGLEngine.Object(new Cube());
+        object1.transform.setTranslation(new Vector3(0, 0, -6));
         engine.addObject(object1);
 
-        var rot = 0.1;
-        var pos = 0;
+        var rot = 0;
         function renderLoop() {
             rot += 0.01;
-            pos += 0.02;
-            object1.transform.setRotation(new Vector3(0, rot, 0));
-            object1.transform.setTranslation(new Vector3(2*Math.sin(pos), 0, -5));
+            object1.transform.setRotation(new Vector3(0, rot, rot / 3));
             engine.drawObjects();
-            requestAnimationFrame(renderLoop);
+            setTimeout(function () {
+                requestAnimationFrame(renderLoop);
+            }, 1000 / 60);
         }
         renderLoop();
     });

@@ -6,7 +6,10 @@ class WebGLEngine {
     constructor(gl) {
 
         this.gl = gl;
-        this.gl.enable(gl.DEPTH_TEST);
+        this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.enable(this.gl.CULL_FACE);
+        this.gl.cullFace(this.gl.BACK);
+
         this.positionAttribL = null;
         this.transformUniformL = null;
         this.useColorUniformL = null;
@@ -113,8 +116,11 @@ class WebGLEngine {
 
                 this.gl.uniformMatrix4fv(this.transformUniformL, false, object.transform.getMatrix());
 
-                this.gl.uniform1f(this.useColorUniformL, 1.0);
+                this.gl.uniform1f(this.useColorUniformL, 1);
                 this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
+                
+                this.gl.uniform1f(this.useColorUniformL, 0);
+                this.gl.drawElements(this.gl.LINE_STRIP, indices, this.gl.UNSIGNED_BYTE, 0);
             }
         }
     }
