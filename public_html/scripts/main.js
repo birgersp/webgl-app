@@ -22,21 +22,13 @@ function main() {
     var style = document.createElement("style");
     document.head.appendChild(style);
     style.appendChild(document.createTextNode(""));
-    style.sheet.insertRule("body {padding:0px; margin:0px;}", 0);
+    style.sheet.insertRule("body {padding:0px; margin:0px; overflow:hidden;}", 0);
     style.sheet.insertRule("canvas {"
             + "padding:0px; margin:0px;"
-            + "width:100%; height:100%;"
             + "}", 0);
 
-    // Create canvas
-    var canvas = document.createElement("canvas");
-    canvas.id = "canvas";
-    document.body.appendChild(canvas);
-    var onResize = function () {
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
-    };
-    onResize();
+    window.addEventListener("resize", function() {
+    });
 
     // Create file loader
     var loader = new FileLoader();
@@ -52,11 +44,15 @@ function main() {
 
 
     // Load files, start app
-    loader.load(function () {
+    loader.load(function() {
+
+        // Create canvas
+        var canvas = document.createElement("canvas");
+        canvas.id = "canvas";
+        document.body.appendChild(canvas);
 
         var gl = canvas.getContext("webgl");
         var engine = new WebGLEngine(gl);
-        engine.camera.setAspectRatio(canvas.clientWidth / canvas.clientHeight);
         engine.initialize(
                 shaderFiles[SHADER_FILENAMES.VSHADER].text,
                 shaderFiles[SHADER_FILENAMES.FSHADER].text
@@ -71,10 +67,24 @@ function main() {
             rot += 0.01;
             object1.transform.setRotation(new Vector3(0, rot, rot / 3));
             engine.drawObjects();
-            setTimeout(function () {
+            setTimeout(function() {
                 requestAnimationFrame(renderLoop);
             }, 1000 / 60);
         }
         renderLoop();
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            engine.camera.setAspectRatio(canvas.clientWidth / canvas.clientHeight);
+            gl.viewport(0,0, gl.canvas.width, gl.canvas.height);
+        }
+        resizeCanvas();
+
+        var resizingTimeout;
+        window.addEventListener("resize", function() {
+            clearTimeout(resizingTimeout);
+            resizingTimeout = setTimeout(resizeCanvas, 250);
+        });
     });
 }
