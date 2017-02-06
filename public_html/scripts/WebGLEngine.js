@@ -43,7 +43,7 @@ class WebGLEngine {
         this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
         this.transformUniformL = this.gl.getUniformLocation(shaderProgram, "transform");
         this.useColorUniformL = this.gl.getUniformLocation(shaderProgram, "useColor");
-        this.projectionUniformL = this.gl.getUniformLocation(shaderProgram, "projection");
+        this.projectionUniformL = this.gl.getUniformLocation(shaderProgram, "projectionView");
     }
 
     bufferGeometry(geometry) {

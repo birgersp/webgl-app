@@ -27,7 +27,7 @@ function main() {
             + "padding:0px; margin:0px;"
             + "}", 0);
 
-    window.addEventListener("resize", function() {
+    window.addEventListener("resize", function () {
     });
 
     // Create file loader
@@ -44,7 +44,7 @@ function main() {
 
 
     // Load files, start app
-    loader.load(function() {
+    loader.load(function () {
 
         // Create canvas
         var canvas = document.createElement("canvas");
@@ -59,32 +59,44 @@ function main() {
                 );
 
         var object1 = new WebGLEngine.Object(new Cube());
-        object1.transform.setTranslation(new Vector3(0, 0, -6));
+        object1.transform.setTranslation(new Vector3(0, 0, 0));
         engine.addObject(object1);
-
-        var rot = 0;
-        function renderLoop() {
-            rot += 0.01;
-            object1.transform.setRotation(new Vector3(0, rot, rot / 3));
-            engine.drawObjects();
-            setTimeout(function() {
-                requestAnimationFrame(renderLoop);
-            }, 1000 / 60);
-        }
-        renderLoop();
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             engine.camera.setAspectRatio(canvas.clientWidth / canvas.clientHeight);
-            gl.viewport(0,0, gl.canvas.width, gl.canvas.height);
+            engine.camera.updateMatrix();
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         }
         resizeCanvas();
 
         var resizingTimeout;
-        window.addEventListener("resize", function() {
+        window.addEventListener("resize", function () {
             clearTimeout(resizingTimeout);
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
+
+        var t = new Transform();
+        t.setTranslation(new Vector3(0, -5, -5));
+        t.updateMatrix();
+
+        var r = new Transform();
+        r.setRotation(new Vector3(Math.PI / 4, 0, 0));
+        r.updateMatrix();
+        
+        var m = Matrix4.identity();
+        m.multiply(r.m);
+        m.multiply(t.m);
+        
+        engine.camera.m.multiply(m);
+        
+        function renderLoop() {
+            engine.drawObjects();
+            setTimeout(function () {
+                requestAnimationFrame(renderLoop);
+            }, 1000 / 60);
+        }
+        renderLoop();
     });
 }
