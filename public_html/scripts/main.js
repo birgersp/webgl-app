@@ -1,4 +1,4 @@
-const DEPENDENCIES = ["FileLoader", "WebGLEngine", "Matrix4", "Cube", "Vector3", "Transform", "Camera"];
+const DEPENDENCIES = ["util/FileLoader", "WebGLEngine", "Matrix4", "Cube", "Vector3", "Transform", "Camera"];
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
