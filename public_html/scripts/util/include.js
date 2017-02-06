@@ -14,15 +14,13 @@ function include(name) {
         include.files.push(fixedName);
 }
 
-include.filesLoaded = 0;
 include.files = [];
-include.headElement;
 include.prefix = "";
 
 // Initialize and start including
 (function () {
 
-    include.headElement = document.getElementsByTagName("head")[0];
+    var headElement = document.getElementsByTagName("head")[0];
 
     var mainScript;
     var scriptElements = document.getElementsByTagName("script");
@@ -35,6 +33,7 @@ include.prefix = "";
     if (!mainScript)
         throw new Error("Main script not defined.");
 
+    var filesLoaded = 0;
     function loadScript(name) {
         include.prefix = "";
         var prefixNameSplit = name.split("/");
@@ -45,9 +44,9 @@ include.prefix = "";
         var scriptElement = document.createElement("script");
         scriptElement.setAttribute("src", name + ".js");
         scriptElement.onload = function () {
-            include.filesLoaded++;
-            if (include.filesLoaded < include.files.length)
-                loadScript(include.files[include.filesLoaded]);
+            filesLoaded++;
+            if (filesLoaded < include.files.length)
+                loadScript(include.files[filesLoaded]);
             else {
                 if (window.main === null || typeof window.main !== "function") {
                     throw new Error("Could not invoke function \"main\"");
@@ -58,7 +57,7 @@ include.prefix = "";
         scriptElement.onerror = function (evt) {
             throw new Error("Could not load script \"" + name + ".js\"");
         };
-        include.headElement.appendChild(scriptElement);
+        headElement.appendChild(scriptElement);
     }
 
     include(mainScript);
