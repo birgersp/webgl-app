@@ -1,6 +1,7 @@
 include("util/FileLoader");
 include("WebGLEngine");
 include("Cube");
+include("ViewController");
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -39,7 +40,7 @@ function main() {
 
 
     // Load files, start app
-    loader.load(function() {
+    loader.load(function () {
 
         // Create canvas
         var canvas = document.createElement("canvas");
@@ -67,20 +68,45 @@ function main() {
         resizeCanvas();
 
         var resizingTimeout;
-        window.addEventListener("resize", function() {
+        window.addEventListener("resize", function () {
             clearTimeout(resizingTimeout);
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
 
-        engine.camera.setTranslation(new Vector3(0, 2, 6));
-        engine.camera.setRotation(new Vector3(0, 0.4, 0));
+        var cameraPos = new Vector3(2, 2, 6);
+        engine.camera.setTranslation(cameraPos);
+        engine.camera.setRotation(new Vector3(-0.2, 0.3, 0));
+
+        var viewController = new ViewController(engine.camera);
 
         function renderLoop() {
+            viewController.update();
             engine.drawObjects();
-            setTimeout(function() {
+            setTimeout(function () {
                 requestAnimationFrame(renderLoop);
             }, 1000 / 60);
         }
         renderLoop();
+
+        canvas.requestPointerLock = canvas.requestPointerLock ||
+                canvas.mozRequestPointerLock;
+
+        document.exitPointerLock = document.exitPointerLock ||
+                document.mozExitPointerLock;
+
+        canvas.addEventListener("click", function () {
+            canvas.requestPointerLock();
+        }, false);
+
+        function lockChange() {
+            if (document.pointerLockElement === canvas ||
+                    document.mozPointerLockElement === canvas) {
+                viewController.enable();
+            } else {
+                viewController.disable();
+            }
+        }
+        document.addEventListener('pointerlockchange', lockChange, false);
+        document.addEventListener('mozpointerlockchange', lockChange, false);
     });
 }
