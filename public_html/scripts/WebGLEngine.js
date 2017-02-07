@@ -14,6 +14,7 @@ class WebGLEngine {
         this.transformUniformL = null;
         this.useColorUniformL = null;
         this.viewTransform = Matrix4.identity();
+        this.objects = [];
         this.bufferedGeometries = [];
         this.lastBoundGeometry = null;
         this.camera = new Camera(70);
@@ -55,7 +56,6 @@ class WebGLEngine {
         this.bindBufferedGeometry(bufferedGeometry);
         this.writeBufferedGeometryData(bufferedGeometry);
 
-        this.bufferedGeometries.push(bufferedGeometry);
         return bufferedGeometry;
     }
 
@@ -77,12 +77,9 @@ class WebGLEngine {
     getBufferedGeometry(geometry) {
 
         var bufferedGeometry = null;
-        var geometryIndex = 0;
-        while (geometryIndex < this.bufferedGeometries.length && !bufferedGeometry)
+        for (var geometryIndex = 0; geometryIndex < this.bufferedGeometries.length && !bufferedGeometry; geometryIndex++)
             if (this.bufferedGeometries[geometryIndex].geometry === geometry)
                 bufferedGeometry = this.bufferedGeometries[geometryIndex];
-            else
-                geometryIndex++;
 
         if (!bufferedGeometry)
             bufferedGeometry = this.bufferGeometry(geometry);
@@ -92,37 +89,47 @@ class WebGLEngine {
 
     addObject(object) {
 
-        var bufferedGeometry = this.getBufferedGeometry(object.geometry);
-        bufferedGeometry.objects.push(object);
+        object.bufferedGeometry = this.getBufferedGeometry(object.geometry);
+        this.objects.push(object);
     }
 
     drawObjects() {
 
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        var engine = this;
 
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         this.gl.uniformMatrix4fv(this.projectionUniformL, false, this.camera.getViewProjectionMatrix());
 
-        for (var geometryIndex in this.bufferedGeometries) {
-            var bufferedGeometry = this.bufferedGeometries[geometryIndex];
+        var transformMatrices = [Matrix4.identity()];
+        var transform = transformMatrices[0];
 
-            if (this.lastBoundGeometry !== bufferedGeometry)
-                this.bindBufferedGeometry(bufferedGeometry);
+        function renderObject(object) {
+            transformMatrices.push(object.transform.getMatrix());
+            transform = transform.times(object.transform.getMatrix());
+            engine.gl.uniformMatrix4fv(engine.transformUniformL, false, transform);
+
+            if (!object.bufferedGeometry)
+                object.bufferedGeometry = engine.bufferGeometry(object.geometry);
+            var bufferedGeometry = object.bufferedGeometry;
+            if (engine.lastBoundGeometry !== bufferedGeometry)
+                engine.bindBufferedGeometry(bufferedGeometry);
 
             var indices = bufferedGeometry.geometry.indices.length;
 
-            for (var objectIndex in bufferedGeometry.objects) {
+            engine.gl.uniform1f(engine.useColorUniformL, 1);
+            engine.gl.drawElements(engine.gl.TRIANGLES, indices, engine.gl.UNSIGNED_BYTE, 0);
 
-                var object = bufferedGeometry.objects[objectIndex];
+            engine.gl.uniform1f(engine.useColorUniformL, 0);
+            engine.gl.drawElements(engine.gl.LINE_STRIP, indices, engine.gl.UNSIGNED_BYTE, 0);
 
-                this.gl.uniformMatrix4fv(this.transformUniformL, false, object.transform.getMatrix());
+            for (var childIndex = 0; childIndex < object.children.length; childIndex++)
+                renderObject(object.children[childIndex]);
 
-                this.gl.uniform1f(this.useColorUniformL, 1);
-                this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
-                
-                this.gl.uniform1f(this.useColorUniformL, 0);
-                this.gl.drawElements(this.gl.LINE_STRIP, indices, this.gl.UNSIGNED_BYTE, 0);
-            }
+            transformMatrices.pop();
+            transform = transformMatrices[transformMatrices.length - 1];
         }
+
+        this.objects.forEach(renderObject);
     }
 }
 
@@ -133,7 +140,6 @@ WebGLEngine.BufferedGeometry = class {
         this.geometry = geometry;
         this.vertexBuffer = vertexBuffer;
         this.indexBuffer = indexBuffer;
-        this.objects = [];
     }
 };
 
@@ -152,5 +158,12 @@ WebGLEngine.Object = class {
 
         this.geometry = geometry;
         this.transform = new Transform();
+        this.children = [];
+        this.bufferedGeometry = null;
+    }
+
+    add(object) {
+
+        this.children.push(object);
     }
 };

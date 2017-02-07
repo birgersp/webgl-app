@@ -56,7 +56,17 @@ function main() {
 
         var object1 = new WebGLEngine.Object(new Cube());
         object1.transform.setTranslation(new Vector3(0, 0, 0));
+
+        var object2 = new WebGLEngine.Object(new Cube());
+        object2.transform.setTranslation(new Vector3(0, 3, 0));
+        object2.transform.setRotation(new Vector3(Math.PI / 2, 0, 0));
+
+        var object3 = new WebGLEngine.Object(new Cube());
+        object3.transform.setTranslation(new Vector3(0, 3, 0));
+
         engine.addObject(object1);
+        object1.add(object2);
+        object2.add(object3);
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -73,13 +83,16 @@ function main() {
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
 
-        var cameraPos = new Vector3(2, 2, 6);
+        var cameraPos = new Vector3(0, 0, 12);
         engine.camera.setTranslation(cameraPos);
-        engine.camera.setRotation(new Vector3(-0.2, 0.3, 0));
 
         var viewController = new ViewController(engine.camera);
 
+        var rotY = 0;
         function renderLoop() {
+            rotY += .01;
+            object1.transform.setRotation(new Vector3(0, rotY, 0));
+            object3.transform.setRotation(new Vector3(rotY/2, 0, 0));
             viewController.update();
             engine.drawObjects();
             setTimeout(function () {
