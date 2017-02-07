@@ -108,13 +108,5 @@ function main() {
         }
         document.addEventListener('pointerlockchange', lockChange, false);
         document.addEventListener('mozpointerlockchange', lockChange, false);
-        document.addEventListener('keydown', function (evt) {
-            if (!viewController.enabled)
-                if (evt.keyCode === 27)
-                    setTimeout(function () {
-                        canvas.requestPointerLock();
-                    }, 100);
-        }, false);
-
     });
 }
