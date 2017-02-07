@@ -16,9 +16,12 @@ class Matrix4 extends Float32Array {
      * 
      * @returns {Matrix4}
      */
-    constructor() {
+    constructor(matrix) {
 
-        super(16);
+        if (matrix)
+            super(matrix);
+        else
+            super(16);
     }
 
     /**
@@ -56,5 +59,12 @@ class Matrix4 extends Float32Array {
             this[2] * matrix[12] + this[6] * matrix[13] + this[10] * matrix[14] + this[14] * matrix[15],
             this[3] * matrix[12] + this[7] * matrix[13] + this[11] * matrix[14] + this[15] * matrix[15]
         ]);
+    }
+
+    times(matrix) {
+
+        var result = new Matrix4(this);
+        result.multiply(matrix);
+        return result;
     }
 }
