@@ -6,6 +6,7 @@ class ViewController {
         this.speed = 0.1;
         this.camera = camera;
         this.keysDown = {};
+        this.maxMouseMoveCoordinate = 50;
 
         var viewController = this;
         document.addEventListener("mousemove", function (evt) {
@@ -62,7 +63,21 @@ class ViewController {
 
     mouseMoved(event) {
         if (this.enabled) {
-            this.camera.r[0] -= event.movementY / 2000;
+            var x = event.movementX;
+            if (x > this.maxMouseMoveCoordinate)
+                x = this.maxMouseMoveCoordinate;
+            else if (x < -this.maxMouseMoveCoordinate)
+                x = -this.maxMouseMoveCoordinate;
+
+            var y = event.movementY;
+            if (y > this.maxMouseMoveCoordinate)
+                y = this.maxMouseMoveCoordinate;
+            else if (y < -this.maxMouseMoveCoordinate)
+                y = -this.maxMouseMoveCoordinate;
+
+            this.camera.r[0] -= y / 1000;
+            this.camera.r[1] -= x / 1000;
+
             if (this.camera.r[0] > Math.PI / 2) {
                 this.camera.r[0] = Math.PI / 2;
             } else
@@ -77,7 +92,6 @@ class ViewController {
                 this.camera.r[1] += Math.PI * 2;
             }
 
-            this.camera.r[1] -= event.movementX / 2000;
             this.camera.updated = false;
         }
     }
