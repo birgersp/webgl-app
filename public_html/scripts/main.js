@@ -23,12 +23,7 @@ function main() {
     document.head.appendChild(style);
     style.appendChild(document.createTextNode(""));
     style.sheet.insertRule("body {padding:0px; margin:0px; overflow:hidden;}", 0);
-    style.sheet.insertRule("canvas {"
-            + "padding:0px; margin:0px;"
-            + "}", 0);
-
-    window.addEventListener("resize", function () {
-    });
+    style.sheet.insertRule("canvas {padding:0px; margin:0px;}", 0);
 
     // Create file loader
     var loader = new FileLoader();
@@ -44,7 +39,7 @@ function main() {
 
 
     // Load files, start app
-    loader.load(function () {
+    loader.load(function() {
 
         // Create canvas
         var canvas = document.createElement("canvas");
@@ -65,14 +60,14 @@ function main() {
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            engine.camera.setAspectRatio(canvas.clientWidth / canvas.clientHeight);
+            engine.camera.setAspectRatio(canvas.width / canvas.height);
             engine.camera.updateMatrix();
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         }
         resizeCanvas();
 
         var resizingTimeout;
-        window.addEventListener("resize", function () {
+        window.addEventListener("resize", function() {
             clearTimeout(resizingTimeout);
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
@@ -82,7 +77,7 @@ function main() {
 
         function renderLoop() {
             engine.drawObjects();
-            setTimeout(function () {
+            setTimeout(function() {
                 requestAnimationFrame(renderLoop);
             }, 1000 / 60);
         }
