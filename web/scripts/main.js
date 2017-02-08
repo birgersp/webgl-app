@@ -1,4 +1,6 @@
 include("util/FileLoader");
+include("Identifyable");
+
 include("WebGLEngine");
 include("Cube");
 include("Pyramid");
