@@ -57,18 +57,19 @@ function main() {
                 shaderFiles[SHADER_FILENAMES.FSHADER].text
                 );
 
-        var object1 = new WebGLEngine.Object(new Cube());
-        object1.transform.setTranslation(new Vector3(0, 0, 0));
+        var cube = new Cube();
 
-        var object2 = new WebGLEngine.Object(new Cube());
+        var object1 = new WebGLEngine.Object(cube);
+        object1.transform.setTranslation(new Vector3(0, 0, 0));
+        engine.addObject(object1);
+
+        var object2 = new WebGLEngine.Object(cube);
         object2.transform.setTranslation(new Vector3(0, 3, 0));
         object2.transform.setRotation(new Vector3(Math.PI / 2, 0, -Math.PI / 2));
+        object1.add(object2);
 
         var object3 = new WebGLEngine.Object(new Pyramid());
         object3.transform.setTranslation(new Vector3(0, 3, 0));
-
-        engine.addObject(object1);
-        object1.add(object2);
         object2.add(object3);
 
         function resizeCanvas() {
