@@ -143,10 +143,11 @@ WebGLEngine.BufferedGeometry = class {
     }
 };
 
-WebGLEngine.Geometry = class {
+WebGLEngine.Geometry = class extends Identifyable {
 
     constructor(vertices, indices) {
 
+        super();
         this.vertices = vertices;
         this.indices = indices;
     }
