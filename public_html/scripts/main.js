@@ -1,6 +1,7 @@
 include("util/FileLoader");
 include("WebGLEngine");
 include("Cube");
+include("Pyramid");
 include("ViewController");
 
 const SHADER_FILENAMES = {
@@ -59,9 +60,9 @@ function main() {
 
         var object2 = new WebGLEngine.Object(new Cube());
         object2.transform.setTranslation(new Vector3(0, 3, 0));
-        object2.transform.setRotation(new Vector3(Math.PI / 2, 0, 0));
+        object2.transform.setRotation(new Vector3(Math.PI / 2, 0, -Math.PI / 2));
 
-        var object3 = new WebGLEngine.Object(new Cube());
+        var object3 = new WebGLEngine.Object(new Pyramid());
         object3.transform.setTranslation(new Vector3(0, 3, 0));
 
         engine.addObject(object1);
