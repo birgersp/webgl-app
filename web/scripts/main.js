@@ -11,15 +11,6 @@ const SHADER_FILENAMES = {
     FSHADER: "shaders/fshader.webgl"
 };
 
-const SHADER_VARIABLES = {
-    POSITION: "position",
-    TEXTURE_COORD: "textureCoord",
-    USE_COLOR: "useColor",
-    MV_MATRIX: "mvMatrix",
-    SAMPLER: "sampler",
-    COLOR: "color"
-};
-
 function main() {
 
     // Setup web page
@@ -39,7 +30,7 @@ function main() {
     }
 
     // Load texture
-    var crateWallImage = loader.addImageFile("binaries/crate.jpg");
+    var crateImageFile = loader.addImageFile("binaries/crate.jpg");
 
 
     // Load files, start app
@@ -58,19 +49,20 @@ function main() {
                 );
 
         var cube = new Cube();
+        var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
 
-        var object1 = new WebGLEngine.Object(cube);
+        var object1 = new WebGLEngine.Object(cube, crateTexture);
         object1.transform.setTranslation(new Vector3(0, 0, 0));
         engine.addObject(object1);
 
-        var object2 = new WebGLEngine.Object(cube);
+        var object2 = new WebGLEngine.Object(cube, crateTexture);
         object2.transform.setTranslation(new Vector3(0, 3, 0));
         object2.transform.setRotation(new Vector3(Math.PI / 2, 0, -Math.PI / 2));
         object1.add(object2);
 
-        var object3 = new WebGLEngine.Object(new Pyramid());
-        object3.transform.setTranslation(new Vector3(0, 3, 0));
-        object2.add(object3);
+//        var object3 = new WebGLEngine.Object(new Pyramid(), crateTexture);
+//        object3.transform.setTranslation(new Vector3(0, 3, 0));
+//        object2.add(object3);
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;

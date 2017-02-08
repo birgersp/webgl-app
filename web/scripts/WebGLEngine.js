@@ -1,5 +1,6 @@
 include("Transform");
 include("Camera");
+include("Vertex");
 
 class WebGLEngine {
 
@@ -11,12 +12,16 @@ class WebGLEngine {
         this.gl.cullFace(this.gl.BACK);
 
         this.positionAttribL = null;
+        this.textureCoordinateAttribL = null;
         this.transformUniformL = null;
+        this.samplerUniformL = null;
         this.useColorUniformL = null;
         this.viewTransform = Matrix4.identity();
         this.objects = [];
         this.bufferedGeometries = {};
+        this.glTextures = {};
         this.lastBoundGeometry = null;
+        this.lastBoundTexture = null;
         this.camera = new Camera(70);
     }
 
@@ -42,7 +47,9 @@ class WebGLEngine {
 
         // Set vertex attribute pointer for position
         this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
+        this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
         this.transformUniformL = this.gl.getUniformLocation(shaderProgram, "transform");
+        this.samplerUniformL = this.gl.getUniformLocation(shaderProgram, "sampler");
         this.useColorUniformL = this.gl.getUniformLocation(shaderProgram, "useColor");
         this.projectionUniformL = this.gl.getUniformLocation(shaderProgram, "projectionView");
     }
@@ -54,7 +61,8 @@ class WebGLEngine {
         var bufferedGeometry = new WebGLEngine.BufferedGeometry(vertexBuffer, indexBuffer);
 
         this.bindBufferedGeometry(bufferedGeometry);
-        this.writeGeometryToBuffer(geometry);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(geometry.vertices), this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(geometry.indices), this.gl.STATIC_DRAW);
         this.bufferedGeometries[geometry.objectID] = bufferedGeometry;
 
         return bufferedGeometry;
@@ -62,17 +70,15 @@ class WebGLEngine {
 
     bindBufferedGeometry(bufferedGeometry) {
 
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, bufferedGeometry.vertexBuffer);
-        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
-        this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, 0, 0);
-        this.gl.enableVertexAttribArray(this.positionAttribL);
-        this.lastBoundGeometry = bufferedGeometry;
-    }
-
-    writeGeometryToBuffer(geometry) {
-
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(geometry.vertices), this.gl.STATIC_DRAW);
-        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(geometry.indices), this.gl.STATIC_DRAW);
+        if (this.lastBoundGeometry !== bufferedGeometry) {
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, bufferedGeometry.vertexBuffer);
+            this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
+            this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 0);
+            this.gl.enableVertexAttribArray(this.positionAttribL);
+            this.gl.vertexAttribPointer(this.textureCoordinateAttribL, 2, this.gl.FLOAT, false, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
+            this.gl.enableVertexAttribArray(this.textureCoordinateAttribL);
+            this.lastBoundGeometry = bufferedGeometry;
+        }
     }
 
     getBufferedGeometry(geometry) {
@@ -84,9 +90,42 @@ class WebGLEngine {
         return bufferedGeometry;
     }
 
+    bufferTexture(texture) {
+
+        var glTexture = this.gl.createTexture();
+
+        this.bindTexture(glTexture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, texture.image);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
+        this.gl.generateMipmap(this.gl.TEXTURE_2D);
+        this.glTextures[texture.objectID] = glTexture;
+
+        return glTexture;
+    }
+
+    bindTexture(glTexture) {
+
+        if (this.lastBoundTexture !== glTexture) {
+            this.gl.bindTexture(this.gl.TEXTURE_2D, glTexture);
+            this.gl.uniform1i(this.samplerUniformL, 0);
+            this.lastBoundTexture = glTexture;
+        }
+    }
+
+    getGLTexture(texture) {
+
+        var glTexture = this.glTextures[texture.objectID];
+        if (glTexture === undefined)
+            glTexture = this.bufferTexture(texture);
+
+        return glTexture;
+    }
+
     addObject(object) {
 
-        object.bufferedGeometry = this.getBufferedGeometry(object.geometry);
+        this.getBufferedGeometry(object.geometry);
+        this.getGLTexture(object.texture);
         this.objects.push(object);
     }
 
@@ -106,8 +145,7 @@ class WebGLEngine {
             engine.gl.uniformMatrix4fv(engine.transformUniformL, false, transform);
 
             var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
-            if (engine.lastBoundGeometry !== bufferedGeometry)
-                engine.bindBufferedGeometry(bufferedGeometry);
+            engine.bindBufferedGeometry(bufferedGeometry);
 
             var indices = object.geometry.indices.length;
 
@@ -147,11 +185,21 @@ WebGLEngine.Geometry = class extends Identifyable {
     }
 };
 
+WebGLEngine.Texture = class extends Identifyable {
+
+    constructor(image) {
+
+        super();
+        this.image = image;
+    }
+};
+
 WebGLEngine.Object = class {
 
-    constructor(geometry) {
+    constructor(geometry, texture) {
 
         this.geometry = geometry;
+        this.texture = texture;
         this.transform = new Transform();
         this.children = [];
     }

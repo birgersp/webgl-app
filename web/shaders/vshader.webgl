@@ -2,8 +2,11 @@ uniform mat4 projectionView;
 uniform mat4 transform;
 
 attribute vec3 position;
+attribute vec2 textureCoord;
 
+varying vec2 vTextureCoord;
 void main() {
     
     gl_Position = projectionView * transform * vec4(position, 1);
+    vTextureCoord = textureCoord;
 }

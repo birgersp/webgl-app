@@ -1,8 +1,8 @@
 class Vertex extends Float32Array {
 
-    constructor(x, y, z) {
+    constructor(x, y, z, u, v) {
 
-        super([x, y, z]);
+        super([x, y, z, u, v]);
     }
 };
 
