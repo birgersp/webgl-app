@@ -90,9 +90,9 @@ function main() {
 
         var rotY = 0;
         function renderLoop() {
-            rotY += .01;
-            object1.transform.setRotation(new Vector3(0, rotY, 0));
-            object3.transform.setRotation(new Vector3(rotY/2, 0, 0));
+//            rotY += .01;
+//            object1.transform.setRotation(new Vector3(0, rotY, 0));
+//            object3.transform.setRotation(new Vector3(rotY/2, 0, 0));
             viewController.update();
             engine.drawObjects();
             setTimeout(function () {

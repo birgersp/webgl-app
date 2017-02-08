@@ -9,15 +9,15 @@ class ViewController {
         this.maxMouseMoveCoordinate = 50;
 
         var viewController = this;
-        document.addEventListener("mousemove", function (evt) {
+        document.addEventListener("mousemove", function(evt) {
             viewController.mouseMoved(evt);
         }, false);
-        document.addEventListener("keydown", function (evt) {
+        document.addEventListener("keydown", function(evt) {
             if (viewController.enabled)
-                viewController.keysDown[event.key] = true;
+                viewController.keysDown[evt.key] = true;
         }, false);
-        document.addEventListener("keyup", function (evt) {
-            viewController.keysDown[event.key] = false;
+        document.addEventListener("keyup", function(evt) {
+            viewController.keysDown[evt.key] = false;
         }, false);
     }
 
@@ -35,28 +35,49 @@ class ViewController {
     update() {
 
         if (this.enabled) {
-            if (this.keysDown.a) {
-                this.camera.t[0] -= this.speed * Math.cos(this.camera.r[1]);
-                this.camera.t[2] += this.speed * Math.sin(this.camera.r[1]);
-                this.camera.updated = false;
-            } else
-            if (this.keysDown.d) {
-                this.camera.t[0] += this.speed * Math.cos(this.camera.r[1]);
-                this.camera.t[2] -= this.speed * Math.sin(this.camera.r[1]);
-                this.camera.updated = false;
-            }
 
             if (this.keysDown.w) {
-                this.camera.t[2] -= this.speed * Math.cos(this.camera.r[1]);
-                this.camera.t[1] += this.speed * Math.sin(this.camera.r[0]);
-                this.camera.t[0] -= this.speed * Math.sin(this.camera.r[1]);
-                this.camera.updated = false;
+                var headingPitch = this.camera.r[0];
+                var headingYaw = this.camera.r[1];
+                var vector = new Vector3(
+                        -Math.sin(headingYaw) * Math.cos(headingPitch),
+                        Math.sin(headingPitch),
+                        -Math.cos(headingYaw) * Math.cos(headingPitch));
+                vector.scale(this.speed);
+                vector.add(this.camera.t);
+                this.camera.setTranslation(vector);
             } else
             if (this.keysDown.s) {
-                this.camera.t[2] += this.speed * Math.cos(this.camera.r[1]);
-                this.camera.t[1] -= this.speed * Math.sin(this.camera.r[0]);
-                this.camera.t[0] += this.speed * Math.sin(this.camera.r[1]);
-                this.camera.updated = false;
+                var headingPitch = this.camera.r[0];
+                var headingYaw = this.camera.r[1];
+                var vector = new Vector3(
+                        -Math.sin(headingYaw) * Math.cos(headingPitch),
+                        Math.sin(headingPitch),
+                        -Math.cos(headingYaw) * Math.cos(headingPitch));
+                vector.scale(-this.speed);
+                vector.add(this.camera.t);
+                this.camera.setTranslation(vector);
+            }
+
+            if (this.keysDown.a) {
+                var headingYaw = this.camera.r[1] + Math.PI/2;
+                var vector = new Vector3(
+                        -Math.sin(headingYaw),
+                        0,
+                        -Math.cos(headingYaw));
+                vector.scale(this.speed);
+                vector.add(this.camera.t);
+                this.camera.setTranslation(vector);
+            } else
+            if (this.keysDown.d) {
+                var headingYaw = this.camera.r[1] - Math.PI/2;
+                var vector = new Vector3(
+                        -Math.sin(headingYaw),
+                        0,
+                        -Math.cos(headingYaw));
+                vector.scale(this.speed);
+                vector.add(this.camera.t);
+                this.camera.setTranslation(vector);
             }
         }
     }

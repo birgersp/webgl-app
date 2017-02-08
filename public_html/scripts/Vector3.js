@@ -19,6 +19,12 @@ class Vector3 extends Float32Array {
     }
 
     scale(factor) {
-        this.set([this[0] * factor, this[1] * factor, this[2] * factor]);
+        this[0] *= factor;
+        this[1] *= factor;
+        this[2] *= factor;
+    }
+
+    add(vector) {
+        this.set([this[0] + vector[0], this[1] + vector[1], this[2] + vector[2]]);
     }
 }

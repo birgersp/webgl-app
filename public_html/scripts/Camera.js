@@ -114,4 +114,10 @@ class Camera {
         this.t = vector;
         this.setNotUpdated();
     }
+
+    move(vector) {
+
+        this.t.add(vector);
+        this.setNotUpdated();
+    }
 }
