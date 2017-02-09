@@ -14,10 +14,10 @@ class ViewController {
         }, false);
         document.addEventListener("keydown", function(evt) {
             if (viewController.enabled)
-                viewController.keysDown[evt.key] = true;
+                viewController.keysDown[evt.key.toLowerCase()] = true;
         }, false);
         document.addEventListener("keyup", function(evt) {
-            viewController.keysDown[evt.key] = false;
+            viewController.keysDown[evt.key.toLowerCase()] = false;
         }, false);
     }
 
@@ -36,6 +36,11 @@ class ViewController {
 
         if (this.enabled) {
 
+            var speed = this.speed;
+            if (this.keysDown.shift) {
+                speed *= 0.5;
+            }
+
             if (this.keysDown.w) {
                 var headingPitch = this.camera.r[0];
                 var headingYaw = this.camera.r[1];
@@ -43,7 +48,7 @@ class ViewController {
                         -Math.sin(headingYaw) * Math.cos(headingPitch),
                         Math.sin(headingPitch),
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
-                vector.scale(this.speed);
+                vector.scale(speed);
                 vector.add(this.camera.t);
                 this.camera.setTranslation(vector);
             } else
@@ -54,28 +59,28 @@ class ViewController {
                         -Math.sin(headingYaw) * Math.cos(headingPitch),
                         Math.sin(headingPitch),
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
-                vector.scale(-this.speed);
+                vector.scale(-speed);
                 vector.add(this.camera.t);
                 this.camera.setTranslation(vector);
             }
 
             if (this.keysDown.a) {
-                var headingYaw = this.camera.r[1] + Math.PI/2;
+                var headingYaw = this.camera.r[1] + Math.PI / 2;
                 var vector = new Vector3(
                         -Math.sin(headingYaw),
                         0,
                         -Math.cos(headingYaw));
-                vector.scale(this.speed);
+                vector.scale(speed);
                 vector.add(this.camera.t);
                 this.camera.setTranslation(vector);
             } else
             if (this.keysDown.d) {
-                var headingYaw = this.camera.r[1] - Math.PI/2;
+                var headingYaw = this.camera.r[1] - Math.PI / 2;
                 var vector = new Vector3(
                         -Math.sin(headingYaw),
                         0,
                         -Math.cos(headingYaw));
-                vector.scale(this.speed);
+                vector.scale(speed);
                 vector.add(this.camera.t);
                 this.camera.setTranslation(vector);
             }
