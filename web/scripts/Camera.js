@@ -1,5 +1,5 @@
-include("Matrix4");
-include("Vector3");
+include("geometry/Matrix4");
+include("geometry/Vector3");
 
 class Camera {
 

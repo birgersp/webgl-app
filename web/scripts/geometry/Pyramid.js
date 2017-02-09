@@ -1,4 +1,3 @@
-include("WebGLEngine");
 
 class Pyramid extends WebGLEngine.Geometry {
 

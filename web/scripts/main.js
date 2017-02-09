@@ -1,10 +1,12 @@
-include("util/FileLoader");
 include("Identifyable");
-
 include("WebGLEngine");
-include("Cube");
-include("Pyramid");
+
+include("geometry/Cube");
+include("geometry/Pyramid");
+
 include("ViewController");
+
+include("util/FileLoader");
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",

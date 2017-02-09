@@ -1,6 +1,7 @@
-include("Transform");
+include("geometry/Vertex");
+include("geometry/Transform");
+
 include("Camera");
-include("Vertex");
 
 class WebGLEngine {
 
