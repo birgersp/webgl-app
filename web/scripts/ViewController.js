@@ -13,8 +13,7 @@ class ViewController {
             viewController.mouseMoved(evt);
         }, false);
         document.addEventListener("keydown", function(evt) {
-            if (viewController.enabled)
-                viewController.keysDown[evt.key.toLowerCase()] = true;
+            viewController.keysDown[evt.key.toLowerCase()] = true;
         }, false);
         document.addEventListener("keyup", function(evt) {
             viewController.keysDown[evt.key.toLowerCase()] = false;
