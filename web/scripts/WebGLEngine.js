@@ -148,13 +148,16 @@ class WebGLEngine {
             var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
             engine.bindBufferedGeometry(bufferedGeometry);
 
+            var glTexture = engine.getGLTexture(object.texture);
+            engine.bindTexture(glTexture);
+
             var indices = object.geometry.indices.length;
 
             engine.gl.uniform1f(engine.useColorUniformL, 1);
             engine.gl.drawElements(engine.gl.TRIANGLES, indices, engine.gl.UNSIGNED_BYTE, 0);
 
-            engine.gl.uniform1f(engine.useColorUniformL, 0);
-            engine.gl.drawElements(engine.gl.LINE_STRIP, indices, engine.gl.UNSIGNED_BYTE, 0);
+//            engine.gl.uniform1f(engine.useColorUniformL, 0);
+//            engine.gl.drawElements(engine.gl.LINE_STRIP, indices, engine.gl.UNSIGNED_BYTE, 0);
 
             for (var childIndex = 0; childIndex < object.children.length; childIndex++)
                 renderObject(object.children[childIndex]);
@@ -164,6 +167,11 @@ class WebGLEngine {
         }
 
         this.objects.forEach(renderObject);
+    }
+
+    setViewPort(x, y, width, height) {
+
+        this.gl.viewport(x, y, width, height);
     }
 }
 

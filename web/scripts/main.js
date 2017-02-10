@@ -7,6 +7,7 @@ include("geometry/Pyramid");
 include("ViewController");
 
 include("util/FileLoader");
+include("geometry/GeometryBuilder");
 
 const SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
@@ -33,7 +34,7 @@ function main() {
 
     // Load texture
     var crateImageFile = loader.addImageFile("binaries/crate.jpg");
-
+    var grassImageFile = loader.addImageFile("binaries/grass.jpg");
 
     // Load files, start app
     loader.load(function () {
@@ -54,13 +55,20 @@ function main() {
         var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
 
         var object1 = new WebGLEngine.Object(cube, crateTexture);
-        object1.transform.setTranslation(new Vector3(0, 0, 0));
+        object1.transform.setTranslation(new Vector3(0, 0.5, 0));
         engine.addObject(object1);
 
-        var object2 = new WebGLEngine.Object(cube, crateTexture);
-        object2.transform.setTranslation(new Vector3(0, 3, 0));
-        object2.transform.setRotation(new Vector3(Math.PI / 2, 0, -Math.PI / 2));
-        object1.add(object2);
+//        var object2 = new WebGLEngine.Object(cube, crateTexture);
+//        object2.transform.setTranslation(new Vector3(0, 3, 0));
+//        object2.transform.setRotation(new Vector3(Math.PI / 2, 0, -Math.PI / 2));
+//        object1.add(object2);
+
+        var grassTexture = new WebGLEngine.Texture(grassImageFile.image);
+        var surface1 = new WebGLEngine.Object(GeometryBuilder.getSurface(8), grassTexture);
+        surface1.transform.setScale(new Vector3(16, 16, 1));
+        surface1.transform.setRotation(new Vector3(-Math.PI / 2, 0, 0));
+        surface1.transform.setTranslation(new Vector3(-8, 0, 8));
+        engine.addObject(surface1);
 
 //        var object3 = new WebGLEngine.Object(new Pyramid(), crateTexture);
 //        object3.transform.setTranslation(new Vector3(0, 3, 0));
@@ -81,8 +89,8 @@ function main() {
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
 
-        var cameraPos = new Vector3(0, 0, 12);
-        engine.camera.setTranslation(cameraPos);
+        engine.camera.setTranslation(new Vector3(12, 6, 15));
+        engine.camera.setRotation(new Vector3(-0.2,0.5,0));
 
         var viewController = new ViewController(engine.camera);
 
