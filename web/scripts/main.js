@@ -2,7 +2,6 @@ include("Identifyable");
 include("WebGLEngine");
 
 include("geometry/Cube");
-include("geometry/Pyramid");
 
 include("ViewController");
 

@@ -5,23 +5,24 @@ class GeometryBuilder {
 
     static getSurface(resolution) {
 
-        let vertices = new Float32Array(Math.pow(resolution, 2) * 4 * Vertex.LENGTH);
+        let vertices = new Float32Array(Math.pow(resolution + 1, 2) * Vertex.LENGTH);
         let indices = new Float32Array(Math.pow(resolution, 2) * 6);
 
-        let cellIndex = 0;
-        for (let yCount = 1; yCount <= resolution; yCount++) {
+        let i = 0;
+        for (let yCount = 0; yCount <= resolution; yCount++) {
             let y = yCount / resolution;
-            for (let xCount = 1; xCount <= resolution; xCount++) {
+            for (let xCount = 0; xCount <= resolution; xCount++) {
 
-                let i = cellIndex * 4;
-                vertices.set(new Vertex((xCount - 1) / resolution, (yCount - 1) / resolution, 0, (xCount - 1) % 2, (yCount - 1) % 2), i * Vertex.LENGTH);
-                vertices.set(new Vertex(xCount / resolution, (yCount - 1) / resolution, 0, xCount % 2, (yCount - 1) % 2), (i + 1) * Vertex.LENGTH);
-                vertices.set(new Vertex((xCount - 1) / resolution, yCount / resolution, 0, (xCount - 1) % 2, yCount % 2), (i + 2) * Vertex.LENGTH);
-                vertices.set(new Vertex(xCount / resolution, yCount / resolution, 0, xCount % 2, yCount % 2), (i + 3) * Vertex.LENGTH);
+                vertices.set(new Vertex(xCount / resolution, yCount / resolution, 0, xCount, yCount), i * Vertex.LENGTH);
 
-                indices.set([i, i + 1, i + 3, i, i + 3, i + 2], cellIndex * 6);
+                if (xCount > 0 && yCount > 0) {
 
-                cellIndex++;
+                    let a = i - resolution - 2;
+                    let b = a + 1;
+                    let c = i - 1;
+                    indices.set([a, b, i, a, i, c], ((yCount - 1) * resolution + xCount - 1) * 6);
+                }
+                i++;
             }
         }
 
