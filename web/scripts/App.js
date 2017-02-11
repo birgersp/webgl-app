@@ -114,6 +114,18 @@ class App {
         this.terrainGeometry.indices = indices;
         this.engine.bufferGeometry(this.terrainGeometry);
     }
+
+    isBelowTerrain(coordinate) {
+
+        let xIndex = Math.floor(coordinate[0]);
+        let zIndex = Math.floor(coordinate[2]);
+        let tc0 = this.terrainCoordinates[xIndex][zIndex];
+        let tc1 = this.terrainCoordinates[xIndex + 1][zIndex];
+        let tc2 = this.terrainCoordinates[xIndex][zIndex + 1];
+        let tc3 = this.terrainCoordinates[xIndex + 1][zIndex + 1];
+        let y = coordinate[1];
+        return (y < tc0[1] && y < tc1[1] && y < tc2[1] && y < tc3[1]);
+    }
 }
 
 App.GRAVITY = new Vector3(0, -9.81, 0);
