@@ -88,17 +88,29 @@ function main() {
 
     // Demo
 
-    let i = 0;
-    let terrainSize = 12;
-    let terrainCoordinates = new Array(Math.pow(terrainSize + 1, 2));
-    for (let z = 0; z <= terrainSize; z++)
-        for (let x = 0; x <= terrainSize; x++) {
-            let coordinate = new Vector3(x - terrainSize / 2, 0, z - terrainSize / 2);
-            terrainCoordinates[i++] = coordinate;
-        }
+    function getTerrain(xOffset, zOffset, size) {
+        let i = 0;
+        let terrainCoordinates = new Array(Math.pow(size + 1, 2));
+        for (let z = 0; z <= size; z++)
+            for (let x = 0; x <= size; x++) {
+                let coordinate = new Vector3(xOffset + x - size / 2, 0, zOffset + z - size / 2);
+                terrainCoordinates[i++] = coordinate;
+            }
+        return terrainCoordinates;
+    }
+
+    function addTerrain() {
+
+        let sections = 16;
+        let sectionSize = 12;
+        for (let z = -sections / 2; z < sections / 2; z++)
+            for (let x = -sections / 2; x < sections / 2; x++) {
+                app.setTerrainMesh(getTerrain(x * sectionSize, z * sectionSize, 12));
+            }
+    }
 
     app.load(function() {
-        app.setTerrainMesh(terrainCoordinates);
+        addTerrain();
         app.start();
     });
 }
