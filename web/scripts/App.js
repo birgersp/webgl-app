@@ -17,6 +17,7 @@ class App {
         this.controller.rotation = new Vector3(0, 0, 0);
         this.engine = new WebGLEngine(gl);
         this.loader = new FileLoader();
+        this.paused = true;
     }
 
     start() {
@@ -109,20 +110,28 @@ class App {
 
     stepTime() {
 
-        this.user.velocity.add(App.GRAVITY_STEP);
-        this.user.position.add(this.user.velocity);
+        this.controller.update();
+
+        let controlVelocity = this.controller.velocity.getCopy();
+        controlVelocity.scale(App.USER_SPEED);
+
+        this.user.velocity[0] = controlVelocity[0];
+        this.user.velocity[1] += App.GRAVITY_STEP;
+        this.user.velocity[2] = controlVelocity[2];
+
+        this.user.position.add(this.user.velocity.times(App.TIME_STEP));
+        this.user.position[1] += this.user.velocity[1] * App.TIME_STEP + App.GRAVITY * (Math.pow(App.TIME_STEP, 2) / 2);
 
         var bottomCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
         var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
 
-        this.controller.update();
         if (this.isBelowTerrain(bottomCenter) && !this.isBelowTerrain(topCenter)) {
             this.user.position[1] = -User.BOTTOM_CENTER_POS[1];
-            this.user.velocity = this.controller.velocity;
-            this.user.velocity.scale(0.1);
+            this.user.velocity = this.controller.velocity.getCopy();
+            this.user.velocity[1] = 0;
 
             if (this.controller.keysDown[" "])
-                this.user.velocity[1] = 2;
+                this.user.velocity[1] = 5;
         }
 
         var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
@@ -133,17 +142,20 @@ class App {
     pause() {
 
         this.controller.disable();
+        this.paused = true;
     }
 
     resume() {
 
         this.controller.enable();
+        this.paused = false;
     }
 }
 
-App.GRAVITY = new Vector3(0, -9.81, 0);
+App.GRAVITY = -9.81;
 App.TIME_STEP = 1 / 60;
-App.GRAVITY_STEP = new Vector3().add(App.GRAVITY).scale(App.TIME_STEP);
+App.GRAVITY_STEP = App.GRAVITY * App.TIME_STEP;
+App.USER_SPEED = 5;
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
