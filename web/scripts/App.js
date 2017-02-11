@@ -61,7 +61,7 @@ class App {
         function renderLoop() {
             app.stepTime();
             app.engine.render();
-            setTimeout(renderLoop, 1000 / 60);
+            setTimeout(renderLoop, App.TIME_STEP * 1000);
         }
         renderLoop();
     }
@@ -110,7 +110,7 @@ class App {
             let tc2 = this.terrainCoordinates[xIndex][zIndex + 1];
             let tc3 = this.terrainCoordinates[xIndex + 1][zIndex + 1];
             let y = coordinate[1];
-            if (tc0 !== null && tc1 !== null && tc2 !== null && tc3 !== null)
+            if (tc0 && tc1 && tc2 && tc3)
                 return (y < tc0[1] && y < tc1[1] && y < tc2[1] && y < tc3[1]);
         }
         return false;
