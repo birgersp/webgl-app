@@ -19,36 +19,6 @@ class App {
         this.loader = new FileLoader();
     }
 
-    stepTime() {
-
-        this.user.velocity.add(App.GRAVITY_STEP);
-        this.user.position.add(this.user.velocity);
-
-        var bottomCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
-        var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
-
-        this.controller.update();
-        if (this.isBelowTerrain(bottomCenter) && !this.isBelowTerrain(topCenter)) {
-            this.user.position[1] = -User.BOTTOM_CENTER_POS[1];
-            this.user.velocity = this.controller.velocity;
-            this.user.velocity.scale(0.1);
-        }
-
-        var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
-        this.engine.camera.setTranslation(topCenter);
-        this.engine.camera.setRotation(this.controller.rotation);
-    }
-
-    pause() {
-
-        this.controller.disable();
-    }
-
-    resume() {
-
-        this.controller.enable();
-    }
-
     start() {
 
         // Create file loader
@@ -111,7 +81,7 @@ class App {
                 }
 
                 let c = coordinates[vertexIndex];
-                let vertex = new Vertex(c[0], c[1], c[2], i/2, j/2);
+                let vertex = new Vertex(c[0], c[1], c[2], i / 2, j / 2);
                 vertices.set(vertex, vertexIndex++ * Vertex.LENGTH);
 
                 let xIndex = Math.floor(c[0]);
@@ -135,6 +105,36 @@ class App {
         let tc3 = this.terrainCoordinates[xIndex + 1][zIndex + 1];
         let y = coordinate[1];
         return (y < tc0[1] && y < tc1[1] && y < tc2[1] && y < tc3[1]);
+    }
+
+    stepTime() {
+
+        this.user.velocity.add(App.GRAVITY_STEP);
+        this.user.position.add(this.user.velocity);
+
+        var bottomCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
+        var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
+
+        this.controller.update();
+        if (this.isBelowTerrain(bottomCenter) && !this.isBelowTerrain(topCenter)) {
+            this.user.position[1] = -User.BOTTOM_CENTER_POS[1];
+            this.user.velocity = this.controller.velocity;
+            this.user.velocity.scale(0.1);
+        }
+
+        var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
+        this.engine.camera.setTranslation(topCenter);
+        this.engine.camera.setRotation(this.controller.rotation);
+    }
+
+    pause() {
+
+        this.controller.disable();
+    }
+
+    resume() {
+
+        this.controller.enable();
     }
 }
 
