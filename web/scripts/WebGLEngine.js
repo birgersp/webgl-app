@@ -57,9 +57,12 @@ class WebGLEngine {
 
     bufferGeometry(geometry) {
 
-        var vertexBuffer = this.gl.createBuffer();
-        var indexBuffer = this.gl.createBuffer();
-        var bufferedGeometry = new WebGLEngine.BufferedGeometry(vertexBuffer, indexBuffer);
+        var bufferedGeometry = this.bufferedGeometries[geometry.objectID];
+        if (!bufferedGeometry) {
+            var vertexBuffer = this.gl.createBuffer();
+            var indexBuffer = this.gl.createBuffer();
+            bufferedGeometry = new WebGLEngine.BufferedGeometry(vertexBuffer, indexBuffer);
+        }
 
         this.bindBufferedGeometry(bufferedGeometry);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(geometry.vertices), this.gl.STATIC_DRAW);
