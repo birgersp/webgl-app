@@ -3,7 +3,6 @@ class Controller {
     constructor() {
 
         this.enabled = false;
-        this.speed = 0.1;
         this.keysDown = {};
         this.maxMouseMoveCoordinate = 50;
         this.velocity = new Vector3();
@@ -25,11 +24,6 @@ class Controller {
 
         if (this.enabled) {
 
-            var speed = this.speed;
-            if (this.keysDown.shift) {
-                speed *= 0.5;
-            }
-
             this.velocity = new Vector3();
             if (this.keysDown.w) {
                 var headingPitch = this.rotation[0];
@@ -38,7 +32,6 @@ class Controller {
                         -Math.sin(headingYaw) * Math.cos(headingPitch),
                         Math.sin(headingPitch),
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
-                vector.scale(speed);
                 this.velocity.add(vector);
             } else
             if (this.keysDown.s) {
@@ -48,7 +41,7 @@ class Controller {
                         -Math.sin(headingYaw) * Math.cos(headingPitch),
                         Math.sin(headingPitch),
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
-                vector.scale(-speed);
+                vector.scale(-1);
                 this.velocity.add(vector);
             }
 
@@ -58,7 +51,6 @@ class Controller {
                         -Math.sin(headingYaw),
                         0,
                         -Math.cos(headingYaw));
-                vector.scale(speed);
                 this.velocity.add(vector);
             } else
             if (this.keysDown.d) {
@@ -67,7 +59,6 @@ class Controller {
                         -Math.sin(headingYaw),
                         0,
                         -Math.cos(headingYaw));
-                vector.scale(speed);
                 this.velocity.add(vector);
             }
         }
