@@ -33,6 +33,12 @@ class Vector3 extends Float32Array {
         return this;
     }
 
+    subtract(vector) {
+
+        this.set([this[0] - vector[0], this[1] - vector[1], this[2] - vector[2]]);
+        return this;
+    }
+
     plus(vector) {
 
         var result = new Vector3();
