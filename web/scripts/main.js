@@ -15,7 +15,7 @@ function main() {
     var style = document.createElement("style");
     document.head.appendChild(style);
     style.appendChild(document.createTextNode(""));
-    style.sheet.insertRule("body {padding:0px; margin:0px; overflow:hidden;}", 0);
+    style.sheet.insertRule("body {padding:0px; margin:0px; overflow:hidden; background:black;}", 0);
     style.sheet.insertRule("canvas {padding:0px; margin:0px;}", 0);
 
     // Create canvas
@@ -25,12 +25,26 @@ function main() {
 
     let app = new App(canvas.getContext("webgl"));
 
+    let aspectRatio = 16 / 9;
     function resizeCanvas() {
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        app.engine.camera.setAspectRatio(canvas.width / canvas.height);
+
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let desiredHeight = width / aspectRatio;
+        if (height > desiredHeight) { // Too high!
+            height = desiredHeight;
+        } else {
+            width = height * aspectRatio;
+        }
+
+        let heightOffset = window.innerHeight - height;
+        let widthOffset = window.innerWidth - width;
+
         app.engine.camera.updateMatrix();
-        app.engine.setViewPort(0, 0, canvas.width, canvas.height);
+        app.engine.setViewPort(widthOffset / 2, heightOffset / 2, width, height);
     }
     resizeCanvas();
 
@@ -79,7 +93,7 @@ function main() {
     let terrainSize = 12;
     let terrainCoordinates = new Array(Math.pow(terrainSize + 1, 2));
     for (let z = 0; z <= terrainSize; z++)
-        for (let x = 0; x <= terrainSize; x++){
+        for (let x = 0; x <= terrainSize; x++) {
             let coordinate = new Vector3(x - terrainSize / 2, 0, z - terrainSize / 2);
             terrainCoordinates[i++] = coordinate;
         }
