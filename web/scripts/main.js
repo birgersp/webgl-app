@@ -59,7 +59,7 @@ function main() {
         engine.addObject(object1);
 
         var grassTexture = new WebGLEngine.Texture(grassImageFile.image);
-        var surface1 = new WebGLEngine.Object(GeometryBuilder.getSurface(8), grassTexture);
+        var surface1 = new WebGLEngine.Object(GeometryBuilder.getSurfaceGeometry(8), grassTexture);
         surface1.transform.setScale(new Vector3(16, 16, 1));
         surface1.transform.setRotation(new Vector3(-Math.PI / 2, 0, 0));
         surface1.transform.setTranslation(new Vector3(-8, 0, 8));

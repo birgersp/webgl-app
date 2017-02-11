@@ -3,7 +3,7 @@ include("Vertex");
 
 class GeometryBuilder {
 
-    static getSurface(resolution) {
+    static getSurfaceGeometry(resolution) {
 
         let vertices = new Float32Array(Math.pow(resolution + 1, 2) * Vertex.LENGTH);
         let indices = new Float32Array(Math.pow(resolution, 2) * 6);
