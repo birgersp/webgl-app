@@ -85,7 +85,6 @@ function main() {
     }
     document.addEventListener('pointerlockchange', lockChange, false);
     document.addEventListener('mozpointerlockchange', lockChange, false);
-    app.start();
 
     // Demo
 
@@ -97,5 +96,9 @@ function main() {
             let coordinate = new Vector3(x - terrainSize / 2, 0, z - terrainSize / 2);
             terrainCoordinates[i++] = coordinate;
         }
-    app.setTerrainMesh(terrainCoordinates);
+
+    app.load(function() {
+        app.setTerrainMesh(terrainCoordinates);
+        app.start();
+    });
 }

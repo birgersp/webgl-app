@@ -10,7 +10,7 @@ class App {
 
         this.controller = new Controller();
 
-        this.terrainGeometry = new WebGLEngine.Geometry([], []);
+        this.grassTexture = null;
         this.terrainCoordinates = {};
         this.user = new User();
         this.user.position = new Vector3(0, 4, 5);
@@ -20,7 +20,7 @@ class App {
         this.paused = true;
     }
 
-    start() {
+    load(onloaded) {
 
         // Create file loader
         var loader = new FileLoader();
@@ -50,17 +50,20 @@ class App {
             object1.transform.setTranslation(new Vector3(0, 0.5, 0));
             engine.addObject(object1);
 
-            var grassTexture = new WebGLEngine.Texture(grassImageFile.image);
-            var terrainObject = new WebGLEngine.Object(app.terrainGeometry, grassTexture);
-            engine.addObject(terrainObject);
+            app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
 
-            function renderLoop() {
-                app.stepTime();
-                engine.render();
-                setTimeout(renderLoop, 1000 / 60);
-            }
-            renderLoop();
+            onloaded();
         });
+    }
+
+    start() {
+        let app = this;
+        function renderLoop() {
+            app.stepTime();
+            app.engine.render();
+            setTimeout(renderLoop, 1000 / 60);
+        }
+        renderLoop();
     }
 
     setTerrainMesh(coordinates) {
@@ -91,21 +94,26 @@ class App {
                     this.terrainCoordinates[xIndex] = {};
                 this.terrainCoordinates[xIndex][zIndex] = c;
             }
-        this.terrainGeometry.vertices = vertices;
-        this.terrainGeometry.indices = indices;
-        this.engine.bufferGeometry(this.terrainGeometry);
+
+        let geometry = new WebGLEngine.Geometry(vertices, indices);
+        let terrainObject = new WebGLEngine.Object(geometry, this.grassTexture);
+        this.engine.addObject(terrainObject);
     }
 
     isBelowTerrain(coordinate) {
 
         let xIndex = Math.floor(coordinate[0]);
-        let zIndex = Math.floor(coordinate[2]);
-        let tc0 = this.terrainCoordinates[xIndex][zIndex];
-        let tc1 = this.terrainCoordinates[xIndex + 1][zIndex];
-        let tc2 = this.terrainCoordinates[xIndex][zIndex + 1];
-        let tc3 = this.terrainCoordinates[xIndex + 1][zIndex + 1];
-        let y = coordinate[1];
-        return (y < tc0[1] && y < tc1[1] && y < tc2[1] && y < tc3[1]);
+        if (this.terrainCoordinates[xIndex]) {
+            let zIndex = Math.floor(coordinate[2]);
+            let tc0 = this.terrainCoordinates[xIndex][zIndex];
+            let tc1 = this.terrainCoordinates[xIndex + 1][zIndex];
+            let tc2 = this.terrainCoordinates[xIndex][zIndex + 1];
+            let tc3 = this.terrainCoordinates[xIndex + 1][zIndex + 1];
+            let y = coordinate[1];
+            if (tc0 !== null && tc1 !== null && tc2 !== null && tc3 !== null)
+                return (y < tc0[1] && y < tc1[1] && y < tc2[1] && y < tc3[1]);
+        }
+        return false;
     }
 
     stepTime() {
