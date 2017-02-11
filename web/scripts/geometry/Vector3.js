@@ -27,6 +27,14 @@ class Vector3 extends Float32Array {
         return this;
     }
 
+    times(factor) {
+
+        let result = new Vector3();
+        result.set(this);
+        result.scale(factor);
+        return result;
+    }
+
     add(vector) {
 
         this.set([this[0] + vector[0], this[1] + vector[1], this[2] + vector[2]]);
@@ -65,5 +73,10 @@ class Vector3 extends Float32Array {
     getMagnitude() {
 
         return Math.sqrt(this[0] * this[0] + this[1] * this[1] + this[2] * this[2]);
+    }
+
+    getCopy() {
+
+        return new Vector3(this[0], this[1], this[2]);
     }
 }
