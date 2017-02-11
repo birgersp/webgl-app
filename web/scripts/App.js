@@ -130,6 +130,7 @@ class App {
 
 App.GRAVITY = new Vector3(0, -9.81, 0);
 App.TIME_STEP = 1 / 60;
+App.GRAVITY_STEP = new Vector3().add(App.GRAVITY).scale(App.TIME_STEP);
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
