@@ -20,7 +20,7 @@ class Camera {
         this.setNear(0.1);
         this.setFar(100);
         this.setAspectRatio(1);
-        this.setFieldOfView(Math.PI / 3);
+        this.setFieldOfView(Math.PI / 2);
         this.updateMatrix();
     }
 

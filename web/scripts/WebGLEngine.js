@@ -23,7 +23,7 @@ class WebGLEngine {
         this.glTextures = {};
         this.lastBoundGeometry = null;
         this.lastBoundTexture = null;
-        this.camera = new Camera(70);
+        this.camera = new Camera();
     }
 
     initialize(vertexShaderSource, fragmentShaderSource) {
