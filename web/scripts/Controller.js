@@ -7,6 +7,7 @@ class Controller {
         this.maxMouseMoveCoordinate = 50;
         this.velocity = new Vector3();
         this.rotation = new Vector3();
+        this.mode = Camera.XZ_PLANE;
     }
 
     enable() {
@@ -30,8 +31,10 @@ class Controller {
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
                         -Math.sin(headingYaw) * Math.cos(headingPitch),
-                        Math.sin(headingPitch),
+                        0,
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
+                if (this.mode === Camera.FREE)
+                    vector[1] = Math.sin(headingPitch);
                 this.velocity.add(vector);
             } else
             if (this.keysDown.s) {
@@ -39,8 +42,10 @@ class Controller {
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
                         -Math.sin(headingYaw) * Math.cos(headingPitch),
-                        Math.sin(headingPitch),
+                        0,
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
+                if (this.mode === Camera.FREE)
+                    vector[1] = Math.sin(headingPitch);
                 vector.scale(-1);
                 this.velocity.add(vector);
             }
@@ -96,8 +101,8 @@ class Controller {
             if (this.rotation[0] > Math.PI / 2) {
                 this.rotation[0] = Math.PI / 2;
             } else
-            if (this.rotation[0] < -Math.PI / 2) {
-                this.rotation[0] = -Math.PI / 2;
+            if (this.rotation[0] < Camera.MIN_X_ROTATION) {
+                this.rotation[0] = Camera.MIN_X_ROTATION;
             }
 
             if (this.rotation[1] > Math.PI) {
@@ -109,3 +114,9 @@ class Controller {
         }
     }
 }
+
+Camera.MIN_X_ROTATION = -Math.PI / 2 + 1 / 1000000;
+Camera.moveMode = {
+    XZ_PLANE: 0,
+    FREE: 1
+};
