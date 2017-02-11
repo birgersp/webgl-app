@@ -120,6 +120,9 @@ class App {
             this.user.position[1] = -User.BOTTOM_CENTER_POS[1];
             this.user.velocity = this.controller.velocity;
             this.user.velocity.scale(0.1);
+
+            if (this.controller.keysDown[" "])
+                this.user.velocity[1] = 2;
         }
 
         var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
