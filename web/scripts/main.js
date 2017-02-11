@@ -81,6 +81,17 @@ function main() {
         });
 
         let app = new App(engine);
+        document.addEventListener("mousemove", function(evt) {
+            app.controller.mouseMoved(evt.movementX, evt.movementY);
+
+        }, false);
+        document.addEventListener("keydown", function(evt) {
+            app.controller.keyDown(evt.key.toLowerCase());
+        }, false);
+        document.addEventListener("keyup", function(evt) {
+            app.controller.keyUp(evt.key.toLowerCase());
+        }, false);
+
         function renderLoop() {
             app.stepTime();
             engine.drawObjects();

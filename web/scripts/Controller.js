@@ -8,18 +8,6 @@ class Controller {
         this.maxMouseMoveCoordinate = 50;
         this.velocity = new Vector3();
         this.rotation = new Vector3();
-
-        var viewController = this;
-        document.addEventListener("mousemove", function(evt) {
-            viewController.mouseMoved(evt.movementX, evt.movementY);
-
-        }, false);
-        document.addEventListener("keydown", function(evt) {
-            viewController.keysDown[evt.key.toLowerCase()] = true;
-        }, false);
-        document.addEventListener("keyup", function(evt) {
-            viewController.keysDown[evt.key.toLowerCase()] = false;
-        }, false);
     }
 
     enable() {
@@ -83,6 +71,16 @@ class Controller {
                 this.velocity.add(vector);
             }
         }
+    }
+
+    keyDown(key) {
+
+        this.keysDown[key] = true;
+    }
+
+    keyUp(key) {
+
+        this.keysDown[key] = false;
     }
 
     mouseMoved(x, y) {
