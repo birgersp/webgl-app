@@ -24,7 +24,6 @@ function main() {
     document.body.appendChild(canvas);
 
     let app = new App(canvas.getContext("webgl"));
-    app.start();
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -72,4 +71,17 @@ function main() {
     }
     document.addEventListener('pointerlockchange', lockChange, false);
     document.addEventListener('mozpointerlockchange', lockChange, false);
+    app.start();
+
+    // Demo
+
+    let i = 0;
+    let terrainSize = 12;
+    let terrainCoordinates = new Array(Math.pow(terrainSize + 1, 2));
+    for (let z = 0; z <= terrainSize; z++)
+        for (let x = 0; x <= terrainSize; x++){
+            let coordinate = new Vector3(x - terrainSize / 2, 0, z - terrainSize / 2);
+            terrainCoordinates[i++] = coordinate;
+        }
+    app.setTerrainMesh(terrainCoordinates);
 }

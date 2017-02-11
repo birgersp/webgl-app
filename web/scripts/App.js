@@ -10,9 +10,11 @@ class App {
 
         this.controller = new Controller();
 
+        this.terrainGeometry = new WebGLEngine.Geometry([], []);
+        this.terrainCoordinates = {};
         this.user = new User();
-        this.user.position = new Vector3(13, 6, 15);
-        this.controller.rotation = new Vector3(-0.2, 0.5, 0);
+        this.user.position = new Vector3(0, 4, 5);
+        this.controller.rotation = new Vector3(0, 0, 0);
         this.engine = new WebGLEngine(gl);
         this.loader = new FileLoader();
     }
@@ -21,16 +23,6 @@ class App {
 
         this.controller.update();
         this.user.position.add(this.controller.velocity);
-
-//        player.velocity.add(Game.GRAVITY);
-//        player.position.add(player.velocity);
-//        var bottomCenter = player.position.plus(Player.BOTTOM_CENTER_POS);
-
-//        var xIndex = Math.floor(bottomCenter[0]);
-//        var zIndex = Math.floor(bottomCenter[2]);
-
-//        var a = this.surface.slice(this.surfaceFaces[xIndex], this.surfaceFaces[xIndex] + 1);
-//        let a = 
 
         var topCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
         this.engine.camera.setTranslation(topCenter);
@@ -78,11 +70,8 @@ class App {
             engine.addObject(object1);
 
             var grassTexture = new WebGLEngine.Texture(grassImageFile.image);
-            var surface1 = new WebGLEngine.Object(GeometryBuilder.getSurfaceGeometry(8), grassTexture);
-            surface1.transform.setScale(new Vector3(16, 16, 1));
-            surface1.transform.setRotation(new Vector3(-Math.PI / 2, 0, 0));
-            surface1.transform.setTranslation(new Vector3(-8, 0, 8));
-            engine.addObject(surface1);
+            var terrainObject = new WebGLEngine.Object(app.terrainGeometry, grassTexture);
+            engine.addObject(terrainObject);
 
             function renderLoop() {
                 app.stepTime();
@@ -91,6 +80,39 @@ class App {
             }
             renderLoop();
         });
+    }
+
+    setTerrainMesh(coordinates) {
+
+        let size = Math.sqrt(coordinates.length);
+
+        let vertices = new Float32Array(coordinates.length * Vertex.LENGTH);
+        let indices = new Uint16Array(Math.pow(size - 1, 2) * 6);
+
+        let vertexIndex = 0;
+        let indexIndex = 0;
+        for (let j = 0; j < size; j++)
+            for (let i = 0; i < size; i++) {
+                if (i > 0 && j > 0) {
+                    let a = vertexIndex - size - 1;
+                    let b = a + 1;
+                    let c = vertexIndex - 1;
+                    indices.set([a, vertexIndex, b, a, c, vertexIndex], indexIndex++ * 6);
+                }
+
+                let c = coordinates[vertexIndex];
+                let vertex = new Vertex(c[0], c[1], c[2], i, j);
+                vertices.set(vertex, vertexIndex++ * Vertex.LENGTH);
+
+                let xIndex = Math.floor(c[0]);
+                let zIndex = Math.floor(c[2]);
+                if (!this.terrainCoordinates[xIndex])
+                    this.terrainCoordinates[xIndex] = {};
+                this.terrainCoordinates[xIndex][zIndex] = c;
+            }
+        this.terrainGeometry.vertices = vertices;
+        this.terrainGeometry.indices = indices;
+        this.engine.bufferGeometry(this.terrainGeometry);
     }
 }
 
