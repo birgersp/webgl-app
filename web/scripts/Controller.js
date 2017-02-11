@@ -61,6 +61,10 @@ class Controller {
                         -Math.cos(headingYaw));
                 this.velocity.add(vector);
             }
+
+            this.velocity.normalize();
+            if (this.keysDown.shift)
+                this.velocity.scale(0.5);
         }
     }
 
