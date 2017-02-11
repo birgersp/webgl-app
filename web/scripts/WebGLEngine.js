@@ -132,7 +132,7 @@ class WebGLEngine {
 
     drawObjects() {
 
-        var engine = this;
+        let engine = this;
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         this.gl.uniformMatrix4fv(this.projectionUniformL, false, this.camera.getViewProjectionMatrix());
@@ -172,6 +172,14 @@ class WebGLEngine {
     setViewPort(x, y, width, height) {
 
         this.gl.viewport(x, y, width, height);
+    }
+
+    render() {
+
+        let engine = this;
+        requestAnimationFrame(function() {
+            engine.drawObjects();
+        });
     }
 }
 
