@@ -85,7 +85,7 @@ class App {
                 }
 
                 let c = coordinates[vertexIndex];
-                let vertex = new Vertex(c[0], c[1], c[2], i / 2, j / 2);
+                let vertex = new Vertex(c[0], c[1], c[2], i / 4, j / 4);
                 vertices.set(vertex, vertexIndex++ * Vertex.LENGTH);
 
                 let xIndex = Math.floor(c[0]);

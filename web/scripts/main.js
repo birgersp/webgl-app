@@ -101,10 +101,10 @@ function main() {
 
     function addTerrain() {
 
-        let sections = 16;
+        let sections = 15;
         let sectionSize = 12;
-        for (let z = -sections / 2; z < sections / 2; z++)
-            for (let x = -sections / 2; x < sections / 2; x++) {
+        for (let z = -(sections / 2 - 1); z < sections / 2; z++)
+            for (let x = -(sections / 2 - 1); x < sections / 2; x++) {
                 app.setTerrainMesh(getTerrain(x * sectionSize, z * sectionSize, 12));
             }
     }
