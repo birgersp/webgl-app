@@ -2,8 +2,9 @@ include("Identifyable");
 include("WebGLEngine");
 
 include("geometry/Cube");
+include("geometry/Vector3");
 
-include("ViewController");
+include("App");
 
 include("util/FileLoader");
 include("geometry/GeometryBuilder");
@@ -36,7 +37,7 @@ function main() {
     var grassImageFile = loader.addImageFile("binaries/grass.jpg");
 
     // Load files, start app
-    loader.load(function () {
+    loader.load(function() {
 
         // Create canvas
         var canvas = document.createElement("canvas");
@@ -57,21 +58,12 @@ function main() {
         object1.transform.setTranslation(new Vector3(0, 0.5, 0));
         engine.addObject(object1);
 
-//        var object2 = new WebGLEngine.Object(cube, crateTexture);
-//        object2.transform.setTranslation(new Vector3(0, 3, 0));
-//        object2.transform.setRotation(new Vector3(Math.PI / 2, 0, -Math.PI / 2));
-//        object1.add(object2);
-
         var grassTexture = new WebGLEngine.Texture(grassImageFile.image);
         var surface1 = new WebGLEngine.Object(GeometryBuilder.getSurface(8), grassTexture);
         surface1.transform.setScale(new Vector3(16, 16, 1));
         surface1.transform.setRotation(new Vector3(-Math.PI / 2, 0, 0));
         surface1.transform.setTranslation(new Vector3(-8, 0, 8));
         engine.addObject(surface1);
-
-//        var object3 = new WebGLEngine.Object(new Pyramid(), crateTexture);
-//        object3.transform.setTranslation(new Vector3(0, 3, 0));
-//        object2.add(object3);
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -83,24 +75,16 @@ function main() {
         resizeCanvas();
 
         var resizingTimeout;
-        window.addEventListener("resize", function () {
+        window.addEventListener("resize", function() {
             clearTimeout(resizingTimeout);
             resizingTimeout = setTimeout(resizeCanvas, 250);
         });
 
-        engine.camera.setTranslation(new Vector3(12, 6, 15));
-        engine.camera.setRotation(new Vector3(-0.2,0.5,0));
-
-        var viewController = new ViewController(engine.camera);
-
-        var rotY = 0;
+        let app = new App(engine);
         function renderLoop() {
-//            rotY += .01;
-//            object1.transform.setRotation(new Vector3(0, rotY, 0));
-//            object3.transform.setRotation(new Vector3(rotY/2, 0, 0));
-            viewController.update();
+            app.stepTime();
             engine.drawObjects();
-            setTimeout(function () {
+            setTimeout(function() {
                 requestAnimationFrame(renderLoop);
             }, 1000 / 60);
         }
@@ -112,16 +96,16 @@ function main() {
         document.exitPointerLock = document.exitPointerLock ||
                 document.mozExitPointerLock;
 
-        canvas.addEventListener("click", function () {
+        canvas.addEventListener("click", function() {
             canvas.requestPointerLock();
         }, false);
 
         function lockChange() {
             if (document.pointerLockElement === canvas ||
                     document.mozPointerLockElement === canvas) {
-                viewController.enable();
+                app.resume();
             } else {
-                viewController.disable();
+                app.pause();
             }
         }
         document.addEventListener('pointerlockchange', lockChange, false);
