@@ -18,6 +18,7 @@ class Controller {
     disable() {
 
         this.enabled = false;
+        this.velocity = new Vector3();
         this.keysDown = {};
     }
 
