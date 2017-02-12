@@ -100,12 +100,42 @@ function main() {
         return noiseValues[x][z];
     }
 
-    let amplitude = 10;
-    function generateHeight(x, z) {
+    function getSmoothNoise(x, z) {
+
         let corners = (getNoise(x + 1, z - 1) + getNoise(x - 1, z - 1) + getNoise(x - 1, z + 1) + getNoise(x + 1, z + 1)) / 16;
         let sides = (getNoise(x - 1, z) + getNoise(x + 1, z) + getNoise(x, z + 1) + getNoise(x, z - 1)) / 8;
-        let center = getNoise(x,z) / 4;
-        return (corners + sides + center) * amplitude;
+        let center = getNoise(x, z) / 4;
+        return (corners + sides + center);
+    }
+
+    function interpolate(a, b, blend) {
+
+        let theta = blend * Math.PI;
+        let f = (1 - Math.cos(theta)) * 0.5;
+        return a * (1 - f) + b * f;
+    }
+
+    function getInterpolatedNoise(x, z) {
+
+        let intX = Math.floor(x);
+        let intZ = Math.floor(z);
+        let fracX = x - intX;
+        let fracZ = z - intZ;
+
+        let v1 = getSmoothNoise(intX, intZ);
+        let v2 = getSmoothNoise(intX + 1, intZ);
+        let v3 = getSmoothNoise(intX, intZ + 1);
+        let v4 = getSmoothNoise(intX + 1, intZ + 1);
+
+        let i1 = interpolate(v1, v2, fracX);
+        let i2 = interpolate(v3, v4, fracX);
+        return interpolate(i1, i2, fracZ);
+    }
+
+    let amplitude = 25;
+    function generateY(x, z) {
+
+        return getInterpolatedNoise(x / 8, z / 8) * amplitude;
     }
 
     function getTerrain(xOffset, zOffset, size) {
@@ -114,7 +144,7 @@ function main() {
         for (let z = 0; z <= size; z++)
             for (let x = 0; x <= size; x++) {
                 let coordinate = new Vector3(xOffset + x - size / 2, 0, zOffset + z - size / 2);
-                coordinate[1] = generateHeight(coordinate[0], coordinate[2]);
+                coordinate[1] = generateY(coordinate[0], coordinate[2]);
                 terrainCoordinates[i++] = coordinate;
             }
         return terrainCoordinates;
