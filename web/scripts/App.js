@@ -140,8 +140,8 @@ class App {
 
         if (this.isBelowTerrain(bottomCenter) && !this.isBelowTerrain(topCenter)) {
             this.user.position[1] = -User.BOTTOM_CENTER_POS[1];
-            this.user.velocity = this.controller.velocity.getCopy();
-            this.user.velocity[1] = 0;
+            if (this.controller.mode !== Controller.moveMode.FREE)
+                this.user.velocity[1] = 0;
 
             if (this.controller.keysDown[" "])
                 this.user.velocity[1] = 5;
