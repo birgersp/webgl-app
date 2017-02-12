@@ -93,7 +93,7 @@ class App {
                     let bottomleft = coordinates[a];
                     let bottomright = coordinates[b];
                     let collidable = new CollidableFace(topleft, topright, bottomleft, bottomright);
-                    // TODO: Add collidable to collidable manager
+                    this.collidableManager.addCollidableFace(collidable);
                 }
 
                 let c = coordinates[vertexIndex];
@@ -125,9 +125,25 @@ class App {
             dPosition[1] += App.GRAVITY * (Math.pow(App.TIME_STEP, 2) / 2);
         this.user.position.add(dPosition);
 
+        // Check collision
+        this.checkUserTerrainCollision();
+
         let newTopCenter = this.user.position.plus(User.TOP_CENTER_POS);
         this.engine.camera.setTranslation(newTopCenter);
         this.engine.camera.setRotation(this.controller.rotation);
+    }
+
+    checkUserTerrainCollision() {
+
+        let bottomCenter = this.user.position.getCopy();
+        bottomCenter[1] -= User.HEIGHT / 2;
+        let collidable = this.collidableManager.getCollidableOnYInterval(bottomCenter, bottomCenter[1] + User.HEIGHT);
+        if (collidable) {
+            let collisionPoint = collidable.getCollisionPoint(bottomCenter, User.BOTTOM_TO_TOP);
+            if (collisionPoint) {
+                this.user.position[1] = collisionPoint[1];
+            }
+        }
     }
 
     pause() {
