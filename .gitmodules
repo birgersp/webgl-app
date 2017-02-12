@@ -2,3 +2,7 @@
 	path = web/scripts/lib/includejs
 	url = git@github.com:birgersp/includejs.git
 	branch = master
+[submodule "web/binaries"]
+	path = web/binaries
+	url = git@bitbucket.org:birgersp/webgl-app-bin.git
+	branch = master
