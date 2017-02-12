@@ -73,6 +73,7 @@ class Vector3 extends Float32Array {
         let magnitude = this.getMagnitude();
         if (magnitude > 0)
             this.scale(1 / magnitude);
+        return this;
     }
 
     getMagnitude() {
