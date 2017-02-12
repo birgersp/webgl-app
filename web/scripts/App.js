@@ -58,6 +58,7 @@ class App {
 
     start() {
         let app = this;
+        app.controller.mode = Controller.moveMode.FREE;
         function renderLoop() {
             app.stepTime();
             app.engine.render();
@@ -124,14 +125,18 @@ class App {
         controlVelocity.scale(App.USER_SPEED);
 
         this.user.velocity[0] = controlVelocity[0];
-        this.user.velocity[1] += App.GRAVITY_STEP;
+        if (this.controller.mode === Controller.moveMode.FREE)
+            this.user.velocity[1] = controlVelocity[1];
+        else
+            this.user.velocity[1] += App.GRAVITY_STEP;
         this.user.velocity[2] = controlVelocity[2];
 
         this.user.position.add(this.user.velocity.times(App.TIME_STEP));
-        this.user.position[1] += this.user.velocity[1] * App.TIME_STEP + App.GRAVITY * (Math.pow(App.TIME_STEP, 2) / 2);
+        if (this.controller.mode !== Controller.moveMode.FREE)
+            this.user.position[1] += App.GRAVITY * (Math.pow(App.TIME_STEP, 2) / 2);
 
-        var bottomCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
-        var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
+        let bottomCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
+        let topCenter = this.user.position.plus(User.TOP_CENTER_POS);
 
         if (this.isBelowTerrain(bottomCenter) && !this.isBelowTerrain(topCenter)) {
             this.user.position[1] = -User.BOTTOM_CENTER_POS[1];
@@ -142,7 +147,6 @@ class App {
                 this.user.velocity[1] = 5;
         }
 
-        var topCenter = this.user.position.plus(User.TOP_CENTER_POS);
         this.engine.camera.setTranslation(topCenter);
         this.engine.camera.setRotation(this.controller.rotation);
     }
