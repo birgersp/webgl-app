@@ -23,6 +23,7 @@ CollidableFace = class extends Collidable {
         let vectorLength = vector.getMagnitude();
         let d = new Vector3(vector[0] / vectorLength, vector[1] / vectorLength, vector[2] / vectorLength);
 
+        let t = null;
         let t1 = getRayTriangleIntersection(this.topleft, this.bottomleft, this.topright, origin, d);
         let t2 = getRayTriangleIntersection(this.bottomright, this.topright, this.bottomleft, origin, d);
 
@@ -34,6 +35,10 @@ CollidableFace = class extends Collidable {
             if (t === null || t2 < t)
                 t = t2;
         }
-        return t;
+
+        if (t !== null) {
+            d.scale(t).add(origin);
+            return d;
+        }
     }
 };

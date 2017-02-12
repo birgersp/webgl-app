@@ -1,33 +1,35 @@
-class CollidableManager { 
+class CollidableManager {
 
     constructor() {
 
-        this.blocks = {};
+        this.collidables = {};
     }
 
     setCollidableYInterval(origin, endY, collidable) {
 
         let vector = origin.getCopy();
         for (let y = origin[1]; y < endY; y += 1) {
-            setCollidable(vector, collidable);
+            this.setCollidable(vector, collidable);
             vector[1] = y;
         }
         vector[1] = endY;
-        setCollidable(vector, collidable);
+        this.setCollidable(vector, collidable);
     }
 
-    getCollidabeYInterval(origin, endY) {
+    getCollidableOnYInterval(origin, endY) {
 
-        let collidables = [];
+        let collidable;
         let vector = origin.getCopy();
-        for (let y = origin[1]; y < endY; y += 1) {
-            collidables.push(getCollidable(vector));
+        for (let y = origin[1]; !collidable && y < endY; y += 1) {
+            collidable = this.getCollidable(vector);
             vector[1] = y;
         }
-        vector[1] = endY;
-        let lastCollidable = getCollidable(vector);
-        if (collidables.indexOf(lastCollidable) === -1)
-            collidables.push(lastCollidable);
+
+        if (!collidable) {
+            vector[1] = endY;
+            collidable = this.getCollidable(vector);
+        }
+        return collidable;
     }
 
     addCollidableFace(collidableFace) {
