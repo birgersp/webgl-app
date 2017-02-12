@@ -4,18 +4,20 @@ include("WebGLEngine");
 include("Controller");
 include("util/FileLoader");
 include("geometry/Collidable");
+include("CollidableManager");
 
 class App {
 
     constructor(gl) {
 
         this.controller = new Controller();
+        this.collidableManager = new CollidableManager();
 
         this.grassTexture = null;
-        this.collidables = {};
         this.user = new User();
-        this.user.position = new Vector3(0, 4, 5);
+        this.user.position = new Vector3(0, 0, 0);
         this.controller.rotation = new Vector3(0, 0, 0);
+        this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.loader = new FileLoader();
         this.paused = true;
@@ -33,7 +35,7 @@ class App {
         }
 
         // Load texture
-        var crateImageFile = loader.addImageFile("binaries/crate.jpg");
+//        var crateImageFile = loader.addImageFile("binaries/crate.jpg");
         var grassImageFile = loader.addImageFile("binaries/grass.jpg");
 
         let engine = this.engine;
@@ -44,12 +46,11 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.FSHADER].text
                     );
 
-            var cube = new Cube();
-            var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
-
-            var object1 = new WebGLEngine.Object(cube, crateTexture);
-            object1.transform.setTranslation(new Vector3(0, 0.5, 0));
-            engine.addObject(object1);
+//            var cube = new Cube();
+//            var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
+//            var object1 = new WebGLEngine.Object(cube, crateTexture);
+//            object1.transform.setTranslation(new Vector3(0, 0.5, 0));
+//            engine.addObject(object1);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
 
@@ -59,41 +60,12 @@ class App {
 
     start() {
         let app = this;
-        app.controller.mode = Controller.moveMode.FREE;
         function renderLoop() {
             app.stepTime();
             app.engine.render();
             setTimeout(renderLoop, App.TIME_STEP * 1000);
         }
         renderLoop();
-    }
-
-    setCollidable(coordinate, collidable, overwrite) {
-
-        let xIndex = Math.floor(coordinate[0]);
-        if (!this.collidables[xIndex])
-            this.collidables[xIndex] = {};
-
-        let yIndex = Math.floor(coordinate[1]);
-
-        if (!this.collidables[xIndex][yIndex])
-            this.collidables[xIndex][yIndex] = {};
-
-        let zIndex = Math.floor(coordinate[2]);
-        if (!this.collidables[xIndex][yIndex][zIndex] || overwrite)
-            this.collidables[xIndex][yIndex][zIndex] = collidable;
-    }
-
-    getCollidable(coordinate) {
-
-        let xIndex = Math.floor(coordinate[0]);
-        if (this.collidables[xIndex]) {
-            let yIndex = Math.floor(coordinate[1]);
-            if (this.collidables[xIndex][yIndex]) {
-                let zIndex = Math.floor(coordinate[2]);
-                return this.collidables[xIndex][yIndex][zIndex];
-            }
-        }
     }
 
     setTerrainMesh(coordinates) {
@@ -121,10 +93,7 @@ class App {
                     let bottomleft = coordinates[a];
                     let bottomright = coordinates[b];
                     let collidable = new CollidableFace(topleft, topright, bottomleft, bottomright);
-                    this.setCollidable(topleft, collidable);
-                    this.setCollidable(topright, collidable);
-                    this.setCollidable(bottomleft, collidable);
-                    this.setCollidable(bottomright, collidable);
+                    // TODO: Add collidable to collidable manager
                 }
 
                 let c = coordinates[vertexIndex];
@@ -137,29 +106,12 @@ class App {
         this.engine.addObject(terrainObject);
     }
 
-    isBelowTerrain(coordinate) {
-
-        let xIndex = Math.floor(coordinate[0]);
-        if (this.collidables[xIndex]) {
-            let zIndex = Math.floor(coordinate[2]);
-            let tc0 = this.collidables[xIndex][zIndex];
-            let tc1 = this.collidables[xIndex + 1][zIndex];
-            let tc2 = this.collidables[xIndex][zIndex + 1];
-            let tc3 = this.collidables[xIndex + 1][zIndex + 1];
-            let y = coordinate[1];
-            if (tc0 && tc1 && tc2 && tc3)
-                return (y < tc0[1] && y < tc1[1] && y < tc2[1] && y < tc3[1]);
-        }
-        return false;
-    }
-
     stepTime() {
 
+        // Check control input
         this.controller.update();
-
         let controlVelocity = this.controller.velocity.getCopy();
         controlVelocity.scale(App.USER_SPEED);
-
         this.user.velocity[0] = controlVelocity[0];
         if (this.controller.mode === Controller.moveMode.FREE)
             this.user.velocity[1] = controlVelocity[1];
@@ -167,18 +119,14 @@ class App {
             this.user.velocity[1] += App.GRAVITY_STEP;
         this.user.velocity[2] = controlVelocity[2];
 
+        // Set new position
         let dPosition = this.user.velocity.times(App.TIME_STEP);
-
         if (this.controller.mode !== Controller.moveMode.FREE)
             dPosition[1] += App.GRAVITY * (Math.pow(App.TIME_STEP, 2) / 2);
         this.user.position.add(dPosition);
 
-        let bottomCenter = this.user.position.plus(User.BOTTOM_CENTER_POS);
-        let topCenter = this.user.position.plus(User.TOP_CENTER_POS);
-
-        // TODO: Implemented collision
-
-        this.engine.camera.setTranslation(topCenter);
+        let newTopCenter = this.user.position.plus(User.TOP_CENTER_POS);
+        this.engine.camera.setTranslation(newTopCenter);
         this.engine.camera.setRotation(this.controller.rotation);
     }
 
