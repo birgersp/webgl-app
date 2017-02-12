@@ -5,6 +5,11 @@ class Vector3 extends Float32Array {
         return new Vector3(u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]);
     }
 
+    static getDotProduct(u, v) {
+
+        return u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+    }
+
     constructor(x, y, z) {
 
         x = x !== undefined ? x : 0;
