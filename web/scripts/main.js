@@ -88,12 +88,33 @@ function main() {
 
     // Demo
 
+    let noiseValues = {};
+    function getNoise(x, z) {
+
+        if (!noiseValues[x])
+            noiseValues[x] = {};
+
+        if (noiseValues[x][z] === undefined)
+            noiseValues[x][z] = Math.random() * 2 - 1;
+
+        return noiseValues[x][z];
+    }
+
+    let amplitude = 10;
+    function generateHeight(x, z) {
+        let corners = (getNoise(x + 1, z - 1) + getNoise(x - 1, z - 1) + getNoise(x - 1, z + 1) + getNoise(x + 1, z + 1)) / 16;
+        let sides = (getNoise(x - 1, z) + getNoise(x + 1, z) + getNoise(x, z + 1) + getNoise(x, z - 1)) / 8;
+        let center = getNoise(x,z) / 4;
+        return (corners + sides + center) * amplitude;
+    }
+
     function getTerrain(xOffset, zOffset, size) {
         let i = 0;
         let terrainCoordinates = new Array(Math.pow(size + 1, 2));
         for (let z = 0; z <= size; z++)
             for (let x = 0; x <= size; x++) {
                 let coordinate = new Vector3(xOffset + x - size / 2, 0, zOffset + z - size / 2);
+                coordinate[1] = generateHeight(coordinate[0], coordinate[2]);
                 terrainCoordinates[i++] = coordinate;
             }
         return terrainCoordinates;
