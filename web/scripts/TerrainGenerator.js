@@ -1,8 +1,15 @@
+/**
+ * Thanks to ThinMatrix for showing me how to do this
+ * https://www.facebook.com/thinmatrix
+ */
+
 class TerrainGenerator {
 
     constructor() {
 
         this.amplitude = 20;
+        this.octaves = 3;
+        this.roughness = 0.3;
         this.generatedNoise = {};
     }
 
@@ -51,9 +58,13 @@ class TerrainGenerator {
 
     generateY(x, z) {
 
-        let y = this.getInterpolatedNoise(x / 8, z / 8) * this.amplitude;
-        y += this.getInterpolatedNoise(x / 4, z / 4) * this.amplitude / 3;
-        y += this.getInterpolatedNoise(x / 2, z / 2) * this.amplitude / 9;
+        let y = 0;
+        let d = Math.pow(3, this.octaves - 1);
+        for (let i = 0; i < this.octaves; i++) {
+            let freq = Math.pow(2, i) / d;
+            let amp = Math.pow(this.roughness, i) * this.amplitude;
+            y += this.getInterpolatedNoise(x * freq, z * freq) * amp;
+        }
         return y;
     }
 
