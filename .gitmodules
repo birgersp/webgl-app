@@ -1,7 +1,3 @@
-[submodule "web/binaries"]
-	path = web/binaries
-	url = git@github.com:birgersp/webgl-bin.git
-	branch = master
 [submodule "web/scripts/lib/includejs"]
 	path = web/scripts/lib/includejs
 	url = git@github.com:birgersp/includejs.git
