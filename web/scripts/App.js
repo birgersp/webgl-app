@@ -85,15 +85,18 @@ class App {
                 let normalVectorBuilder = new NormalVectorBuilder(coordinates[coordinateIndex]);
 
                 let underNeighbourI;
+                let underNeighbour;
                 if (j > 0) {
                     underNeighbourI = coordinateIndex - size;
-                    normalVectorBuilder.addBottomNeighbour(coordinates[underNeighbourI]);
+                    underNeighbour = coordinates[underNeighbourI];
+                    normalVectorBuilder.addBottomNeighbour(underNeighbour);
                 }
 
                 if (i > 0) {
 
                     let leftNeighbourI = coordinateIndex - 1;
                     let leftNeighbour = coordinates[leftNeighbourI];
+                    normalVectorBuilder.addLeftNeighbour(leftNeighbour);
 
                     if (j > 0) {
 
@@ -104,16 +107,15 @@ class App {
                         // Compute collidable terrain faces
                         let topright = coordinates[coordinateIndex];
                         let bottomleft = coordinates[bottomLeftNeighbourI];
-                        let bottomright = coordinates[underNeighbourI];
-                        let gridCell = new TerrainGridCell(leftNeighbour, topright, bottomleft, bottomright);
+                        let gridCell = new TerrainGridCell(leftNeighbour, topright, bottomleft, underNeighbour);
                         this.terrainManager.addGridCell(gridCell);
                     }
                 }
 
                 if (i < size - 1)
-                    normalVectorBuilder.addBottomNeighbour(coordinates[coordinateIndex + 1]);
+                    normalVectorBuilder.addRightNeighbour(coordinates[coordinateIndex + 1]);
                 if (j < size - 1)
-                    normalVectorBuilder.addBottomNeighbour(coordinates[coordinateIndex + size]);
+                    normalVectorBuilder.addTopNeighbour(coordinates[coordinateIndex + size]);
 
                 let c = coordinates[coordinateIndex];
                 let n = normalVectorBuilder.getNormalVector();

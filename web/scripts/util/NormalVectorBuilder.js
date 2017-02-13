@@ -22,25 +22,29 @@ class NormalVectorBuilder {
 
     addRightNeighbour(coordinate) {
 
-        this.neighboursSummed.add(NormalVectorBuilder.rotateVector90DegZ(coordinate.minus(this.origin).normalize()));
+        let rightNormal = NormalVectorBuilder.rotateVector90DegZ(coordinate.minus(this.origin).normalize());
+        this.neighboursSummed.add(rightNormal);
         this.neighbours++;
     }
 
     addLeftNeighbour(coordinate) {
 
-        this.neighboursSummed.add(NormalVectorBuilder.rotateVector90DegZ(coordinate.minus(this.origin).normalize(), -1));
+        let leftNormal = NormalVectorBuilder.rotateVector90DegZ(coordinate.minus(this.origin).normalize(), -1);
+        this.neighboursSummed.add(leftNormal);
         this.neighbours++;
     }
 
     addTopNeighbour(coordinate) {
 
-        this.neighboursSummed.add(NormalVectorBuilder.rotateVector90DegX(coordinate.minus(this.origin).normalize()));
+        let topNormal = NormalVectorBuilder.rotateVector90DegX(coordinate.minus(this.origin).normalize());
+        this.neighboursSummed.add(topNormal);
         this.neighbours++;
     }
 
     addBottomNeighbour(coordinate) {
 
-        this.neighboursSummed.add(NormalVectorBuilder.rotateVector90DegX(coordinate.minus(this.origin).normalize(), -1));
+        let bottomNormal = NormalVectorBuilder.rotateVector90DegX(coordinate.minus(this.origin).normalize(), -1);
+        this.neighboursSummed.add(bottomNormal);
         this.neighbours++;
     }
 
