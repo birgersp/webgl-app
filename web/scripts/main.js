@@ -7,7 +7,6 @@ include("geometry/Vector3");
 include("App");
 
 include("util/FileLoader");
-include("geometry/GeometryBuilder");
 include("TerrainGenerator");
 
 function main() {
