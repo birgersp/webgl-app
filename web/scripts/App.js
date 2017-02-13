@@ -4,14 +4,14 @@ include("WebGLEngine");
 include("Controller");
 include("util/FileLoader");
 include("geometry/Collidable");
-include("CollidableManager");
+include("TerrainManager");
 
 class App {
 
     constructor(gl) {
 
         this.controller = new Controller();
-        this.collidableManager = new CollidableManager();
+        this.terrainManager = new TerrainManager();
 
         this.grassTexture = null;
         this.user = new User();
@@ -93,7 +93,7 @@ class App {
                     let bottomleft = coordinates[a];
                     let bottomright = coordinates[b];
                     let collidable = new CollidableFace(topleft, topright, bottomleft, bottomright);
-                    this.collidableManager.addCollidableFace(collidable);
+                    this.terrainManager.addCollidableFace(collidable);
                 }
 
                 let c = coordinates[vertexIndex];
@@ -126,7 +126,7 @@ class App {
         this.user.position.add(dPosition);
 
         // Check collision
-        let collidable = this.collidableManager.getCollidableOnYInterval(this.user.position, this.user.position[1] + User.HEIGHT);
+        let collidable = this.terrainManager.getCollidableOnYInterval(this.user.position, this.user.position[1] + User.HEIGHT);
         if (collidable) {
             let collisionPoint = collidable.getCollisionPoint(this.user.position, User.BOTTOM_TO_TOP);
             if (collisionPoint) {

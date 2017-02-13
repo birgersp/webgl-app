@@ -1,4 +1,4 @@
-class CollidableManager {
+class TerrainManager {
 
     constructor() {
 
