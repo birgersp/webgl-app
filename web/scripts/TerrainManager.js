@@ -32,11 +32,37 @@ class TerrainManager {
         return collidable;
     }
 
-    addCollidableFace(collidableFace) {
+    getTerrainIntersectionY(origin, dY) {
 
-        this.setCollidableYInterval(collidableFace.bottomleft, collidableFace.bottomright[1], collidableFace);
-        this.setCollidableYInterval(collidableFace.bottomleft, collidableFace.topleft[1], collidableFace);
-        this.setCollidableYInterval(collidableFace.bottomleft, collidableFace.topright[1], collidableFace);
+        let collidable;
+        let vector = origin.getCopy();
+        let endY = origin[1] + dY;
+
+        while (!collidable && vector[1] < endY) {
+            collidable = this.getCollidable(vector);
+            vector[1]++;
+        }
+
+        if (!collidable) {
+            vector[1] = endY;
+            collidable = this.getCollidable(vector);
+        }
+
+        if (collidable) {
+            let intersectionY = collidable.getY(origin[0], origin[2]);
+            if (intersectionY >= origin[1] && intersectionY <= endY)
+                return intersectionY;
+        }
+
+        return null;
+    }
+
+    addGridCell(gridCell) {
+
+        this.setCollidableYInterval(gridCell.bottomleft, gridCell.bottomright[1], gridCell);
+        this.setCollidableYInterval(gridCell.bottomleft, gridCell.topleft[1], gridCell);
+        this.setCollidableYInterval(gridCell.bottomleft, gridCell.topright[1], gridCell);
+
     }
 
     setCollidable(coordinate, collidable, overwrite) {

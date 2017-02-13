@@ -3,8 +3,8 @@ include("User");
 include("WebGLEngine");
 include("Controller");
 include("util/FileLoader");
-include("geometry/Collidable");
 include("TerrainManager");
+include("geometry/TerrainGridCell");
 
 class App {
 
@@ -92,8 +92,8 @@ class App {
                     let topright = coordinates[vertexIndex];
                     let bottomleft = coordinates[a];
                     let bottomright = coordinates[b];
-                    let collidable = new CollidableFace(topleft, topright, bottomleft, bottomright);
-                    this.terrainManager.addCollidableFace(collidable);
+                    let gridCell = new TerrainGridCell(topleft, topright, bottomleft, bottomright);
+                    this.terrainManager.addGridCell(gridCell);
                 }
 
                 let c = coordinates[vertexIndex];
@@ -126,16 +126,13 @@ class App {
         this.user.position.add(dPosition);
 
         // Check collision
-        let collidable = this.terrainManager.getCollidableOnYInterval(this.user.position, this.user.position[1] + User.HEIGHT);
-        if (collidable) {
-            let collisionPoint = collidable.getCollisionPoint(this.user.position, User.BOTTOM_TO_TOP);
-            if (collisionPoint) {
-                this.user.position[1] = collisionPoint[1];
-                if (this.controller.mode !== Controller.moveMode.FREE) {
-                    this.user.velocity[1] = 0;
-                    if (this.controller.keysDown[Controller.keys.SPACE])
-                        this.user.velocity[1] = 10;
-                }
+        let terrainUserCollisionY = this.terrainManager.getTerrainIntersectionY(this.user.position, User.HEIGHT);
+        if (terrainUserCollisionY !== null) {
+            this.user.position[1] = terrainUserCollisionY;
+            if (this.controller.mode !== Controller.moveMode.FREE) {
+                this.user.velocity[1] = 0;
+                if (this.controller.keysDown[Controller.keys.SPACE])
+                    this.user.velocity[1] = 10;
             }
         }
 
