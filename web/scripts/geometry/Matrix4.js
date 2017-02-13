@@ -13,6 +13,23 @@ class Matrix4 extends Float32Array {
     }
 
     /**
+     * @param {Number} rX
+     * @param {Number} rY
+     * @param {Number} rZ
+     * @returns {Matrix4}
+     */
+    static rotationXYZ(rX, rY, rZ) {
+        let matrix = new Matrix4();
+        matrix.set([
+            cos(rY) * cos(rZ), cos(rX) * sin(rZ) + cos(rZ) * sin(rX) * sin(rY), sin(rX) * sin(rZ) - cos(rX) * cos(rZ) * sin(rY), 0,
+            -cos(rY) * sin(rZ), cos(rX) * cos(rZ) - sin(rX) * sin(rY) * sin(rZ), cos(rZ) * sin(rX) + cos(rX) * sin(rY) * sin(rZ), 0,
+            sin(rY), -cos(rY) * sin(rX), cos(rX) * cos(rY), 0,
+            0, 0, 0, 1
+        ]);
+        return matrix;
+    }
+
+    /**
      * 
      * @returns {Matrix4}
      */

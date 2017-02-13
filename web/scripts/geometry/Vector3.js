@@ -80,6 +80,13 @@ class Vector3 extends Float32Array {
         return this;
     }
 
+    normalized() {
+
+        let result = this.getCopy();
+        result.normalize();
+        return result;
+    }
+
     getMagnitude() {
 
         return Math.sqrt(this[0] * this[0] + this[1] * this[1] + this[2] * this[2]);
