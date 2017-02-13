@@ -17,7 +17,7 @@ class App {
         this.user = new User();
         this.user.position = new Vector3(0, 0, 0);
         this.controller.rotation = new Vector3(0, 0, 0);
-        this.controller.mode = Controller.moveMode.FREE;
+//        this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.loader = new FileLoader();
         this.paused = true;
@@ -126,24 +126,23 @@ class App {
         this.user.position.add(dPosition);
 
         // Check collision
-        this.checkUserTerrainCollision();
-
-        let newTopCenter = this.user.position.plus(User.TOP_CENTER_POS);
-        this.engine.camera.setTranslation(newTopCenter);
-        this.engine.camera.setRotation(this.controller.rotation);
-    }
-
-    checkUserTerrainCollision() {
-
-        let bottomCenter = this.user.position.getCopy();
-        bottomCenter[1] -= User.HEIGHT / 2;
-        let collidable = this.collidableManager.getCollidableOnYInterval(bottomCenter, bottomCenter[1] + User.HEIGHT);
+        let collidable = this.collidableManager.getCollidableOnYInterval(this.user.position, this.user.position[1] + User.HEIGHT);
         if (collidable) {
-            let collisionPoint = collidable.getCollisionPoint(bottomCenter, User.BOTTOM_TO_TOP);
+            let collisionPoint = collidable.getCollisionPoint(this.user.position, User.BOTTOM_TO_TOP);
             if (collisionPoint) {
                 this.user.position[1] = collisionPoint[1];
+                if (this.controller.mode !== Controller.moveMode.FREE) {
+                    this.user.velocity[1] = 0;
+                    if (this.controller.keysDown[" "])
+                        this.user.velocity[1] = 10;
+                }
             }
         }
+
+        let newTopCenter = this.user.position.getCopy();
+        newTopCenter[1] += User.HEIGHT;
+        this.engine.camera.setTranslation(newTopCenter);
+        this.engine.camera.setRotation(this.controller.rotation);
     }
 
     pause() {
@@ -160,7 +159,7 @@ class App {
 }
 
 App.GRAVITY = -9.81;
-App.TIME_STEP = 1 / 60;
+App.TIME_STEP = 1 / 30;
 App.GRAVITY_STEP = App.GRAVITY * App.TIME_STEP;
 App.USER_SPEED = 5;
 
