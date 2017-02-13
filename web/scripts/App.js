@@ -133,7 +133,7 @@ class App {
                 this.user.position[1] = collisionPoint[1];
                 if (this.controller.mode !== Controller.moveMode.FREE) {
                     this.user.velocity[1] = 0;
-                    if (this.controller.keysDown[" "])
+                    if (this.controller.keysDown[Controller.keys.SPACE])
                         this.user.velocity[1] = 10;
                 }
             }

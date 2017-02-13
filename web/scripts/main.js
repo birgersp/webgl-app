@@ -60,10 +60,10 @@ function main() {
 
     }, false);
     document.addEventListener("keydown", function(evt) {
-        app.controller.keyDown(evt.key.toLowerCase());
+        app.controller.keyDown(evt.keyCode);
     }, false);
     document.addEventListener("keyup", function(evt) {
-        app.controller.keyUp(evt.key.toLowerCase());
+        app.controller.keyUp(evt.keyCode);
     }, false);
 
     canvas.requestPointerLock = canvas.requestPointerLock ||

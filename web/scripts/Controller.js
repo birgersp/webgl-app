@@ -27,7 +27,7 @@ class Controller {
         if (this.enabled) {
 
             this.velocity = new Vector3();
-            if (this.keysDown.w) {
+            if (this.keysDown[Controller.keys.W]) {
                 var headingPitch = this.rotation[0];
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
@@ -38,7 +38,7 @@ class Controller {
                     vector[1] = Math.sin(headingPitch);
                 this.velocity.add(vector);
             } else
-            if (this.keysDown.s) {
+            if (this.keysDown[Controller.keys.S]) {
                 var headingPitch = this.rotation[0];
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
@@ -51,7 +51,7 @@ class Controller {
                 this.velocity.add(vector);
             }
 
-            if (this.keysDown.a) {
+            if (this.keysDown[Controller.keys.A]) {
                 var headingYaw = this.rotation[1] + Math.PI / 2;
                 var vector = new Vector3(
                         -Math.sin(headingYaw),
@@ -59,7 +59,7 @@ class Controller {
                         -Math.cos(headingYaw));
                 this.velocity.add(vector);
             } else
-            if (this.keysDown.d) {
+            if (this.keysDown[Controller.keys.D]) {
                 var headingYaw = this.rotation[1] - Math.PI / 2;
                 var vector = new Vector3(
                         -Math.sin(headingYaw),
@@ -69,7 +69,7 @@ class Controller {
             }
 
             this.velocity.normalize();
-            if (this.keysDown.shift)
+            if (this.keysDown[Controller.keys.SHIFT])
                 this.velocity.scale(0.5);
         }
     }
@@ -120,4 +120,13 @@ Controller.MIN_X_ROTATION = -Math.PI / 2 + 1 / 1000000;
 Controller.moveMode = {
     XZ_PLANE: 0,
     FREE: 1
+};
+
+Controller.keys = {
+    W: 87,
+    A: 65,
+    S: 83,
+    D: 68,
+    SHIFT: 16,
+    SPACE: 32
 };
