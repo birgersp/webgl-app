@@ -116,13 +116,13 @@ class App {
         if (this.controller.mode === Controller.moveMode.FREE)
             this.user.velocity[1] = controlVelocity[1];
         else
-            this.user.velocity[1] += App.GRAVITY_STEP;
+            this.user.velocity[1] += App.GRAVITY_STEP_VEL_Y;
         this.user.velocity[2] = controlVelocity[2];
 
         // Set new position
         let dPosition = this.user.velocity.times(App.TIME_STEP);
         if (this.controller.mode !== Controller.moveMode.FREE)
-            dPosition[1] += App.GRAVITY * (Math.pow(App.TIME_STEP, 2) / 2);
+            dPosition[1] += App.GRAVITY_STEP_POS_Y;
         this.user.position.add(dPosition);
 
         // Check collision
@@ -158,9 +158,10 @@ class App {
     }
 }
 
-App.GRAVITY = -9.81;
-App.TIME_STEP = 1 / 30;
-App.GRAVITY_STEP = App.GRAVITY * App.TIME_STEP;
+App.GRAVITY_Y = -9.81;
+App.TIME_STEP = 1 / 60;
+App.GRAVITY_STEP_POS_Y = App.GRAVITY_Y * Math.pow(App.TIME_STEP, 2) / 2;
+App.GRAVITY_STEP_VEL_Y = App.GRAVITY_Y * App.TIME_STEP;
 App.USER_SPEED = 5;
 
 App.SHADER_FILENAMES = {

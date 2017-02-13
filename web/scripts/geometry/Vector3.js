@@ -39,8 +39,7 @@ class Vector3 extends Float32Array {
 
     times(factor) {
 
-        let result = new Vector3();
-        result.set(this);
+        let result = new Vector3(this[0], this[1], this[2]);
         result.scale(factor);
         return result;
     }
