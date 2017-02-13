@@ -35,7 +35,7 @@ class App {
         }
 
         // Load texture
-//        var crateImageFile = loader.addImageFile("binaries/crate.jpg");
+        var crateImageFile = loader.addImageFile("binaries/crate.jpg");
         var grassImageFile = loader.addImageFile("binaries/grass.jpg");
 
         let engine = this.engine;
@@ -53,6 +53,7 @@ class App {
 //            engine.addObject(object1);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
+            app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
 
             onloaded();
         });
