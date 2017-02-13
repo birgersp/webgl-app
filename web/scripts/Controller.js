@@ -8,6 +8,8 @@ class Controller {
         this.velocity = new Vector3();
         this.rotation = new Vector3();
         this.mode = Controller.XZ_PLANE;
+        this.rotationSensitivity = 1 / 50;
+        this.mouseSensitivity = 1 / 20;
     }
 
     enable() {
@@ -71,6 +73,18 @@ class Controller {
             this.velocity.normalize();
             if (this.keysDown[Controller.keys.SHIFT])
                 this.velocity.scale(0.5);
+
+            if (this.keysDown[Controller.keys.LEFT])
+                this.rotate(0, 1);
+            else if (this.keysDown[Controller.keys.RIGHT])
+                this.rotate(0, -1);
+
+            if (this.keysDown[Controller.keys.UP])
+                this.rotate(1, 0);
+            else
+            if (this.keysDown[Controller.keys.DOWN])
+                this.rotate(-1, 0);
+
         }
     }
 
@@ -82,6 +96,26 @@ class Controller {
     keyUp(key) {
 
         this.keysDown[key] = false;
+    }
+
+    rotate(x, y) {
+
+        this.rotation[0] += x * this.rotationSensitivity;
+        this.rotation[1] += y * this.rotationSensitivity;
+
+        if (this.rotation[0] > Math.PI / 2) {
+            this.rotation[0] = Math.PI / 2;
+        } else
+        if (this.rotation[0] < Controller.MIN_X_ROTATION) {
+            this.rotation[0] = Controller.MIN_X_ROTATION;
+        }
+
+        if (this.rotation[1] > Math.PI) {
+            this.rotation[1] -= Math.PI * 2;
+        } else
+        if (this.rotation[1] < -Math.PI) {
+            this.rotation[1] += Math.PI * 2;
+        }
     }
 
     mouseMoved(x, y) {
@@ -96,22 +130,7 @@ class Controller {
             else if (y < -this.maxMouseMoveCoordinate)
                 y = -this.maxMouseMoveCoordinate;
 
-            this.rotation[0] -= y / 1000;
-            this.rotation[1] -= x / 1000;
-
-            if (this.rotation[0] > Math.PI / 2) {
-                this.rotation[0] = Math.PI / 2;
-            } else
-            if (this.rotation[0] < Controller.MIN_X_ROTATION) {
-                this.rotation[0] = Controller.MIN_X_ROTATION;
-            }
-
-            if (this.rotation[1] > Math.PI) {
-                this.rotation[1] -= Math.PI * 2;
-            } else
-            if (this.rotation[1] < -Math.PI) {
-                this.rotation[1] += Math.PI * 2;
-            }
+            this.rotate(-y * this.mouseSensitivity, -x * this.mouseSensitivity);
         }
     }
 }
@@ -128,5 +147,9 @@ Controller.keys = {
     S: 83,
     D: 68,
     SHIFT: 16,
-    SPACE: 32
+    SPACE: 32,
+    LEFT: 37,
+    RIGHT: 39,
+    UP: 38,
+    DOWN: 40
 };
