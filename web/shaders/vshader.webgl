@@ -2,11 +2,14 @@ uniform mat4 projectionView;
 uniform mat4 transform;
 
 attribute vec3 position;
+attribute vec3 normal;
 attribute vec2 textureCoord;
 
 varying vec2 vTextureCoord;
+varying float normalPhi;
 void main() {
     
     gl_Position = projectionView * transform * vec4(position, 1);
     vTextureCoord = textureCoord;
+    normalPhi = dot(normal, vec3(0, 1, 0)) / 2.0 + 0.5;
 }

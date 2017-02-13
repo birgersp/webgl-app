@@ -50,6 +50,7 @@ class WebGLEngine {
 
         // Set vertex attribute pointer for position
         this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
+        this.normalAttribL = this.gl.getAttribLocation(shaderProgram, "normal");
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
         this.transformUniformL = this.gl.getUniformLocation(shaderProgram, "transform");
         this.samplerUniformL = this.gl.getUniformLocation(shaderProgram, "sampler");
@@ -81,7 +82,9 @@ class WebGLEngine {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
             this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 0);
             this.gl.enableVertexAttribArray(this.positionAttribL);
-            this.gl.vertexAttribPointer(this.textureCoordinateAttribL, 2, this.gl.FLOAT, false, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
+            this.gl.vertexAttribPointer(this.normalAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
+            this.gl.enableVertexAttribArray(this.positionAttribL);
+            this.gl.vertexAttribPointer(this.textureCoordinateAttribL, 2, this.gl.FLOAT, false, Vertex.SIZE, 6 * Vertex.BYTES_PER_ELEMENT);
             this.gl.enableVertexAttribArray(this.textureCoordinateAttribL);
             this.lastBoundGeometry = bufferedGeometry;
         }

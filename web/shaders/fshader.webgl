@@ -4,6 +4,7 @@ uniform bool useColor;
 uniform sampler2D sampler;
 
 varying vec2 vTextureCoord;
+varying float normalPhi;
 void main() {
 
     if (useColor == true) {

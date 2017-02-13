@@ -5,6 +5,7 @@ include("Controller");
 include("util/FileLoader");
 include("TerrainManager");
 include("geometry/TerrainGridCell");
+include("util/NormalVectorBuilder");
 
 class App {
 
@@ -17,7 +18,7 @@ class App {
         this.user = new User();
         this.user.position = new Vector3(0, 11, 0);
         this.controller.rotation = new Vector3(0, 0, 0);
-//        this.controller.mode = Controller.moveMode.FREE;
+        this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.loader = new FileLoader();
         this.paused = true;
@@ -76,30 +77,48 @@ class App {
         let vertices = new Float32Array(coordinates.length * Vertex.LENGTH);
         let indices = new Uint16Array(Math.pow(size - 1, 2) * 6);
 
-        let vertexIndex = 0;
+        let coordinateIndex = 0;
         let indexIndex = 0;
         for (let j = 0; j < size; j++)
             for (let i = 0; i < size; i++) {
-                if (i > 0 && j > 0) {
 
-                    // Compute indices
-                    let a = vertexIndex - size - 1;
-                    let b = a + 1;
-                    let c = vertexIndex - 1;
-                    indices.set([a, vertexIndex, b, a, c, vertexIndex], indexIndex++ * 6);
+                let normalVectorBuilder = new NormalVectorBuilder(coordinates[coordinateIndex]);
 
-                    // Compute collidable terrain faces
-                    let topleft = coordinates[c];
-                    let topright = coordinates[vertexIndex];
-                    let bottomleft = coordinates[a];
-                    let bottomright = coordinates[b];
-                    let gridCell = new TerrainGridCell(topleft, topright, bottomleft, bottomright);
-                    this.terrainManager.addGridCell(gridCell);
+                let underNeighbourI;
+                if (j > 0) {
+                    underNeighbourI = coordinateIndex - size;
+                    normalVectorBuilder.addBottomNeighbour(coordinates[underNeighbourI]);
                 }
 
-                let c = coordinates[vertexIndex];
-                let vertex = new Vertex(c[0], c[1], c[2], i / 4, j / 4);
-                vertices.set(vertex, vertexIndex++ * Vertex.LENGTH);
+                if (i > 0) {
+
+                    let leftNeighbourI = coordinateIndex - 1;
+                    let leftNeighbour = coordinates[leftNeighbourI];
+
+                    if (j > 0) {
+
+                        // Compute indices
+                        let bottomLeftNeighbourI = coordinateIndex - size - 1;
+                        indices.set([bottomLeftNeighbourI, coordinateIndex, underNeighbourI, bottomLeftNeighbourI, leftNeighbourI, coordinateIndex], indexIndex++ * 6);
+
+                        // Compute collidable terrain faces
+                        let topright = coordinates[coordinateIndex];
+                        let bottomleft = coordinates[bottomLeftNeighbourI];
+                        let bottomright = coordinates[underNeighbourI];
+                        let gridCell = new TerrainGridCell(leftNeighbour, topright, bottomleft, bottomright);
+                        this.terrainManager.addGridCell(gridCell);
+                    }
+                }
+
+                if (i < size - 1)
+                    normalVectorBuilder.addBottomNeighbour(coordinates[coordinateIndex + 1]);
+                if (j < size - 1)
+                    normalVectorBuilder.addBottomNeighbour(coordinates[coordinateIndex + size]);
+
+                let c = coordinates[coordinateIndex];
+                let n = normalVectorBuilder.getNormalVector();
+                let vertex = new Vertex(c[0], c[1], c[2], n[0], n[1], n[2], i / 4, j / 4);
+                vertices.set(vertex, coordinateIndex++ * Vertex.LENGTH);
             }
 
         let geometry = new WebGLEngine.Geometry(vertices, indices);
@@ -160,7 +179,7 @@ App.GRAVITY_Y = -9.81;
 App.TIME_STEP = 1 / 60;
 App.GRAVITY_STEP_POS_Y = App.GRAVITY_Y * Math.pow(App.TIME_STEP, 2) / 2;
 App.GRAVITY_STEP_VEL_Y = App.GRAVITY_Y * App.TIME_STEP;
-App.USER_SPEED = 5;
+App.USER_SPEED = 7.5;
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
