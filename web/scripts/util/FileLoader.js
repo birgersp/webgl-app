@@ -1,3 +1,8 @@
+/**
+ * FileLoader
+ * By Birger Skogeng Pedersen (birgersp)
+ */
+
 class FileLoader {
 
     constructor() {
@@ -6,7 +11,6 @@ class FileLoader {
     }
 
     /**
-     *
      * @param {String} filename
      * @return {FileLoader.Text}
      */
@@ -18,7 +22,6 @@ class FileLoader {
     }
 
     /**
-     *
      * @param {String} filename
      * @return {FileLoader.Image}
      */
@@ -40,7 +43,7 @@ class FileLoader {
         var path = origin.substring(0, origin.lastIndexOf("/") + 1);
         var fullUrl = path + name;
         request.open('GET', fullUrl);
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 if (request.status === 200 || request.status === 'OK') {
                     callback(request.responseText);
@@ -66,16 +69,16 @@ class FileLoader {
             if (index < files.length) {
                 var file = files[index];
                 if (file instanceof FileLoader.Text) {
-                    loader.loadFile(file.name, function(text) {
+                    loader.loadFile(file.name, function (text) {
                         file.text = text;
                         loadFileLoop();
                     });
                 } else
                 if (file instanceof FileLoader.Image) {
-                    file.image.onload = function() {
+                    file.image.onload = function () {
                         loadFileLoop();
                     };
-                    file.image.onerror = function() {
+                    file.image.onerror = function () {
                         loader.throwFileNotFoundError(file.name);
                     };
                     file.image.src = file.name;
@@ -97,6 +100,9 @@ class FileLoader {
 
 FileLoader.File = class {
 
+    /**
+     * @param {String} name
+     */
     constructor(name) {
 
         this.name = name;
@@ -113,6 +119,9 @@ FileLoader.Image = class extends FileLoader.File {
      * @member {Image} image
      */
 
+    /**
+     * @param {String} name
+     */
     constructor(name) {
 
         super(name);
