@@ -8,20 +8,9 @@ class TerrainGridCell {
         this.bottomright = bottomright;
 
         this.xySlopeTop = (topright[1] - topleft[1]) / (topright[0] - topleft[0]);
-        if (!isFinite(this.xySlopeTop))
-            this.xySlopeTop = 0;
-
         this.zySlopeLeft = (topleft[1] - bottomleft[1]) / (topleft[2] - bottomleft[2]);
-        if (!isFinite(this.zySlopeLeft))
-            this.zySlopeLeft = 0;
-
         this.xySlopeBottom = (bottomright[1] - bottomleft[1]) / (bottomright[0] - bottomleft[0]);
-        if (!isFinite(this.xySlopeBottom))
-            this.xySlopeBottom = 0;
-
         this.zySlopeRight = (topright[1] - bottomright[1]) / (topright[2] - bottomright[2]);
-        if (!isFinite(this.zySlopeRight))
-            this.zySlopeRight = 0;
     }
 
     getY(x, z) {
