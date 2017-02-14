@@ -74,26 +74,26 @@ class App {
 
         let coordinateIndex = 0;
         let indexIndex = 0;
-        for (let j = 0; j < size; j++)
-            for (let i = 0; i < size; i++) {
+        for (let sectionJ = 0; sectionJ < size; sectionJ++)
+            for (let sectionI = 0; sectionI < size; sectionI++) {
 
-                let normalVectorBuilder = new NormalVectorBuilder(coordinates[coordinateIndex]);
-
+                let heightBottom = 0;
                 let underNeighbourI;
                 let underNeighbour;
-                if (j > 0) {
+                if (sectionJ > 0) {
                     underNeighbourI = coordinateIndex - size;
                     underNeighbour = coordinates[underNeighbourI];
-                    normalVectorBuilder.addBottomNeighbour(underNeighbour);
+                    heightBottom = underNeighbour[1];
                 }
 
-                if (i > 0) {
+                let heightLeft = 0;
+                if (sectionI > 0) {
 
                     let leftNeighbourI = coordinateIndex - 1;
                     let leftNeighbour = coordinates[leftNeighbourI];
-                    normalVectorBuilder.addLeftNeighbour(leftNeighbour);
+                    heightLeft = leftNeighbour[1];
 
-                    if (j > 0) {
+                    if (sectionJ > 0) {
 
                         // Compute indices
                         let bottomLeftNeighbourI = coordinateIndex - size - 1;
@@ -107,14 +107,16 @@ class App {
                     }
                 }
 
-                if (i < size - 1)
-                    normalVectorBuilder.addRightNeighbour(coordinates[coordinateIndex + 1]);
-                if (j < size - 1)
-                    normalVectorBuilder.addTopNeighbour(coordinates[coordinateIndex + size]);
+                let heightRight = 0;
+                if (sectionI < size - 1)
+                    heightRight = coordinates[coordinateIndex + 1][1];
+                let heightTop = 0;
+                if (sectionJ < size - 1)
+                    heightTop = coordinates[coordinateIndex + size][1];
 
                 let c = coordinates[coordinateIndex];
-                let n = normalVectorBuilder.getNormalVector();
-                let vertex = new Vertex(c[0], c[1], c[2], n[0], n[1], n[2], i / 4, j / 4);
+                let n = new Vector3(heightLeft-heightRight, 2, heightBottom - heightTop).normalize();
+                let vertex = new Vertex(c[0], c[1], c[2], n[0], n[1], n[2], sectionI / 4, sectionJ / 4);
                 vertices.set(vertex, coordinateIndex++ * Vertex.LENGTH);
             }
 
