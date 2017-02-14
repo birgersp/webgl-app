@@ -70,9 +70,9 @@ class TerrainGenerator {
 
     getTerrainCoordinates(xOffset, zOffset, size) {
         let i = 0;
-        let terrainCoordinates = new Array(Math.pow(size + 1, 2));
-        for (let z = 0; z <= size; z++)
-            for (let x = 0; x <= size; x++) {
+        let terrainCoordinates = new Array(Math.pow(size, 2));
+        for (let z = 0; z < size; z++)
+            for (let x = 0; x < size; x++) {
                 let coordinate = new Vector3(xOffset + x, 0, zOffset + z);
                 coordinate[1] = this.generateY(coordinate[0], coordinate[2]);
                 terrainCoordinates[i++] = coordinate;
