@@ -16,11 +16,10 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(5, 0, 5);
-        this.controller.rotation = new Vector3(-0.4, 0.3, 0);
+        this.user.position = new Vector3(0, 5, 0);
+        this.controller.rotation = new Vector3(-Math.PI / 2, 0, 0);
         this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
-        this.loader = new FileLoader();
         this.paused = true;
     }
 
@@ -55,6 +54,7 @@ class App {
     }
 
     start(frameCallback) {
+        frameCallback = frameCallback !== undefined ? frameCallback : function() {};
         let app = this;
         function renderLoop() {
             app.stepTime();
