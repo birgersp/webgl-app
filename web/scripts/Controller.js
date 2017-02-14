@@ -4,10 +4,11 @@ class Controller {
 
         this.enabled = false;
         this.keysDown = {};
+        this.keyDownEvents = {};
         this.maxMouseMoveCoordinate = 50;
         this.velocity = new Vector3();
         this.rotation = new Vector3();
-        this.mode = Controller.XZ_PLANE;
+        this.mode = Controller.moveMode.XZ_PLANE;
         this.rotationSensitivity = 1 / 50;
         this.mouseSensitivity = 1 / 20;
     }
@@ -91,6 +92,8 @@ class Controller {
     keyDown(key) {
 
         this.keysDown[key] = true;
+        if (this.keyDownEvents[key])
+            this.keyDownEvents[key]();
     }
 
     keyUp(key) {
@@ -133,6 +136,11 @@ class Controller {
             this.rotate(-y * this.mouseSensitivity, -x * this.mouseSensitivity);
         }
     }
+
+    addKeyDownEvent(keyCode, event) {
+
+        this.keyDownEvents[keyCode] = event;
+    }
 }
 
 Controller.MIN_X_ROTATION = -Math.PI / 2 + 1 / 1000000;
@@ -151,5 +159,6 @@ Controller.keys = {
     LEFT: 37,
     RIGHT: 39,
     UP: 38,
-    DOWN: 40
+    DOWN: 40,
+    ENTER: 13
 };

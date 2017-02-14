@@ -5,7 +5,6 @@ include("Controller");
 include("util/FileLoader");
 include("TerrainManager");
 include("geometry/TerrainGridCell");
-include("util/NormalVectorBuilder");
 
 class App {
 
@@ -16,11 +15,27 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(0, 5, 0);
+        this.user.position = new Vector3(0, 15, 0);
+        this.userOnGround = false;
 //        this.controller.rotation = new Vector3(-Math.PI / 2, 0, 0);
         this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.paused = true;
+
+        let app = this;
+        this.controller.addKeyDownEvent(Controller.keys.ENTER, function() {
+
+            if (app.controller.mode !== Controller.moveMode.FREE)
+                app.controller.mode = Controller.moveMode.FREE;
+            else if (app.controller.mode !== Controller.moveMode.XZ_PLANE)
+                app.controller.mode = Controller.moveMode.XZ_PLANE;
+        });
+
+        this.controller.addKeyDownEvent(Controller.keys.SPACE, function() {
+
+            if (app.userOnGround)
+                app.user.velocity[1] = 5;
+        });
     }
 
     load(onloaded) {
@@ -115,7 +130,7 @@ class App {
                     heightTop = coordinates[coordinateIndex + size][1];
 
                 let c = coordinates[coordinateIndex];
-                let n = new Vector3(heightLeft-heightRight, 2, heightBottom - heightTop).normalize();
+                let n = new Vector3(heightLeft - heightRight, 2, heightBottom - heightTop).normalize();
                 let vertex = new Vertex(c[0], c[1], c[2], n[0], n[1], n[2], sectionI / 4, sectionJ / 4);
                 vertices.set(vertex, coordinateIndex++ * Vertex.LENGTH);
             }
@@ -143,6 +158,7 @@ class App {
         if (this.controller.mode !== Controller.moveMode.FREE)
             dPosition[1] += App.GRAVITY_STEP_POS_Y;
         this.user.position.add(dPosition);
+        this.userOnGround = false;
 
         // Check collision
         let terrainUserCollisionY = this.terrainManager.getTerrainIntersectionY(this.user.position, User.HEIGHT);
@@ -150,8 +166,7 @@ class App {
             this.user.position[1] = terrainUserCollisionY;
             if (this.controller.mode !== Controller.moveMode.FREE) {
                 this.user.velocity[1] = 0;
-                if (this.controller.keysDown[Controller.keys.SPACE])
-                    this.user.velocity[1] = 10;
+                this.userOnGround = true;
             }
         }
 
