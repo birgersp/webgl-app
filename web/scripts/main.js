@@ -91,13 +91,8 @@ function main() {
     let terrainGenerator = new TerrainGenerator();
     function addTerrain() {
 
-        let squares = 12;
-        let sections = 15;
-        let sectionSize = 8;
-        for (let z = -(sections / 2 - 1); z < sections / 2; z++)
-            for (let x = -(sections / 2 - 1); x < sections / 2; x++) {
-                app.setTerrainMesh(terrainGenerator.getTerrainCoordinates(x * sectionSize, z * sectionSize, squares));
-            }
+        let size = 8;
+        app.setTerrainMesh(terrainGenerator.getTerrainCoordinates(-size / 2, -size / 2, size));
     }
 
     app.load(function() {
