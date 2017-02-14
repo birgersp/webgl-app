@@ -8,6 +8,7 @@ attribute vec2 textureCoord;
 varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
 varying vec3 vToLightVector;
+varying vec3 vPosition;
 
 void main() {
 
@@ -20,4 +21,5 @@ void main() {
     
     vSurfaceNormal = (transform * vec4(normal, 1)).xyz;
     vToLightVector = lightPosition - worldPosition.xyz;
+    vPosition = position;
 }

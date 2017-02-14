@@ -2,26 +2,35 @@ precision mediump float;
 
 uniform bool useColor;
 uniform sampler2D sampler;
+uniform bool useXZOutline;
 
 varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
 varying vec3 vToLightVector;
+varying vec3 vPosition;
+
+bool withinLine(vec3 position) {
+    float lineWidth = 0.01;
+    return floor(position.x) + lineWidth > position.x || floor(position.z) + lineWidth > position.z;
+}
 
 void main() {
 
     // TODO: Remove hardcoded variables
     vec3 lightColor = vec3(1, 1, 1);
+    vec4 ambientLight = vec4(0.2, 0.2, 0.2, 1);
 
     vec3 surfaceNormalN = normalize(vSurfaceNormal);
     vec3 toLightVectorN = normalize(vToLightVector);
 
     float nDot1 = dot(surfaceNormalN, toLightVectorN);
-    float brightness = max(nDot1, 0.1);
-    vec4 diffuse = vec4(lightColor, 1) * brightness;
+    float brightness = max(nDot1, 0.0);
+    vec4 diffuse = vec4(lightColor * brightness, 1);
 
-    if (useColor == true) {
-        gl_FragColor = diffuse * texture2D(sampler, vTextureCoord);
-    } else {
+    if (useXZOutline == true && withinLine(vPosition)) {
         gl_FragColor = vec4(0, 0, 0, 1);
+    }
+    else {
+        gl_FragColor = diffuse * texture2D(sampler, vTextureCoord) + ambientLight;
     }
 }
