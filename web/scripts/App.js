@@ -16,7 +16,7 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(0, 11, 0);
+        this.user.position = new Vector3(0, 11, 5);
         this.controller.rotation = new Vector3(0, 0, 0);
         this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
@@ -47,11 +47,11 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.FSHADER].text
                     );
 
-//            var cube = new Cube();
-//            var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
-//            var object1 = new WebGLEngine.Object(cube, crateTexture);
-//            object1.transform.setTranslation(new Vector3(0, 0.5, 0));
-//            engine.addObject(object1);
+            var cube = new Cube();
+            var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
+            var object1 = new WebGLEngine.Object(cube, crateTexture);
+            object1.transform.setTranslation(new Vector3(0, app.user.position, -5));
+            engine.addObject(object1);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
