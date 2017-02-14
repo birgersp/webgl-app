@@ -6,10 +6,18 @@ attribute vec3 normal;
 attribute vec2 textureCoord;
 
 varying vec2 vTextureCoord;
-varying float normalPhi;
+varying vec3 vSurfaceNormal;
+varying vec3 vToLightVector;
+
 void main() {
-    
-    gl_Position = projectionView * transform * vec4(position, 1);
+
+    // TODO: Remove hardcoded variables
+    vec3 lightPosition = vec3(0, 50, 0);
+
+    vec4 worldPosition = transform * vec4(position, 1);
+    gl_Position = projectionView * worldPosition;
     vTextureCoord = textureCoord;
-    normalPhi = dot(normal, vec3(0, 1, 0)) / 2.0 + 0.5;
+    
+    vSurfaceNormal = (transform * vec4(normal, 1)).xyz;
+    vToLightVector = lightPosition - worldPosition.xyz;
 }

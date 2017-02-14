@@ -15,6 +15,7 @@ class WebGLEngine {
         this.gl.enable(this.gl.BLEND);
 
         this.positionAttribL = null;
+        this.normalAttribL = null;
         this.textureCoordinateAttribL = null;
         this.transformUniformL = null;
         this.samplerUniformL = null;
@@ -83,7 +84,7 @@ class WebGLEngine {
             this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 0);
             this.gl.enableVertexAttribArray(this.positionAttribL);
             this.gl.vertexAttribPointer(this.normalAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
-            this.gl.enableVertexAttribArray(this.positionAttribL);
+            this.gl.enableVertexAttribArray(this.normalAttribL);
             this.gl.vertexAttribPointer(this.textureCoordinateAttribL, 2, this.gl.FLOAT, false, Vertex.SIZE, 6 * Vertex.BYTES_PER_ELEMENT);
             this.gl.enableVertexAttribArray(this.textureCoordinateAttribL);
             this.lastBoundGeometry = bufferedGeometry;

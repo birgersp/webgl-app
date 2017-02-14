@@ -4,11 +4,23 @@ uniform bool useColor;
 uniform sampler2D sampler;
 
 varying vec2 vTextureCoord;
-varying float normalPhi;
+varying vec3 vSurfaceNormal;
+varying vec3 vToLightVector;
+
 void main() {
 
+    // TODO: Remove hardcoded variables
+    vec3 lightColor = vec3(1, 1, 1);
+
+    vec3 surfaceNormalN = normalize(vSurfaceNormal);
+    vec3 toLightVectorN = normalize(vToLightVector);
+
+    float nDot1 = dot(surfaceNormalN, toLightVectorN);
+    float brightness = max(nDot1, 0.1);
+    vec4 diffuse = vec4(lightColor, 1) * brightness;
+
     if (useColor == true) {
-        gl_FragColor = texture2D(sampler, vTextureCoord);
+        gl_FragColor = diffuse * texture2D(sampler, vTextureCoord);
     } else {
         gl_FragColor = vec4(0, 0, 0, 1);
     }

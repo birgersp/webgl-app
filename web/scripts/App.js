@@ -16,8 +16,8 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(0, 11, 5);
-        this.controller.rotation = new Vector3(0, 0, 0);
+        this.user.position = new Vector3(5, 0, 5);
+        this.controller.rotation = new Vector3(-0.4, 0.3, 0);
         this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.loader = new FileLoader();
@@ -47,12 +47,6 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.FSHADER].text
                     );
 
-            var cube = new Cube();
-            var crateTexture = new WebGLEngine.Texture(crateImageFile.image);
-            var object1 = new WebGLEngine.Object(cube, crateTexture);
-            object1.transform.setTranslation(new Vector3(0, app.user.position, -5));
-            engine.addObject(object1);
-
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
 
@@ -60,12 +54,13 @@ class App {
         });
     }
 
-    start() {
+    start(frameCallback) {
         let app = this;
         function renderLoop() {
             app.stepTime();
             app.engine.render();
-            setTimeout(renderLoop, App.TIME_STEP * 1000);
+            setTimeout(renderLoop, App.MS_PER_FRAME);
+            frameCallback();
         }
         renderLoop();
     }
@@ -182,6 +177,7 @@ App.TIME_STEP = 1 / 60;
 App.GRAVITY_STEP_POS_Y = App.GRAVITY_Y * Math.pow(App.TIME_STEP, 2) / 2;
 App.GRAVITY_STEP_VEL_Y = App.GRAVITY_Y * App.TIME_STEP;
 App.USER_SPEED = 7.5;
+App.MS_PER_FRAME = App.TIME_STEP * 1000;
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
