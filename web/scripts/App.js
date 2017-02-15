@@ -71,6 +71,7 @@ class App {
     start(frameCallback) {
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
         let app = this;
+        app.engine.render();
         function renderLoop() {
             app.stepTime();
             app.engine.render();
@@ -86,10 +87,6 @@ class App {
         let sectionSize = 9; // Coordinates^2 per section
         let sections = Math.ceil(size / sectionSize);
         let uvScale = 1 / (sectionSize - 1);
-
-        console.log("size", size);
-        console.log("sectionSize", sectionSize);
-        console.log("sections", sections);
 
         let sectionI, sectionJ;
         function getSectionCoordinateIndex(i, j) {

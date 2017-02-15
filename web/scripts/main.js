@@ -43,7 +43,6 @@ function main() {
         let heightOffset = window.innerHeight - height;
         let widthOffset = window.innerWidth - width;
 
-        app.engine.camera.updateMatrix();
         app.engine.setViewPort(widthOffset / 2, heightOffset / 2, width, height);
     }
     resizeCanvas();
@@ -91,7 +90,7 @@ function main() {
     let terrainGenerator = new TerrainGenerator();
     function addTerrain() {
 
-        let size = 256;
+        let size = 64;
         let offset = Math.floor(size / -2);
         app.setTerrainMesh(terrainGenerator.getTerrainCoordinates(offset, offset, size));
     }

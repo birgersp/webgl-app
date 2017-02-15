@@ -144,7 +144,10 @@ class WebGLEngine {
         let engine = this;
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.uniformMatrix4fv(this.projectionUniformL, false, this.camera.getViewProjectionMatrix());
+
+        let vpMatrix = this.camera.getProjectionMatrix().times(this.camera.getViewMatrix());
+
+        this.gl.uniformMatrix4fv(this.projectionUniformL, false, vpMatrix);
 
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
