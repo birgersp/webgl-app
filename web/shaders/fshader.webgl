@@ -18,19 +18,18 @@ void main() {
 
     // TODO: Remove hardcoded variables
     vec3 lightColor = vec3(1, 1, 1);
-    vec4 ambientLight = vec4(0.2, 0.2, 0.2, 1);
 
     vec3 surfaceNormalN = normalize(vSurfaceNormal);
     vec3 toLightVectorN = normalize(vToLightVector);
 
     float nDot1 = dot(surfaceNormalN, toLightVectorN);
-    float brightness = max(nDot1, 0.0);
+    float brightness = max(nDot1, 0.1);
     vec4 diffuse = vec4(lightColor * brightness, 1);
 
     if (useXZOutline == true && withinLine(vPosition)) {
         gl_FragColor = vec4(0, 0, 0, 1);
     }
     else {
-        gl_FragColor = diffuse * texture2D(sampler, vTextureCoord) + ambientLight;
+        gl_FragColor = diffuse * texture2D(sampler, vTextureCoord);
     }
 }
