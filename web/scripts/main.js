@@ -91,8 +91,9 @@ function main() {
     let terrainGenerator = new TerrainGenerator();
     function addTerrain() {
 
-        let size = 4;
-        app.setTerrainMesh(terrainGenerator.getTerrainCoordinates(-size / 2, -size / 2, size));
+        let size = 256;
+        let offset = Math.floor(size / -2);
+        app.setTerrainMesh(terrainGenerator.getTerrainCoordinates(offset, offset, size));
     }
 
     app.load(function() {
