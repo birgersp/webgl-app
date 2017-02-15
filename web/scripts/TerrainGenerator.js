@@ -7,9 +7,9 @@ class TerrainGenerator {
 
     constructor() {
 
-        this.amplitude = 20;
-        this.octaves = 3;
-        this.roughness = 0.3;
+        this.amplitude = 50;
+        this.octaves = 4;
+        this.roughness = 0.5;
         this.generatedNoise = {};
     }
 

@@ -23,7 +23,7 @@ void main() {
     vec3 toLightVectorN = normalize(vToLightVector);
 
     float nDot1 = dot(surfaceNormalN, toLightVectorN);
-    float brightness = max(nDot1, 0.1);
+    float brightness = max(nDot1, 0.3);
     vec4 diffuse = vec4(lightColor * brightness, 1);
 
     if (useXZOutline == true && withinLine(vPosition)) {

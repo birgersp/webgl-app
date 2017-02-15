@@ -15,10 +15,10 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(0, 15, 0);
+        this.user.position = new Vector3(0, 30, 0);
         this.userOnGround = false;
 //        this.controller.rotation = new Vector3(-Math.PI / 2, 0, 0);
-        this.controller.mode = Controller.moveMode.FREE;
+//        this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.paused = true;
 
@@ -34,7 +34,7 @@ class App {
         this.controller.addKeyDownEvent(Controller.keys.SPACE, function() {
 
             if (app.userOnGround)
-                app.user.velocity[1] = 5;
+                app.user.velocity[1] = App.JUMP_SPEED;
         });
     }
 
@@ -179,7 +179,8 @@ class App {
         if (terrainUserCollisionY !== null) {
             this.user.position[1] = terrainUserCollisionY;
             if (this.controller.mode !== Controller.moveMode.FREE) {
-                this.user.velocity[1] = 0;
+                if (this.user.velocity[1] < 0)
+                    this.user.velocity[1] = 0;
                 this.userOnGround = true;
             }
         }
@@ -203,12 +204,13 @@ class App {
     }
 }
 
-App.GRAVITY_Y = -9.81;
+App.GRAVITY_Y = -9.81 * 2;
 App.TIME_STEP = 1 / 60;
 App.GRAVITY_STEP_POS_Y = App.GRAVITY_Y * Math.pow(App.TIME_STEP, 2) / 2;
 App.GRAVITY_STEP_VEL_Y = App.GRAVITY_Y * App.TIME_STEP;
-App.USER_SPEED = 7.5;
+App.USER_SPEED = 10;
 App.MS_PER_FRAME = App.TIME_STEP * 1000;
+App.JUMP_SPEED = 10;
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
