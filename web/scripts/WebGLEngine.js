@@ -17,10 +17,14 @@ class WebGLEngine {
         this.positionAttribL = null;
         this.normalAttribL = null;
         this.textureCoordinateAttribL = null;
-        this.transformUniformL = null;
-        this.samplerUniformL = null;
-        this.useColorUniformL = null;
-        this.viewTransform = Matrix4.identity();
+
+        this.transformL = null;
+
+        this.projectionViewL = null;
+
+        this.samplerL = null;
+        this.useColorL = null;
+
         this.objects = [];
         this.bufferedGeometries = {};
         this.glTextures = {};
@@ -53,10 +57,10 @@ class WebGLEngine {
         this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
         this.normalAttribL = this.gl.getAttribLocation(shaderProgram, "normal");
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
-        this.transformUniformL = this.gl.getUniformLocation(shaderProgram, "transform");
-        this.samplerUniformL = this.gl.getUniformLocation(shaderProgram, "sampler");
-        this.useColorUniformL = this.gl.getUniformLocation(shaderProgram, "useColor");
-        this.projectionUniformL = this.gl.getUniformLocation(shaderProgram, "projectionView");
+        this.transformL = this.gl.getUniformLocation(shaderProgram, "transform");
+        this.samplerL = this.gl.getUniformLocation(shaderProgram, "sampler");
+        this.projectionViewL = this.gl.getUniformLocation(shaderProgram, "projectionView");
+        this.useColorL = this.gl.getUniformLocation(shaderProgram, "useColor");
     }
 
     bufferGeometry(geometry) {
@@ -118,7 +122,7 @@ class WebGLEngine {
 
         if (this.lastBoundTexture !== glTexture) {
             this.gl.bindTexture(this.gl.TEXTURE_2D, glTexture);
-            this.gl.uniform1i(this.samplerUniformL, 0);
+            this.gl.uniform1i(this.samplerL, 0);
             this.lastBoundTexture = glTexture;
         }
     }
@@ -147,7 +151,7 @@ class WebGLEngine {
 
         let vpMatrix = this.camera.getProjectionMatrix().times(this.camera.getViewMatrix());
 
-        this.gl.uniformMatrix4fv(this.projectionUniformL, false, vpMatrix);
+        this.gl.uniformMatrix4fv(this.projectionViewL, false, vpMatrix);
 
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
@@ -155,7 +159,7 @@ class WebGLEngine {
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
-            engine.gl.uniformMatrix4fv(engine.transformUniformL, false, transform);
+            engine.gl.uniformMatrix4fv(engine.transformL, false, transform);
 
             var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
             engine.bindBufferedGeometry(bufferedGeometry);
