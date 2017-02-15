@@ -1,5 +1,6 @@
 include("geometry/Vertex");
 include("geometry/Transform");
+include("ShaderUniformManager");
 
 include("Camera");
 
@@ -15,17 +16,10 @@ class WebGLEngine {
         this.gl.enable(this.gl.BLEND);
         this.gl.clearColor(0.7, 0.85, 1, 1);
 
+        this.shaderUniformManager = new ShaderUniformManager(this.gl);
         this.positionAttribL = null;
         this.normalAttribL = null;
         this.textureCoordinateAttribL = null;
-
-        this.transformL = null;
-
-        this.viewL = null
-        this.projectionL = null;
-
-        this.samplerL = null;
-        this.useColorL = null;
 
         this.objects = [];
         this.bufferedGeometries = {};
@@ -59,11 +53,8 @@ class WebGLEngine {
         this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
         this.normalAttribL = this.gl.getAttribLocation(shaderProgram, "normal");
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
-        this.transformL = this.gl.getUniformLocation(shaderProgram, "transform");
-        this.samplerL = this.gl.getUniformLocation(shaderProgram, "sampler");
-        this.viewL = this.gl.getUniformLocation(shaderProgram, "view");
-        this.projectionL = this.gl.getUniformLocation(shaderProgram, "projection");
-        this.useColorL = this.gl.getUniformLocation(shaderProgram, "useColor");
+
+        this.shaderUniformManager.initialize(shaderProgram);
     }
 
     bufferGeometry(geometry) {
@@ -125,7 +116,7 @@ class WebGLEngine {
 
         if (this.lastBoundTexture !== glTexture) {
             this.gl.bindTexture(this.gl.TEXTURE_2D, glTexture);
-            this.gl.uniform1i(this.samplerL, 0);
+            this.shaderUniformManager.setSampler(0);
             this.lastBoundTexture = glTexture;
         }
     }
@@ -152,10 +143,8 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        let vpMatrix = this.camera.getProjectionMatrix().times(this.camera.getViewMatrix());
-
-        this.gl.uniformMatrix4fv(this.viewL, false, this.camera.getViewMatrix());
-        this.gl.uniformMatrix4fv(this.projectionL, false, this.camera.getProjectionMatrix());
+        this.shaderUniformManager.setView(this.camera.getViewMatrix());
+        this.shaderUniformManager.setProjection(this.camera.getProjectionMatrix());
 
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
@@ -163,7 +152,7 @@ class WebGLEngine {
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
-            engine.gl.uniformMatrix4fv(engine.transformL, false, transform);
+            engine.shaderUniformManager.setTransform(transform);
 
             var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
             engine.bindBufferedGeometry(bufferedGeometry);
@@ -173,11 +162,7 @@ class WebGLEngine {
 
             var indices = object.geometry.indices.length;
 
-            engine.gl.uniform1f(engine.useColorUniformL, 1);
             engine.gl.drawElements(engine.gl.TRIANGLES, indices, engine.gl.UNSIGNED_BYTE, 0);
-
-//            engine.gl.uniform1f(engine.useColorUniformL, 0);
-//            engine.gl.drawElements(engine.gl.LINE_STRIP, indices, engine.gl.UNSIGNED_BYTE, 0);
 
             for (var childIndex = 0; childIndex < object.children.length; childIndex++)
                 renderObject(object.children[childIndex]);
