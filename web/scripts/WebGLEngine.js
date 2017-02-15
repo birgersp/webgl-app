@@ -13,6 +13,7 @@ class WebGLEngine {
         this.gl.cullFace(this.gl.BACK);
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.enable(this.gl.BLEND);
+        this.gl.clearColor(0.7, 0.85, 1, 1);
 
         this.positionAttribL = null;
         this.normalAttribL = null;

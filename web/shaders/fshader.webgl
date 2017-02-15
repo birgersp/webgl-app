@@ -8,6 +8,7 @@ varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
 varying vec3 vToLightVector;
 varying vec3 vPosition;
+varying float vVisibility;
 
 bool withinLine(vec3 position) {
     float lineWidth = 0.01;
@@ -18,6 +19,7 @@ void main() {
 
     // TODO: Remove hardcoded variables
     vec3 lightColor = vec3(1, 1, 1);
+    vec3 skyColor = vec3(0.7, 0.85, 1);
 
     vec3 surfaceNormalN = normalize(vSurfaceNormal);
     vec3 toLightVectorN = normalize(vToLightVector);
@@ -26,10 +28,14 @@ void main() {
     float brightness = max(nDot1, 0.3);
     vec4 diffuse = vec4(lightColor * brightness, 1);
 
+    vec4 color;
     if (useXZOutline == true && withinLine(vPosition)) {
-        gl_FragColor = vec4(0, 0, 0, 1);
+        color = vec4(0, 0, 0, 1);
     }
     else {
-        gl_FragColor = diffuse * texture2D(sampler, vTextureCoord);
+        color = diffuse * texture2D(sampler, vTextureCoord);
     }
+
+    color = mix(vec4(skyColor, 1.0), color, vVisibility);
+    gl_FragColor = color;
 }
