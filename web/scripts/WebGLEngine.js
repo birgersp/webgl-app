@@ -20,7 +20,8 @@ class WebGLEngine {
 
         this.transformL = null;
 
-        this.projectionViewL = null;
+        this.viewL = null
+        this.projectionL = null;
 
         this.samplerL = null;
         this.useColorL = null;
@@ -59,7 +60,8 @@ class WebGLEngine {
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
         this.transformL = this.gl.getUniformLocation(shaderProgram, "transform");
         this.samplerL = this.gl.getUniformLocation(shaderProgram, "sampler");
-        this.projectionViewL = this.gl.getUniformLocation(shaderProgram, "projectionView");
+        this.viewL = this.gl.getUniformLocation(shaderProgram, "view");
+        this.projectionL = this.gl.getUniformLocation(shaderProgram, "projection");
         this.useColorL = this.gl.getUniformLocation(shaderProgram, "useColor");
     }
 
@@ -151,7 +153,8 @@ class WebGLEngine {
 
         let vpMatrix = this.camera.getProjectionMatrix().times(this.camera.getViewMatrix());
 
-        this.gl.uniformMatrix4fv(this.projectionViewL, false, vpMatrix);
+        this.gl.uniformMatrix4fv(this.viewL, false, this.camera.getViewMatrix());
+        this.gl.uniformMatrix4fv(this.projectionL, false, this.camera.getProjectionMatrix());
 
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];

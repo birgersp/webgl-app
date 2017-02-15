@@ -69,9 +69,11 @@ class App {
     }
 
     start(frameCallback) {
+
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
+
         let app = this;
-        app.engine.render();
+        app.engine.drawObjects();
         function renderLoop() {
             app.stepTime();
             app.engine.render();

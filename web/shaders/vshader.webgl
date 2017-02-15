@@ -1,4 +1,5 @@
-uniform mat4 projectionView;
+uniform mat4 view;
+uniform mat4 projection;
 uniform mat4 transform;
 
 attribute vec3 position;
@@ -16,7 +17,7 @@ void main() {
     vec3 lightPosition = vec3(1000, 1000, 1000);
 
     vec4 worldPosition = transform * vec4(position, 1);
-    gl_Position = projectionView * worldPosition;
+    gl_Position = projection * view * worldPosition;
     vTextureCoord = textureCoord;
     
     vSurfaceNormal = (transform * vec4(normal, 1)).xyz;
