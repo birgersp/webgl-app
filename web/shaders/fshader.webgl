@@ -36,6 +36,6 @@ void main() {
     color = diffuse * texture2D(sampler, vTextureCoord);
   }
 
-  color = mix(vec4(skyColor, 1.0), color, vVisibility);
+  color = vec4(skyColor * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
   gl_FragColor = color;
 }

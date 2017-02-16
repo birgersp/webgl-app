@@ -16,19 +16,18 @@ void main() {
 
   // TODO: Remove hardcoded variables
   vec3 lightPosition = vec3(1000, 1000, 1000);
-  float density = 0.007;
-  float gradient = 1.5;
+  float maxViewDistance = 200.0;
+  float fogFactor = 3.0;
 
-  vec4 worldPosition = transform * vec4(position, 1);
+  vec4 worldPosition = transform * vec4(position, 1.0);
   vec4 positionToCamera = view * worldPosition;
   gl_Position = projection * positionToCamera;
   vTextureCoord = textureCoord;
 
-  vSurfaceNormal = (transform * vec4(normal, 1)).xyz;
+  vSurfaceNormal = (transform * vec4(normal, 1.0)).xyz;
   vToLightVector = lightPosition - worldPosition.xyz;
   vPosition = position;
 
   float distance = length(positionToCamera.xyz);
-  vVisibility = exp(-pow((distance * density), gradient));
-  vVisibility = clamp(vVisibility, 0.0, 1.0);
+  vVisibility = max(min(1.0 - pow(distance / maxViewDistance, fogFactor), 1.0), 0.0);
 }
