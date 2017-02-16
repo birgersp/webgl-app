@@ -157,14 +157,12 @@ class App {
 
         // Check control input
         this.controller.update();
-        let controlVelocity = this.controller.velocity.getCopy();
-        controlVelocity.scale(App.USER_SPEED);
-        this.user.velocity[0] = controlVelocity[0];
+        this.user.velocity[0] = this.controller.velocity[0] * App.USER_SPEED;
+        this.user.velocity[2] = this.controller.velocity[2] * App.USER_SPEED;
         if (this.controller.mode === Controller.moveMode.FREE)
-            this.user.velocity[1] = controlVelocity[1];
+            this.user.velocity[1] = this.controller.velocity[1] * App.TIME_STEP;
         else
             this.user.velocity[1] += App.GRAVITY_STEP_VEL_Y;
-        this.user.velocity[2] = controlVelocity[2];
 
         // Set new position
         let dPosition = this.user.velocity.times(App.TIME_STEP);
@@ -203,13 +201,13 @@ class App {
     }
 }
 
-App.GRAVITY_Y = -9.81 * 2;
-App.TIME_STEP = 1 / 60;
+App.GRAVITY_Y = -9.81;
+App.MS_PER_FRAME = 1000 / 60;
+App.TIME_STEP = App.MS_PER_FRAME / 1000 * 2; // 1/30 sec
 App.GRAVITY_STEP_POS_Y = App.GRAVITY_Y * Math.pow(App.TIME_STEP, 2) / 2;
 App.GRAVITY_STEP_VEL_Y = App.GRAVITY_Y * App.TIME_STEP;
-App.USER_SPEED = 10;
-App.MS_PER_FRAME = App.TIME_STEP * 1000;
-App.JUMP_SPEED = 10;
+App.USER_SPEED = 4; // m / s
+App.JUMP_SPEED = 7;
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
