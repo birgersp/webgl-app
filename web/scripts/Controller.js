@@ -34,9 +34,9 @@ class Controller {
                 var headingPitch = this.rotation[0];
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
-                        -Math.sin(headingYaw) * Math.cos(headingPitch),
+                        Math.sin(headingYaw) * Math.cos(headingPitch),
                         0,
-                        -Math.cos(headingYaw) * Math.cos(headingPitch));
+                        Math.cos(headingYaw) * Math.cos(headingPitch));
                 if (this.mode === Controller.moveMode.FREE)
                     vector[1] = Math.sin(headingPitch);
                 this.velocity.add(vector);
@@ -50,7 +50,6 @@ class Controller {
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
                 if (this.mode === Controller.moveMode.FREE)
                     vector[1] = Math.sin(headingPitch);
-                vector.scale(-1);
                 this.velocity.add(vector);
             }
 
@@ -133,7 +132,7 @@ class Controller {
             else if (y < -this.maxMouseMoveCoordinate)
                 y = -this.maxMouseMoveCoordinate;
 
-            this.rotate(-y * this.mouseSensitivity, -x * this.mouseSensitivity);
+            this.rotate(y * this.mouseSensitivity, x * this.mouseSensitivity);
         }
     }
 

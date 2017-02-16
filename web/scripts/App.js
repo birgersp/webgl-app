@@ -139,7 +139,7 @@ class App {
                             let d = b - sectionSize;
                             let c = d - 1;
 
-                            indices.set([a, b, c, c, b, d], indexIndex++ * 6);
+                            indices.set([a, c, b, b, c, d], indexIndex++ * 6);
                         }
 
                         let n = new Vector3(heightLeft - heightRight, 2, heightBottom - heightTop).normalize();

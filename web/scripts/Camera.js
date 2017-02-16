@@ -83,8 +83,8 @@ class Camera {
 
             0,
             0,
-            -this.f / this.fl,
-            -1,
+            this.f / this.fl,
+            1,
 
             0,
             0,
