@@ -59,10 +59,19 @@ class TerrainManager {
 
     addGridCell(gridCell) {
 
-        this.setCollidableYInterval(gridCell.bottomleft, gridCell.bottomright[1], gridCell);
-        this.setCollidableYInterval(gridCell.bottomleft, gridCell.topleft[1], gridCell);
-        this.setCollidableYInterval(gridCell.bottomleft, gridCell.topright[1], gridCell);
+        let yMin = gridCell.bottomleft[1];
+        yMin = gridCell.topleft[1] < yMin ? gridCell.topleft[1] : yMin;
+        yMin = gridCell.topright[1] < yMin ? gridCell.topright[1] : yMin;
+        yMin = gridCell.bottomright[1] < yMin ? gridCell.bottomright[1] : yMin;
 
+        let yMax = gridCell.bottomleft[1];
+        yMax = gridCell.topleft[1] > yMax ? gridCell.topleft[1] : yMax;
+        yMax = gridCell.topright[1] > yMax ? gridCell.topright[1] : yMax;
+        yMax = gridCell.bottomright[1] > yMax ? gridCell.bottomright[1] : yMax;
+
+        let origin = gridCell.bottomleft.getCopy();
+        origin[1] = yMin;
+        this.setCollidableYInterval(origin, yMax, gridCell);
     }
 
     setCollidable(coordinate, collidable, overwrite) {
