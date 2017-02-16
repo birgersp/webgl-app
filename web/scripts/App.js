@@ -15,7 +15,7 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(0, 30, 0);
+        this.user.position = new Vector3(0, 50, 0);
         this.userOnGround = false;
 //        this.controller.rotation = new Vector3(-Math.PI / 2, 0, 0);
 //        this.controller.mode = Controller.moveMode.FREE;
