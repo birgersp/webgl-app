@@ -3,6 +3,7 @@ include("geometry/Transform");
 include("ShaderUniformManager");
 
 include("Camera");
+include("Skybox");
 
 class WebGLEngine {
 
@@ -73,6 +74,35 @@ class WebGLEngine {
 
         this.mainUniforms.sampler0.write(0);
         this.mainUniforms.sampler1.write(1);
+    }
+
+    initializeSkyboxShaders(vertexShaderSource, fragmentShaderSource) {
+
+        this.skyboxShaderProgram = this.gl.createProgram();
+
+        // Compile vertex shader
+        var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
+        this.gl.shaderSource(vertexShader, vertexShaderSource);
+        this.gl.compileShader(vertexShader);
+        this.gl.attachShader(this.skyboxShaderProgram, vertexShader);
+
+        // Compile fragment shader
+        var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+        this.gl.shaderSource(fragmentShader, fragmentShaderSource);
+        this.gl.compileShader(fragmentShader);
+        this.gl.attachShader(this.skyboxShaderProgram, fragmentShader);
+
+        // Link and use shader program
+        this.gl.linkProgram(this.skyboxShaderProgram);
+        this.gl.useProgram(this.skyboxShaderProgram);
+
+        let uniformManager = new ShaderUniformManager(this.gl, this.skyboxShaderProgram);
+        this.skyboxUniforms = {
+            view: uniformManager.locateMatrix("view"),
+            projection: uniformManager.locateMatrix("projection")
+        };
+
+        this.skyboxPositionL = this.gl.getAttribLocation(this.skyboxShaderProgram, "position");
     }
 
     bufferGeometry(geometry) {
@@ -166,6 +196,23 @@ class WebGLEngine {
         this.terrainTexture1 = this.getGLTexture(texture1);
     }
 
+    setSkybox(skybox) {
+
+        this.skyboxTexture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
+        for (let i = 0; i < skybox.textures.length; i++)
+            this.gl.texImage2D(this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this.gl.RGB, this.gl.RGB, this.gl.UNSIGNED_BYTE, skybox.textures[i].image);
+//        this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.generateMipmap(this.gl.TEXTURE_2D);
+
+        this.skyboxVertexBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(skybox.vertices), this.gl.STATIC_DRAW);
+        this.skybox = skybox;
+    }
+
     renderGeometry(geometry) {
 
         var bufferedGeometry = this.getBufferedGeometry(geometry);
@@ -177,15 +224,12 @@ class WebGLEngine {
 
     render() {
 
-        this.gl.useProgram(this.mainShaderProgram);
-
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
+        this.gl.useProgram(this.mainShaderProgram);
         this.mainUniforms.view.write(this.camera.getViewMatrix());
         this.mainUniforms.projection.write(this.camera.getProjectionMatrix());
-
         this.mainUniforms.transform.write(Matrix4.identity());
-
         this.mainUniforms.terrainMode.write(1);
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.bindTexture(this.terrainTexture0);
@@ -219,6 +263,15 @@ class WebGLEngine {
         }
 
         this.objects.forEach(renderObject);
+
+        this.gl.useProgram(this.skyboxShaderProgram);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
+        this.gl.vertexAttribPointer(this.skyboxPositionL, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.skyboxPositionL);
+        this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
+        this.skyboxUniforms.view.write(this.camera.getViewMatrix());
+        this.skyboxUniforms.projection.write(this.camera.getProjectionMatrix());
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.skybox.vertices.length / 3);
     }
 
     setViewPort(x, y, width, height) {

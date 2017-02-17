@@ -5,6 +5,7 @@ include("Controller");
 include("util/FileLoader");
 include("TerrainManager");
 include("geometry/TerrainGridCell");
+include("Skybox");
 
 class App {
 
@@ -55,6 +56,14 @@ class App {
         var crateImageFile = loader.addImageFile("binaries/crate.jpg");
         var grassImageFile = loader.addImageFile("binaries/grass.jpg");
         var rockImageFile = loader.addImageFile("binaries/rock.jpg");
+        var skyboxImageFiles = [
+            loader.addImageFile("binaries/skybox/right.png"),
+            loader.addImageFile("binaries/skybox/left.png"),
+            loader.addImageFile("binaries/skybox/top.png"),
+            loader.addImageFile("binaries/skybox/bottom.png"),
+            loader.addImageFile("binaries/skybox/back.png"),
+            loader.addImageFile("binaries/skybox/front.png")
+        ];
 
         let engine = this.engine;
         let app = this;
@@ -64,11 +73,16 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.FSHADER].text
                     );
 
+            engine.initializeSkyboxShaders(
+                    shaderFiles[App.SHADER_FILENAMES.SKYBOX_VSHADER].text,
+                    shaderFiles[App.SHADER_FILENAMES.SKYBOX_FSHADER].text
+                    );
+
             engine.gl.clearColor(0.7, 0.85, 1, 1);
 
+            engine.gl.useProgram(engine.mainShaderProgram);
             engine.mainUniforms.sunDirection.write(new Vector3(-1, -1, -1));
             engine.mainUniforms.sunColor.write(new Vector3(1, 1, 1));
-
             engine.mainUniforms.viewDistance.write(engine.camera.f);
             engine.mainUniforms.fogFactor.write(3);
 
@@ -77,6 +91,13 @@ class App {
             app.rockTexture = new WebGLEngine.Texture(rockImageFile.image);
 
             engine.setTerrainTextures(app.grassTexture, app.rockTexture);
+
+            let skyboxImages = [];
+            for (let i in skyboxImageFiles)
+                skyboxImages.push(skyboxImageFiles[i].image);
+
+            let skybox = new Skybox(engine.camera.f, skyboxImages);
+            engine.setSkybox(skybox);
 
             onloaded();
         });
@@ -229,5 +250,7 @@ App.JUMP_SPEED = 7;
 
 App.SHADER_FILENAMES = {
     VSHADER: "shaders/vshader.webgl",
-    FSHADER: "shaders/fshader.webgl"
+    FSHADER: "shaders/fshader.webgl",
+    SKYBOX_VSHADER: "shaders/skybox_vshader.webgl",
+    SKYBOX_FSHADER: "shaders/skybox_fshader.webgl"
 };
