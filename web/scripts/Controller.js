@@ -75,15 +75,15 @@ class Controller {
                 this.velocity.scale(0.5);
 
             if (this.keysDown[Controller.keys.LEFT])
-                this.rotate(0, 1);
-            else if (this.keysDown[Controller.keys.RIGHT])
                 this.rotate(0, -1);
+            else if (this.keysDown[Controller.keys.RIGHT])
+                this.rotate(0, 1);
 
             if (this.keysDown[Controller.keys.UP])
-                this.rotate(1, 0);
+                this.rotate(-1, 0);
             else
             if (this.keysDown[Controller.keys.DOWN])
-                this.rotate(-1, 0);
+                this.rotate(1, 0);
 
         }
     }
