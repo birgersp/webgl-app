@@ -3,6 +3,7 @@ class ShaderUniformManager {
     constructor(gl) {
 
         this.gl = gl;
+        this.shaderProgram = null;
 
         this.viewL = null;
         this.projectionL = null;
@@ -10,16 +11,28 @@ class ShaderUniformManager {
 
         this.samplerL = null;
         this.useColorL = null;
+
+        this.sunDirectionL = null;
+        this.sunColorL = null;
     }
 
     initialize(shaderProgram) {
 
-        this.viewL = this.gl.getUniformLocation(shaderProgram, "view");
-        this.transformL = this.gl.getUniformLocation(shaderProgram, "transform");
-        this.projectionL = this.gl.getUniformLocation(shaderProgram, "projection");
+        this.shaderProgram = shaderProgram;
+        this.viewL = this.getUniformL("view");
+        this.transformL = this.getUniformL("transform");
+        this.projectionL = this.getUniformL("projection");
 
-        this.samplerL = this.gl.getUniformLocation(shaderProgram, "sampler");
-        this.useColorL = this.gl.getUniformLocation(shaderProgram, "useColor");
+        this.samplerL = this.getUniformL("sampler");
+        this.useColorL = this.getUniformL("useColor");
+
+        this.sunDirectionL = this.getUniformL("sunDirection");
+        this.sunColorL = this.getUniformL("sunColor");
+    }
+
+    getUniformL(name) {
+
+        return this.gl.getUniformLocation(this.shaderProgram, name);
     }
 
     writeMatrix(location, matrix) {
@@ -30,6 +43,11 @@ class ShaderUniformManager {
     writeInteger(location, value) {
 
         this.gl.uniform1i(location, value);
+    }
+
+    writeVector(location, value) {
+
+        this.gl.uniform3fv(location, value);
     }
 
     setView(matrix) {
@@ -50,5 +68,15 @@ class ShaderUniformManager {
     setSampler(value) {
 
         this.writeInteger(this.samplerL, value);
+    }
+
+    setSunDirection(vector) {
+
+        this.writeVector(this.sunDirectionL, vector);
+    }
+
+    setSunColor(vector) {
+
+        this.writeVector(this.sunColorL, vector);
     }
 }
