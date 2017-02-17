@@ -19,11 +19,20 @@ class Matrix4 extends Float32Array {
      * @returns {Matrix4}
      */
     static rotationXYZ(rX, rY, rZ) {
+
+        let crX = Math.cos(rX);
+        let crY = Math.cos(rY);
+        let crZ = Math.cos(rZ);
+
+        let srX = Math.sin(rX);
+        let srY = Math.sin(rY);
+        let srZ = Math.sin(rZ);
+
         let matrix = new Matrix4();
         matrix.set([
-            cos(rY) * cos(rZ), cos(rX) * sin(rZ) + cos(rZ) * sin(rX) * sin(rY), sin(rX) * sin(rZ) - cos(rX) * cos(rZ) * sin(rY), 0,
-            -cos(rY) * sin(rZ), cos(rX) * cos(rZ) - sin(rX) * sin(rY) * sin(rZ), cos(rZ) * sin(rX) + cos(rX) * sin(rY) * sin(rZ), 0,
-            sin(rY), -cos(rY) * sin(rX), cos(rX) * cos(rY), 0,
+            crY * crZ, crX * srZ + crZ * srX * srY, srX * srZ - crX * crZ * srY, 0,
+            -crY * srZ, crX * crZ - srX * srY * srZ, crZ * srX + crX * srY * srZ, 0,
+            srY, -crY * srX, crX * crY, 0,
             0, 0, 0, 1
         ]);
         return matrix;
