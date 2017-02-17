@@ -54,6 +54,7 @@ class App {
         // Load texture
         var crateImageFile = loader.addImageFile("binaries/crate.jpg");
         var grassImageFile = loader.addImageFile("binaries/grass.jpg");
+        var rockImageFile = loader.addImageFile("binaries/rock.jpg");
 
         let engine = this.engine;
         let app = this;
@@ -74,7 +75,7 @@ class App {
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
-            app.rockTexture = new WebGLEngine.Texture(crateImageFile.image);
+            app.rockTexture = new WebGLEngine.Texture(rockImageFile.image);
 
             engine.setTerrainTextures(app.grassTexture, app.rockTexture);
 
