@@ -68,6 +68,7 @@ class WebGLEngine {
 
             viewDistance: mainUniformManager.locateFloat("viewDistance"),
             fogFactor: mainUniformManager.locateFloat("fogFactor"),
+            fogColor: mainUniformManager.locateVector3("fogColor"),
 
             terrainMode: mainUniformManager.locateFloat("terrainMode")
         };
@@ -99,7 +100,8 @@ class WebGLEngine {
         let uniformManager = new ShaderUniformManager(this.gl, this.skyboxShaderProgram);
         this.skyboxUniforms = {
             view: uniformManager.locateMatrix("view"),
-            projection: uniformManager.locateMatrix("projection")
+            projection: uniformManager.locateMatrix("projection"),
+            fogColor: uniformManager.locateVector3("fogColor")
         };
 
         this.skyboxPositionL = this.gl.getAttribLocation(this.skyboxShaderProgram, "position");
@@ -226,6 +228,15 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
+        this.gl.useProgram(this.skyboxShaderProgram);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
+        this.gl.vertexAttribPointer(this.skyboxPositionL, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.skyboxPositionL);
+        this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
+        this.skyboxUniforms.view.write(this.camera.getViewMatrix());
+        this.skyboxUniforms.projection.write(this.camera.getProjectionMatrix());
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.skybox.vertices.length / 3);
+
         this.gl.useProgram(this.mainShaderProgram);
         this.mainUniforms.view.write(this.camera.getViewMatrix());
         this.mainUniforms.projection.write(this.camera.getProjectionMatrix());
@@ -263,15 +274,6 @@ class WebGLEngine {
         }
 
         this.objects.forEach(renderObject);
-
-        this.gl.useProgram(this.skyboxShaderProgram);
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
-        this.gl.vertexAttribPointer(this.skyboxPositionL, 3, this.gl.FLOAT, false, 0, 0);
-        this.gl.enableVertexAttribArray(this.skyboxPositionL);
-        this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
-        this.skyboxUniforms.view.write(this.camera.getViewMatrix());
-        this.skyboxUniforms.projection.write(this.camera.getProjectionMatrix());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.skybox.vertices.length / 3);
     }
 
     setViewPort(x, y, width, height) {

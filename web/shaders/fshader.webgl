@@ -5,6 +5,7 @@ uniform sampler2D sampler0;
 uniform sampler2D sampler1;
 uniform vec3 sunDirection;
 uniform vec3 sunColor;
+uniform vec3 fogColor;
 
 varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
@@ -13,9 +14,6 @@ varying vec3 vPosition;
 varying vec3 vNormal;
 
 void main() {
-
-  // TODO: This vector should be the skybox texture
-  vec3 background = vec3(0.7, 0.85, 1);
 
   vec3 surfaceNormalN = normalize(vSurfaceNormal);
   vec3 sunDirectionN = normalize(sunDirection);
@@ -32,6 +30,6 @@ void main() {
   }
   color *= diffuse;
 
-  color = vec4(background * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
+  color = vec4(fogColor * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
   gl_FragColor = color;
 }

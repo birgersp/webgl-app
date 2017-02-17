@@ -78,13 +78,18 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.SKYBOX_FSHADER].text
                     );
 
-            engine.gl.clearColor(0.7, 0.85, 1, 1);
+            let fogColor = new Vector3(0.8, 0.83, 0.92, 1);
+            engine.gl.clearColor(fogColor[0], fogColor[1], fogColor[2], 1);
 
             engine.gl.useProgram(engine.mainShaderProgram);
             engine.mainUniforms.sunDirection.write(new Vector3(-1, -1, -1));
             engine.mainUniforms.sunColor.write(new Vector3(1, 1, 1));
-            engine.mainUniforms.viewDistance.write(engine.camera.f);
+            engine.mainUniforms.viewDistance.write(engine.camera.f * 3 / 4);
             engine.mainUniforms.fogFactor.write(3);
+            engine.mainUniforms.fogColor.write(fogColor);
+
+            engine.gl.useProgram(engine.skyboxShaderProgram);
+            engine.skyboxUniforms.fogColor.write(fogColor);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
