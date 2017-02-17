@@ -38,7 +38,7 @@ class Controller {
                         0,
                         Math.cos(headingYaw) * Math.cos(headingPitch));
                 if (this.mode === Controller.moveMode.FREE)
-                    vector[1] = Math.sin(headingPitch);
+                    vector[1] = Math.sin(-headingPitch);
                 this.velocity.add(vector);
             } else
             if (this.keysDown[Controller.keys.S]) {
@@ -49,7 +49,7 @@ class Controller {
                         0,
                         -Math.cos(headingYaw) * Math.cos(headingPitch));
                 if (this.mode === Controller.moveMode.FREE)
-                    vector[1] = Math.sin(headingPitch);
+                    vector[1] = -Math.sin(-headingPitch);
                 this.velocity.add(vector);
             }
 

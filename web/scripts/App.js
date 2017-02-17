@@ -179,7 +179,7 @@ class App {
         this.user.velocity[0] = this.controller.velocity[0] * App.USER_SPEED;
         this.user.velocity[2] = this.controller.velocity[2] * App.USER_SPEED;
         if (this.controller.mode === Controller.moveMode.FREE)
-            this.user.velocity[1] = this.controller.velocity[1] * App.TIME_STEP;
+            this.user.velocity[1] = this.controller.velocity[1] * App.USER_SPEED;
         else
             this.user.velocity[1] += App.GRAVITY_STEP_VEL_Y;
 
