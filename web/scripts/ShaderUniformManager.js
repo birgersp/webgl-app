@@ -13,6 +13,9 @@ class ShaderUniformManager {
 
         this.sunDirection = null;
         this.sunColor = null;
+
+        this.viewDistance = null;
+        this.fogFactor = null;
     }
 
     initialize(shaderProgram) {
@@ -26,6 +29,9 @@ class ShaderUniformManager {
 
         this.sunDirection = this.locateVector3("sunDirection");
         this.sunColor = this.locateVector3("sunColor");
+
+        this.viewDistance = this.locateFloat("viewDistance");
+        this.fogFactor = this.locateFloat("fogFactor");
     }
 
     getUniformL(name) {
@@ -46,6 +52,11 @@ class ShaderUniformManager {
     locateInteger(name) {
 
         return new ShaderUniform.Integer(this.gl, this.getUniformL(name));
+    }
+
+    locateFloat(name) {
+
+        return new ShaderUniform.Float(this.gl, this.getUniformL(name));
     }
 }
 
@@ -94,5 +105,18 @@ ShaderUniform.Integer = class extends ShaderUniform {
     write(value) {
 
         this.gl.uniform1i(this.location, value);
+    }
+};
+
+ShaderUniform.Float = class extends ShaderUniform {
+
+    constructor(gl, location) {
+
+        super(gl, location);
+    }
+
+    write(value) {
+
+        this.gl.uniform1f(this.location, value);
     }
 };

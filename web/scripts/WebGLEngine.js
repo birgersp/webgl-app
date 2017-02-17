@@ -57,6 +57,9 @@ class WebGLEngine {
         this.shaderUniformManager.initialize(shaderProgram);
         this.shaderUniformManager.sunDirection.write(new Vector3(-1, -1, -1));
         this.shaderUniformManager.sunColor.write(new Vector3(1, 1, 1));
+
+        this.shaderUniformManager.viewDistance.write(50);
+        this.shaderUniformManager.fogFactor.write(3);
     }
 
     bufferGeometry(geometry) {
