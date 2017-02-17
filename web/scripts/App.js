@@ -59,19 +59,18 @@ class App {
         let engine = this.engine;
         let app = this;
         loader.load(function() {
-            engine.initialize(
+            engine.initializeMainShaders(
                     shaderFiles[App.SHADER_FILENAMES.VSHADER].text,
                     shaderFiles[App.SHADER_FILENAMES.FSHADER].text
                     );
 
             engine.gl.clearColor(0.7, 0.85, 1, 1);
 
+            engine.mainUniforms.sunDirection.write(new Vector3(-1, -1, -1));
+            engine.mainUniforms.sunColor.write(new Vector3(1, 1, 1));
 
-            engine.uniforms.sunDirection.write(new Vector3(-1, -1, -1));
-            engine.uniforms.sunColor.write(new Vector3(1, 1, 1));
-
-            engine.uniforms.viewDistance.write(engine.camera.f);
-            engine.uniforms.fogFactor.write(3);
+            engine.mainUniforms.viewDistance.write(engine.camera.f);
+            engine.mainUniforms.fogFactor.write(3);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);

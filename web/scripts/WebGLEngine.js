@@ -27,7 +27,7 @@ class WebGLEngine {
         this.camera = new Camera();
     }
 
-    initialize(vertexShaderSource, fragmentShaderSource) {
+    initializeMainShaders(vertexShaderSource, fragmentShaderSource) {
 
         var shaderProgram = this.gl.createProgram();
 
@@ -54,7 +54,7 @@ class WebGLEngine {
 
         let mainUniformManager = new ShaderUniformManager(this.gl, shaderProgram);
 
-        this.uniforms = {
+        this.mainUniforms = {
             view: mainUniformManager.locateMatrix("view"),
             transform: mainUniformManager.locateMatrix("transform"),
             projection: mainUniformManager.locateMatrix("projection"),
@@ -71,8 +71,8 @@ class WebGLEngine {
             terrainMode: mainUniformManager.locateFloat("terrainMode")
         };
 
-        this.uniforms.sampler0.write(0);
-        this.uniforms.sampler1.write(1);
+        this.mainUniforms.sampler0.write(0);
+        this.mainUniforms.sampler1.write(1);
     }
 
     bufferGeometry(geometry) {
@@ -181,29 +181,29 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.uniforms.view.write(this.camera.getViewMatrix());
-        this.uniforms.projection.write(this.camera.getProjectionMatrix());
+        this.mainUniforms.view.write(this.camera.getViewMatrix());
+        this.mainUniforms.projection.write(this.camera.getProjectionMatrix());
 
-        this.uniforms.transform.write(Matrix4.identity());
+        this.mainUniforms.transform.write(Matrix4.identity());
 
-        this.uniforms.terrainMode.write(1);
+        this.mainUniforms.terrainMode.write(1);
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.bindTexture(this.terrainTexture0);
         this.gl.activeTexture(this.gl.TEXTURE1);
         this.bindTexture(this.terrainTexture1);
         for (let terrainI in this.terrainObjects)
             this.renderGeometry(this.terrainObjects[terrainI].geometry);
-        this.uniforms.terrainMode.write(0);
+        this.mainUniforms.terrainMode.write(0);
 
         this.gl.activeTexture(this.gl.TEXTURE0);
-        this.uniforms.sampler0.write(0);
+        this.mainUniforms.sampler0.write(0);
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
 
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
-            engine.uniforms.transform.write(transform);
+            engine.mainUniforms.transform.write(transform);
 
             var glTexture = engine.getGLTexture(object.texture);
             engine.bindTexture(glTexture);
