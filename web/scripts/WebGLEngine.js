@@ -29,30 +29,30 @@ class WebGLEngine {
 
     initializeMainShaders(vertexShaderSource, fragmentShaderSource) {
 
-        var shaderProgram = this.gl.createProgram();
+        this.mainShaderProgram = this.gl.createProgram();
 
         // Compile vertex shader
         var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
         this.gl.shaderSource(vertexShader, vertexShaderSource);
         this.gl.compileShader(vertexShader);
-        this.gl.attachShader(shaderProgram, vertexShader);
+        this.gl.attachShader(this.mainShaderProgram, vertexShader);
 
         // Compile fragment shader
         var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
         this.gl.shaderSource(fragmentShader, fragmentShaderSource);
         this.gl.compileShader(fragmentShader);
-        this.gl.attachShader(shaderProgram, fragmentShader);
+        this.gl.attachShader(this.mainShaderProgram, fragmentShader);
 
         // Link and use shader program
-        this.gl.linkProgram(shaderProgram);
-        this.gl.useProgram(shaderProgram);
+        this.gl.linkProgram(this.mainShaderProgram);
+        this.gl.useProgram(this.mainShaderProgram);
 
         // Set vertex attribute pointer for position
-        this.positionAttribL = this.gl.getAttribLocation(shaderProgram, "position");
-        this.normalAttribL = this.gl.getAttribLocation(shaderProgram, "normal");
-        this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
+        this.positionAttribL = this.gl.getAttribLocation(this.mainShaderProgram, "position");
+        this.normalAttribL = this.gl.getAttribLocation(this.mainShaderProgram, "normal");
+        this.textureCoordinateAttribL = this.gl.getAttribLocation(this.mainShaderProgram, "textureCoord");
 
-        let mainUniformManager = new ShaderUniformManager(this.gl, shaderProgram);
+        let mainUniformManager = new ShaderUniformManager(this.gl, this.mainShaderProgram);
 
         this.mainUniforms = {
             view: mainUniformManager.locateMatrix("view"),
@@ -177,7 +177,7 @@ class WebGLEngine {
 
     render() {
 
-        let engine = this;
+        this.gl.useProgram(this.mainShaderProgram);
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -200,6 +200,7 @@ class WebGLEngine {
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
 
+        let engine = this;
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
