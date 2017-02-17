@@ -55,6 +55,8 @@ class WebGLEngine {
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
 
         this.shaderUniformManager.initialize(shaderProgram);
+        this.shaderUniformManager.setSunDirection(new Vector3(-1, -1, -1));
+        this.shaderUniformManager.setSunColor(new Vector3(1, 1, 1));
     }
 
     bufferGeometry(geometry) {

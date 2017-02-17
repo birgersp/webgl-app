@@ -3,10 +3,11 @@ precision mediump float;
 uniform bool useColor;
 uniform sampler2D sampler;
 uniform bool useXZOutline;
+uniform vec3 sunDirection;
+uniform vec3 sunColor;
 
 varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
-varying vec3 vToLightVector;
 varying vec3 vPosition;
 varying float vVisibility;
 
@@ -23,11 +24,11 @@ void main() {
   vec3 skyColor = vec3(0.7, 0.85, 1);
 
   vec3 surfaceNormalN = normalize(vSurfaceNormal);
-  vec3 toLightVectorN = normalize(vToLightVector);
+  vec3 sunDirectionN = normalize(sunDirection);
 
-  float nDot1 = dot(surfaceNormalN, toLightVectorN);
+  float nDot1 = dot(surfaceNormalN, -sunDirectionN);
   float brightness = max(nDot1, 0.3);
-  vec4 diffuse = vec4(lightColor * brightness, 1);
+  vec4 diffuse = vec4(sunColor * brightness, 1);
 
   vec4 color;
   if (useXZOutline == true && withinLine(vPosition)) {

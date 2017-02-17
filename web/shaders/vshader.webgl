@@ -8,7 +8,6 @@ attribute vec2 textureCoord;
 
 varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
-varying vec3 vToLightVector;
 varying vec3 vPosition;
 varying float vVisibility;
 
@@ -25,7 +24,6 @@ void main() {
   vTextureCoord = textureCoord;
 
   vSurfaceNormal = (transform * vec4(normal, 1.0)).xyz;
-  vToLightVector = lightPosition - worldPosition.xyz;
   vPosition = position;
 
   float distance = length(positionToCamera.xyz);
