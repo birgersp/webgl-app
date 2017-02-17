@@ -149,9 +149,7 @@ class WebGLEngine {
 
     setTerrainTextures(texture0, texture1) {
 
-        this.gl.activeTexture(this.gl.TEXTURE0);
         this.terrainTexture0 = this.getGLTexture(texture0);
-        this.gl.activeTexture(this.gl.TEXTURE1);
         this.terrainTexture1 = this.getGLTexture(texture1);
     }
 
@@ -175,19 +173,17 @@ class WebGLEngine {
 
         this.uniformManager.transform.write(Matrix4.identity());
 
+        this.uniformManager.terrainMode.write(1);
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.bindTexture(this.terrainTexture0);
-
         this.gl.activeTexture(this.gl.TEXTURE1);
         this.bindTexture(this.terrainTexture1);
-
-        this.uniformManager.terrainMode.write(1);
-
         for (let terrainI in this.terrainObjects)
             this.renderGeometry(this.terrainObjects[terrainI].geometry);
-
         this.uniformManager.terrainMode.write(0);
+
         this.gl.activeTexture(this.gl.TEXTURE0);
+        this.uniformManager.sampler0.write(0);
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
 
