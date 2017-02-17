@@ -55,8 +55,8 @@ class WebGLEngine {
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
 
         this.shaderUniformManager.initialize(shaderProgram);
-        this.shaderUniformManager.setSunDirection(new Vector3(-1, -1, -1));
-        this.shaderUniformManager.setSunColor(new Vector3(1, 1, 1));
+        this.shaderUniformManager.sunDirection.write(new Vector3(-1, -1, -1));
+        this.shaderUniformManager.sunColor.write(new Vector3(1, 1, 1));
     }
 
     bufferGeometry(geometry) {
@@ -118,7 +118,7 @@ class WebGLEngine {
 
         if (this.lastBoundTexture !== glTexture) {
             this.gl.bindTexture(this.gl.TEXTURE_2D, glTexture);
-            this.shaderUniformManager.setSampler(0);
+            this.shaderUniformManager.sampler.write(0);
             this.lastBoundTexture = glTexture;
         }
     }
@@ -145,8 +145,8 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.shaderUniformManager.setView(this.camera.getViewMatrix());
-        this.shaderUniformManager.setProjection(this.camera.getProjectionMatrix());
+        this.shaderUniformManager.view.write(this.camera.getViewMatrix());
+        this.shaderUniformManager.projection.write(this.camera.getProjectionMatrix());
 
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
@@ -154,7 +154,7 @@ class WebGLEngine {
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
-            engine.shaderUniformManager.setTransform(transform);
+            engine.shaderUniformManager.transform.write(transform);
 
             var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
             engine.bindBufferedGeometry(bufferedGeometry);
