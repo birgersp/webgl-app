@@ -14,11 +14,13 @@ class App {
         this.terrainManager = new TerrainManager();
 
         this.grassTexture = null;
+        this.rockTexture = null;
+
         this.user = new User();
-        this.user.position = new Vector3(-56, 25, -56);
+        this.user.position = new Vector3(0, 55, 0);
         this.userOnGround = false;
         this.controller.rotation = new Vector3(0, Math.PI / 4, 0);
-        this.controller.mode = Controller.moveMode.FREE;
+//        this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.paused = true;
 
@@ -72,6 +74,9 @@ class App {
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
+            app.rockTexture = new WebGLEngine.Texture(crateImageFile.image);
+
+            engine.setTerrainTextures(app.grassTexture, app.rockTexture);
 
             onloaded();
         });
@@ -141,8 +146,8 @@ class App {
                     }
                 }
                 let geometry = new WebGLEngine.Geometry(vertices, indices);
-                let terrainObject = new WebGLEngine.Object(geometry, this.grassTexture);
-                this.engine.addObject(terrainObject);
+                let terrainObject = new WebGLEngine.TerrainObject(geometry, this.rockTexture, this.grassTexture);
+                this.engine.addTerrainObject(terrainObject);
             }
         }
     }
@@ -152,14 +157,18 @@ class App {
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
 
         let app = this;
-        app.engine.drawObjects();
-        function renderLoop() {
+        app.engine.render();
+        function render() {
             app.stepTime();
             app.engine.render();
-            setTimeout(renderLoop, App.MS_PER_FRAME);
+            setTimeout(loop, App.MS_PER_FRAME);
             frameCallback();
         }
-        renderLoop();
+
+        function loop() {
+            requestAnimationFrame(render);
+        }
+        loop();
     }
 
     stepTime() {

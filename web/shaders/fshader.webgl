@@ -1,21 +1,16 @@
 precision mediump float;
 
-uniform bool useColor;
-uniform sampler2D sampler;
-uniform bool useXZOutline;
+uniform bool terrainMode;
+uniform sampler2D sampler0;
+uniform sampler2D sampler1;
 uniform vec3 sunDirection;
 uniform vec3 sunColor;
 
 varying vec2 vTextureCoord;
 varying vec3 vSurfaceNormal;
-varying vec3 vPosition;
 varying float vVisibility;
-
-bool withinLine(vec3 position) {
-  float lineWidth = 0.01;
-  return floor(position.x) + lineWidth > position.x ||
-         floor(position.z) + lineWidth > position.z;
-}
+varying vec3 vPosition;
+varying vec3 vNormal;
 
 void main() {
 
@@ -29,12 +24,15 @@ void main() {
   float brightness = max(nDot1, 0.3);
   vec4 diffuse = vec4(sunColor * brightness, 1);
 
-  vec4 color;
-  if (useXZOutline == true && withinLine(vPosition)) {
-    color = vec4(0, 0, 0, 1);
-  } else {
-    color = diffuse * texture2D(sampler, vTextureCoord);
+  vec4 color = texture2D(sampler0, vTextureCoord);
+
+  if (terrainMode == true) {
+    float textureFactor =
+        pow(max(dot(vec3(0, 1, 0), vNormal), 0.0), 2.0);
+    color =
+        mix(texture2D(sampler1, vTextureCoord), color, textureFactor);
   }
+  color *= diffuse;
 
   color = vec4(background * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
   gl_FragColor = color;

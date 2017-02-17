@@ -9,13 +9,16 @@ class ShaderUniformManager {
         this.projection = null;
         this.transform = null;
 
-        this.sampler = null;
+        this.sampler0 = null;
+        this.sampler1 = null;
 
         this.sunDirection = null;
         this.sunColor = null;
 
         this.viewDistance = null;
         this.fogFactor = null;
+
+        this.terrainMode = null;
     }
 
     initialize(shaderProgram) {
@@ -25,13 +28,16 @@ class ShaderUniformManager {
         this.transform = this.locateMatrix("transform");
         this.projection = this.locateMatrix("projection");
 
-        this.sampler = this.locateInteger("sampler");
+        this.sampler0 = this.locateInteger("sampler0");
+        this.sampler1 = this.locateInteger("sampler1");
 
         this.sunDirection = this.locateVector3("sunDirection");
         this.sunColor = this.locateVector3("sunColor");
 
         this.viewDistance = this.locateFloat("viewDistance");
         this.fogFactor = this.locateFloat("fogFactor");
+
+        this.terrainMode = this.locateFloat("terrainMode");
     }
 
     getUniformL(name) {

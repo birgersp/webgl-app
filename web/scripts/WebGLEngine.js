@@ -21,6 +21,10 @@ class WebGLEngine {
         this.textureCoordinateAttribL = null;
 
         this.objects = [];
+        this.terrainObjects = [];
+        this.terrainTexture0 = null;
+        this.terrainTexture1 = null;
+
         this.bufferedGeometries = {};
         this.glTextures = {};
         this.lastBoundGeometry = null;
@@ -54,6 +58,8 @@ class WebGLEngine {
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
 
         this.uniformManager.initialize(shaderProgram);
+        this.uniformManager.sampler0.write(0);
+        this.uniformManager.sampler1.write(1);
     }
 
     bufferGeometry(geometry) {
@@ -80,7 +86,7 @@ class WebGLEngine {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
             this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 0);
             this.gl.enableVertexAttribArray(this.positionAttribL);
-            this.gl.vertexAttribPointer(this.normalAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
+            this.gl.vertexAttribPointer(this.normalAttribL, 3, this.gl.FLOAT, true, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
             this.gl.enableVertexAttribArray(this.normalAttribL);
             this.gl.vertexAttribPointer(this.textureCoordinateAttribL, 2, this.gl.FLOAT, false, Vertex.SIZE, 6 * Vertex.BYTES_PER_ELEMENT);
             this.gl.enableVertexAttribArray(this.textureCoordinateAttribL);
@@ -115,7 +121,6 @@ class WebGLEngine {
 
         if (this.lastBoundTexture !== glTexture) {
             this.gl.bindTexture(this.gl.TEXTURE_2D, glTexture);
-            this.uniformManager.sampler.write(0);
             this.lastBoundTexture = glTexture;
         }
     }
@@ -136,7 +141,30 @@ class WebGLEngine {
         this.objects.push(object);
     }
 
-    drawObjects() {
+    addTerrainObject(object) {
+
+        this.getBufferedGeometry(object.geometry);
+        this.terrainObjects.push(object);
+    }
+
+    setTerrainTextures(texture0, texture1) {
+
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.terrainTexture0 = this.getGLTexture(texture0);
+        this.gl.activeTexture(this.gl.TEXTURE1);
+        this.terrainTexture1 = this.getGLTexture(texture1);
+    }
+
+    renderGeometry(geometry) {
+
+        var bufferedGeometry = this.getBufferedGeometry(geometry);
+        this.bindBufferedGeometry(bufferedGeometry);
+
+        var indices = geometry.indices.length;
+        this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
+    }
+
+    render() {
 
         let engine = this;
 
@@ -145,6 +173,21 @@ class WebGLEngine {
         this.uniformManager.view.write(this.camera.getViewMatrix());
         this.uniformManager.projection.write(this.camera.getProjectionMatrix());
 
+        this.uniformManager.transform.write(Matrix4.identity());
+
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.bindTexture(this.terrainTexture0);
+
+        this.gl.activeTexture(this.gl.TEXTURE1);
+        this.bindTexture(this.terrainTexture1);
+
+        this.uniformManager.terrainMode.write(1);
+
+        for (let terrainI in this.terrainObjects)
+            this.renderGeometry(this.terrainObjects[terrainI].geometry);
+
+        this.uniformManager.terrainMode.write(0);
+        this.gl.activeTexture(this.gl.TEXTURE0);
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
 
@@ -153,15 +196,10 @@ class WebGLEngine {
             transform = transform.times(object.transform.getMatrix());
             engine.uniformManager.transform.write(transform);
 
-            var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
-            engine.bindBufferedGeometry(bufferedGeometry);
-
             var glTexture = engine.getGLTexture(object.texture);
             engine.bindTexture(glTexture);
 
-            var indices = object.geometry.indices.length;
-
-            engine.gl.drawElements(engine.gl.TRIANGLES, indices, engine.gl.UNSIGNED_BYTE, 0);
+            engine.renderGeometry(object.geometry);
 
             for (var childIndex = 0; childIndex < object.children.length; childIndex++)
                 renderObject(object.children[childIndex]);
@@ -176,14 +214,6 @@ class WebGLEngine {
     setViewPort(x, y, width, height) {
 
         this.gl.viewport(x, y, width, height);
-    }
-
-    render() {
-
-        let engine = this;
-        requestAnimationFrame(function() {
-            engine.drawObjects();
-        });
     }
 }
 
@@ -228,5 +258,15 @@ WebGLEngine.Object = class {
     add(object) {
 
         this.children.push(object);
+    }
+};
+
+WebGLEngine.TerrainObject = class {
+
+    constructor(geometry, texture0, texture1) {
+
+        this.geometry = geometry;
+        this.texture0 = texture0;
+        this.texture1 = texture1;
     }
 };
