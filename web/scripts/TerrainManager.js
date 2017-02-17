@@ -76,29 +76,44 @@ class TerrainManager {
 
     setCollidable(coordinate, collidable, overwrite) {
 
-        let xIndex = Math.floor(coordinate[0]);
+        let xIndex = this.getXIndex(coordinate[0]);
         if (!this.collidables[xIndex])
             this.collidables[xIndex] = {};
 
-        let yIndex = Math.floor(coordinate[1]);
+        let yIndex = this.getYIndex(coordinate[1]);
         if (!this.collidables[xIndex][yIndex])
             this.collidables[xIndex][yIndex] = {};
 
-        let zIndex = Math.floor(coordinate[2]);
+        let zIndex = this.getZIndex(coordinate[2]);
         if (!this.collidables[xIndex][yIndex][zIndex] || overwrite)
             this.collidables[xIndex][yIndex][zIndex] = collidable;
     }
 
     getCollidable(coordinate) {
 
-        let xIndex = Math.floor(coordinate[0]);
+        let xIndex = this.getXIndex(coordinate[0]);
         if (this.collidables[xIndex]) {
-            let yIndex = Math.floor(coordinate[1]);
+            let yIndex = this.getYIndex(coordinate[1]);
             if (this.collidables[xIndex][yIndex]) {
-                let zIndex = Math.floor(coordinate[2]);
+                let zIndex = this.getZIndex(coordinate[2]);
                 return this.collidables[xIndex][yIndex][zIndex];
             }
         }
         return null;
+    }
+
+    getXIndex(x) {
+
+        return Math.floor(x);
+    }
+
+    getYIndex(y) {
+
+        return Math.floor(y);
+    }
+
+    getZIndex(z) {
+
+        return Math.ceil(z);
     }
 }

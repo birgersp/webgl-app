@@ -34,22 +34,22 @@ class Controller {
                 var headingPitch = this.rotation[0];
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
-                        Math.sin(headingYaw) * Math.cos(headingPitch),
+                        -Math.sin(headingYaw) * Math.cos(headingPitch),
                         0,
-                        Math.cos(headingYaw) * Math.cos(headingPitch));
+                        -Math.cos(headingYaw) * Math.cos(headingPitch));
                 if (this.mode === Controller.moveMode.FREE)
-                    vector[1] = Math.sin(-headingPitch);
+                    vector[1] = Math.sin(headingPitch);
                 this.velocity.add(vector);
             } else
             if (this.keysDown[Controller.keys.S]) {
                 var headingPitch = this.rotation[0];
                 var headingYaw = this.rotation[1];
                 var vector = new Vector3(
-                        -Math.sin(headingYaw) * Math.cos(headingPitch),
+                        Math.sin(headingYaw) * Math.cos(headingPitch),
                         0,
-                        -Math.cos(headingYaw) * Math.cos(headingPitch));
+                        Math.cos(headingYaw) * Math.cos(headingPitch));
                 if (this.mode === Controller.moveMode.FREE)
-                    vector[1] = -Math.sin(-headingPitch);
+                    vector[1] = -Math.sin(headingPitch);
                 this.velocity.add(vector);
             }
 
@@ -75,15 +75,15 @@ class Controller {
                 this.velocity.scale(0.5);
 
             if (this.keysDown[Controller.keys.LEFT])
-                this.rotate(0, -1);
-            else if (this.keysDown[Controller.keys.RIGHT])
                 this.rotate(0, 1);
+            else if (this.keysDown[Controller.keys.RIGHT])
+                this.rotate(0, -1);
 
             if (this.keysDown[Controller.keys.UP])
-                this.rotate(-1, 0);
+                this.rotate(1, 0);
             else
             if (this.keysDown[Controller.keys.DOWN])
-                this.rotate(1, 0);
+                this.rotate(-1, 0);
 
         }
     }
@@ -132,7 +132,7 @@ class Controller {
             else if (y < -this.maxMouseMoveCoordinate)
                 y = -this.maxMouseMoveCoordinate;
 
-            this.rotate(y * this.mouseSensitivity, x * this.mouseSensitivity);
+            this.rotate(-y * this.mouseSensitivity, -x * this.mouseSensitivity);
         }
     }
 
