@@ -19,9 +19,8 @@ bool withinLine(vec3 position) {
 
 void main() {
 
-  // TODO: Remove hardcoded variables
-  vec3 lightColor = vec3(1, 1, 1);
-  vec3 skyColor = vec3(0.7, 0.85, 1);
+  // TODO: This vector should be the skybox texture
+  vec3 background = vec3(0.7, 0.85, 1);
 
   vec3 surfaceNormalN = normalize(vSurfaceNormal);
   vec3 sunDirectionN = normalize(sunDirection);
@@ -37,6 +36,6 @@ void main() {
     color = diffuse * texture2D(sampler, vTextureCoord);
   }
 
-  color = vec4(skyColor * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
+  color = vec4(background * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
   gl_FragColor = color;
 }
