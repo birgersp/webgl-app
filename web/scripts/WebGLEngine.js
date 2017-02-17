@@ -15,11 +15,6 @@ class WebGLEngine {
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.enable(this.gl.BLEND);
 
-        this.uniformManager = new ShaderUniformManager(this.gl);
-        this.positionAttribL = null;
-        this.normalAttribL = null;
-        this.textureCoordinateAttribL = null;
-
         this.objects = [];
         this.terrainObjects = [];
         this.terrainTexture0 = null;
@@ -57,9 +52,27 @@ class WebGLEngine {
         this.normalAttribL = this.gl.getAttribLocation(shaderProgram, "normal");
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
 
-        this.uniformManager.initialize(shaderProgram);
-        this.uniformManager.sampler0.write(0);
-        this.uniformManager.sampler1.write(1);
+        let mainUniformManager = new ShaderUniformManager(this.gl, shaderProgram);
+
+        this.uniforms = {
+            view: mainUniformManager.locateMatrix("view"),
+            transform: mainUniformManager.locateMatrix("transform"),
+            projection: mainUniformManager.locateMatrix("projection"),
+
+            sampler0: mainUniformManager.locateInteger("sampler0"),
+            sampler1: mainUniformManager.locateInteger("sampler1"),
+
+            sunDirection: mainUniformManager.locateVector3("sunDirection"),
+            sunColor: mainUniformManager.locateVector3("sunColor"),
+
+            viewDistance: mainUniformManager.locateFloat("viewDistance"),
+            fogFactor: mainUniformManager.locateFloat("fogFactor"),
+
+            terrainMode: mainUniformManager.locateFloat("terrainMode")
+        };
+
+        this.uniforms.sampler0.write(0);
+        this.uniforms.sampler1.write(1);
     }
 
     bufferGeometry(geometry) {
@@ -168,29 +181,29 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.uniformManager.view.write(this.camera.getViewMatrix());
-        this.uniformManager.projection.write(this.camera.getProjectionMatrix());
+        this.uniforms.view.write(this.camera.getViewMatrix());
+        this.uniforms.projection.write(this.camera.getProjectionMatrix());
 
-        this.uniformManager.transform.write(Matrix4.identity());
+        this.uniforms.transform.write(Matrix4.identity());
 
-        this.uniformManager.terrainMode.write(1);
+        this.uniforms.terrainMode.write(1);
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.bindTexture(this.terrainTexture0);
         this.gl.activeTexture(this.gl.TEXTURE1);
         this.bindTexture(this.terrainTexture1);
         for (let terrainI in this.terrainObjects)
             this.renderGeometry(this.terrainObjects[terrainI].geometry);
-        this.uniformManager.terrainMode.write(0);
+        this.uniforms.terrainMode.write(0);
 
         this.gl.activeTexture(this.gl.TEXTURE0);
-        this.uniformManager.sampler0.write(0);
+        this.uniforms.sampler0.write(0);
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
 
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
-            engine.uniformManager.transform.write(transform);
+            engine.uniforms.transform.write(transform);
 
             var glTexture = engine.getGLTexture(object.texture);
             engine.bindTexture(glTexture);

@@ -67,11 +67,11 @@ class App {
             engine.gl.clearColor(0.7, 0.85, 1, 1);
 
 
-            engine.uniformManager.sunDirection.write(new Vector3(-1, -1, -1));
-            engine.uniformManager.sunColor.write(new Vector3(1, 1, 1));
+            engine.uniforms.sunDirection.write(new Vector3(-1, -1, -1));
+            engine.uniforms.sunColor.write(new Vector3(1, 1, 1));
 
-            engine.uniformManager.viewDistance.write(engine.camera.f);
-            engine.uniformManager.fogFactor.write(3);
+            engine.uniforms.viewDistance.write(engine.camera.f);
+            engine.uniforms.fogFactor.write(3);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
