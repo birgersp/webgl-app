@@ -14,9 +14,8 @@ class WebGLEngine {
         this.gl.cullFace(this.gl.BACK);
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.enable(this.gl.BLEND);
-        this.gl.clearColor(0.7, 0.85, 1, 1);
 
-        this.shaderUniformManager = new ShaderUniformManager(this.gl);
+        this.uniformManager = new ShaderUniformManager(this.gl);
         this.positionAttribL = null;
         this.normalAttribL = null;
         this.textureCoordinateAttribL = null;
@@ -54,12 +53,7 @@ class WebGLEngine {
         this.normalAttribL = this.gl.getAttribLocation(shaderProgram, "normal");
         this.textureCoordinateAttribL = this.gl.getAttribLocation(shaderProgram, "textureCoord");
 
-        this.shaderUniformManager.initialize(shaderProgram);
-        this.shaderUniformManager.sunDirection.write(new Vector3(-1, -1, -1));
-        this.shaderUniformManager.sunColor.write(new Vector3(1, 1, 1));
-
-        this.shaderUniformManager.viewDistance.write(50);
-        this.shaderUniformManager.fogFactor.write(3);
+        this.uniformManager.initialize(shaderProgram);
     }
 
     bufferGeometry(geometry) {
@@ -121,7 +115,7 @@ class WebGLEngine {
 
         if (this.lastBoundTexture !== glTexture) {
             this.gl.bindTexture(this.gl.TEXTURE_2D, glTexture);
-            this.shaderUniformManager.sampler.write(0);
+            this.uniformManager.sampler.write(0);
             this.lastBoundTexture = glTexture;
         }
     }
@@ -148,8 +142,8 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.shaderUniformManager.view.write(this.camera.getViewMatrix());
-        this.shaderUniformManager.projection.write(this.camera.getProjectionMatrix());
+        this.uniformManager.view.write(this.camera.getViewMatrix());
+        this.uniformManager.projection.write(this.camera.getProjectionMatrix());
 
         var transformMatrices = [Matrix4.identity()];
         var transform = transformMatrices[0];
@@ -157,7 +151,7 @@ class WebGLEngine {
         function renderObject(object) {
             transformMatrices.push(object.transform.getMatrix());
             transform = transform.times(object.transform.getMatrix());
-            engine.shaderUniformManager.transform.write(transform);
+            engine.uniformManager.transform.write(transform);
 
             var bufferedGeometry = engine.getBufferedGeometry(object.geometry);
             engine.bindBufferedGeometry(bufferedGeometry);

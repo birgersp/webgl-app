@@ -15,10 +15,10 @@ class App {
 
         this.grassTexture = null;
         this.user = new User();
-        this.user.position = new Vector3(0, 50, 0);
+        this.user.position = new Vector3(-56, 25, -56);
         this.userOnGround = false;
-//        this.controller.rotation = new Vector3(-Math.PI / 2, 0, 0);
-//        this.controller.mode = Controller.moveMode.FREE;
+        this.controller.rotation = new Vector3(0, Math.PI / 4, 0);
+        this.controller.mode = Controller.moveMode.FREE;
         this.engine = new WebGLEngine(gl);
         this.paused = true;
 
@@ -61,26 +61,20 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.FSHADER].text
                     );
 
+            engine.gl.clearColor(0.7, 0.85, 1, 1);
+
+
+            engine.uniformManager.sunDirection.write(new Vector3(-1, -1, -1));
+            engine.uniformManager.sunColor.write(new Vector3(1, 1, 1));
+
+            engine.uniformManager.viewDistance.write(engine.camera.f);
+            engine.uniformManager.fogFactor.write(3);
+
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
             app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
 
             onloaded();
         });
-    }
-
-    start(frameCallback) {
-
-        frameCallback = frameCallback !== undefined ? frameCallback : function() {};
-
-        let app = this;
-        app.engine.drawObjects();
-        function renderLoop() {
-            app.stepTime();
-            app.engine.render();
-            setTimeout(renderLoop, App.MS_PER_FRAME);
-            frameCallback();
-        }
-        renderLoop();
     }
 
     setTerrainMesh(coordinates) {
@@ -151,6 +145,21 @@ class App {
                 this.engine.addObject(terrainObject);
             }
         }
+    }
+
+    start(frameCallback) {
+
+        frameCallback = frameCallback !== undefined ? frameCallback : function() {};
+
+        let app = this;
+        app.engine.drawObjects();
+        function renderLoop() {
+            app.stepTime();
+            app.engine.render();
+            setTimeout(renderLoop, App.MS_PER_FRAME);
+            frameCallback();
+        }
+        renderLoop();
     }
 
     stepTime() {
