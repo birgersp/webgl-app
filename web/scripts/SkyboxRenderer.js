@@ -52,7 +52,6 @@ class SkyboxRenderer extends Renderer {
     constructor(gl, skyboxSize) {
 
         super(gl);
-        this.gl = gl;
         this.texture = gl.createTexture();
         this.uniformManager = null;
         this.vertices = SkyboxRenderer.getVertices(skyboxSize);
@@ -76,11 +75,9 @@ class SkyboxRenderer extends Renderer {
         let renderer = this;
         fileLoader.load(function() {
 
-            renderer.initializeVertexShader(vertexShaderSourceFile.text);
-            renderer.initializeFragmentShader(fragmentShaderSourceFile.text);
+            renderer.initializeShaders(vertexShaderSourceFile.text, fragmentShaderSourceFile.text);
 
             renderer.useShaderProgram();
-
             renderer.positionAL = renderer.getAttributeLocation("position");
             let uniformManager = renderer.getUniformManager();
             renderer.viewUniform = uniformManager.locateMatrix("view");

@@ -11,34 +11,26 @@ class Renderer extends Initializable {
         this.shadersLinked = false;
 
         this.bufferedObjects = [];
-
         this.buffers = [];
-        this.lastBoundBuffer = null;
+        this.lastBoundArrayBuffer = null;
+        this.lastBoundElementArrayBuffer = null;
+
+        this.textureImages = [];
+        this.textures = [];
+        this.lastBoundTexture = null;
     }
 
-    initializeVertexShader(shaderSource) {
+    initializeShaders(vertexShaderSource, fragmentShaderSource) {
 
         var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
-        this.gl.shaderSource(vertexShader, shaderSource);
+        this.gl.shaderSource(vertexShader, vertexShaderSource);
         this.gl.compileShader(vertexShader);
         this.gl.attachShader(this.shaderProgram, vertexShader);
-        this.shadersInitialized++;
-        if (this.shadersInitialized === 2)
-            this.linkShaderProgram();
-    }
-
-    initializeFragmentShader(shaderSource) {
 
         var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
-        this.gl.shaderSource(fragmentShader, shaderSource);
+        this.gl.shaderSource(fragmentShader, fragmentShaderSource);
         this.gl.compileShader(fragmentShader);
         this.gl.attachShader(this.shaderProgram, fragmentShader);
-        this.shadersInitialized++;
-        if (this.shadersInitialized === 2)
-            this.linkShaderProgram();
-    }
-
-    linkShaderProgram() {
 
         this.gl.linkProgram(this.shaderProgram);
     }
@@ -46,27 +38,13 @@ class Renderer extends Initializable {
     useShaderProgram() {
 
         this.gl.useProgram(this.shaderProgram);
-        this.lastBoundBuffer = null;
+        this.lastBoundArrayBuffer = null;
+        this.lastBoundElementArrayBuffer = null;
     }
 
     getUniformManager() {
 
         return new ShaderUniformManager(this.gl, this.shaderProgram);
-    }
-
-    bindArrayBuffer(array) {
-
-        let buffer = this.getGLBuffer(array);
-        if (this.lastBoundBuffer === buffer)
-            return;
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
-        this.lastBoundBuffer = buffer;
-    }
-
-    bufferArrayF(array) {
-
-        this.bindArrayBuffer(array);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(array), this.gl.STATIC_DRAW);
     }
 
     enableAttributeF(location, index, length, totalLength, normalize) {
@@ -92,5 +70,68 @@ class Renderer extends Initializable {
             this.bufferedObjects.push(array);
         }
         return this.buffers[id];
+    }
+
+    bindArrayBuffer(array) {
+
+        let buffer = this.getGLBuffer(array);
+        if (this.lastBoundArrayBuffer === buffer)
+            return;
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+        this.lastBoundArrayBuffer = buffer;
+    }
+
+    bindElementArrayBuffer(array) {
+
+        let buffer = this.getGLBuffer(array);
+        if (this.lastBoundElementArrayBuffer === buffer)
+            return;
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
+        this.lastBoundElementArrayBuffer = buffer;
+    }
+
+    bufferArrayF(array) {
+
+        this.bindArrayBuffer(array);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(array), this.gl.STATIC_DRAW);
+    }
+
+    bufferElementArrayI(array) {
+
+        this.bindElementArrayBuffer(array);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(array), this.gl.STATIC_DRAW);
+    }
+
+    getGLTexture(image) {
+
+        let id = this.textureImages.indexOf(image);
+        if (id === -1) {
+            id = this.textures.length;
+            this.textures.push(this.gl.createTexture());
+            this.textureImages.push(image);
+        }
+        return this.textures[id];
+    }
+
+    bindTexture(image) {
+
+        let texture = this.getGLTexture(image);
+        if (texture === this.lastBoundTexture)
+            return;
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+    }
+
+    bufferTexture(image) {
+
+        this.bindTexture(image);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR);
+        this.gl.generateMipmap(this.gl.TEXTURE_2D);
+    }
+
+    setActiveTexture(id) {
+
+        this.gl.activeTexture(this.gl.TEXTURE0 + id);
     }
 }
