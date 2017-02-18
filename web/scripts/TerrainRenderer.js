@@ -67,7 +67,16 @@ class TerrainRenderer extends Renderer {
 
         this.terrainSections.push(new TerrainRenderer.TerrainSection(vertices, indices));
         this.bufferArrayF(vertices);
-        this.bufferElementArrayI(indices);
+        this.setTerrainIndices(indices);
+    }
+
+    setTerrainIndices(indices) {
+
+        let section;
+        for (let i = 0; i < this.terrainSections.length && !section; i++)
+            if (this.terrainSections[i].indices === indices)
+                section = this.terrainSections[i];
+        this.bufferElementArrayI(section.indices);
     }
 
     render(camera) {
