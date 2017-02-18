@@ -1,6 +1,6 @@
 include("util/FileLoader");
 
-class TerrainRenderer extends Renderer {
+class TerrainRenderer extends ObjectRenderer {
 
     constructor(gl) {
 
@@ -8,20 +8,13 @@ class TerrainRenderer extends Renderer {
 
         this.terrainSections = [];
 
-        this.viewUniform = null;
-        this.projectionUniform = null;
-        this.sampler0Uniform = null;
-        this.sampler1Uniform = null;
-        this.sunDirectionUniform = null;
-        this.sunColorUniform = null;
-        this.viewDistanceUniform = null;
-        this.fogFactorUniform = null;
-        this.fogColorUniform = null;
-
         this.grassImage = null;
         this.rockImage = null;
+    }
 
-        this.positionAL = null;
+    onInitialized(callback) {
+
+        super.initialize(callback);
     }
 
     initialize(callback) {
@@ -38,28 +31,13 @@ class TerrainRenderer extends Renderer {
             renderer.initializeShaders(vShaderFile.text, fShaderFile.text);
 
             renderer.useShaderProgram();
-            let uniformManager = renderer.getUniformManager();
-            renderer.viewUniform = uniformManager.locateMatrix("view");
-            renderer.projectionUniform = uniformManager.locateMatrix("projection");
-            renderer.sampler0Uniform = uniformManager.locateInteger("sampler0");
-            renderer.sampler1Uniform = uniformManager.locateInteger("sampler1");
-
-            renderer.sunDirectionUniform = uniformManager.locateVector3("sunDirection");
-            renderer.sunColorUniform = uniformManager.locateVector3("sunColor");
-            renderer.viewDistanceUniform = uniformManager.locateFloat("viewDistance");
-            renderer.fogFactorUniform = uniformManager.locateFloat("fogFactor");
-            renderer.fogColorUniform = uniformManager.locateVector3("fogColor");
-
-            renderer.positionAL = renderer.getAttributeLocation("position");
-            renderer.normalAL = renderer.getAttributeLocation("normal");
-            renderer.textureCoordAL = renderer.getAttributeLocation("textureCoord");
 
             renderer.grassImage = grassTextureFile.image;
             renderer.bufferTexture(renderer.grassImage);
             renderer.rockImage = rockTextureFile.image;
             renderer.bufferTexture(renderer.rockImage);
 
-            callback();
+            renderer.onInitialized(callback);
         });
     }
 
@@ -102,26 +80,6 @@ class TerrainRenderer extends Renderer {
             this.bindElementArrayBuffer(terrainSection.indices);
             this.gl.drawElements(this.gl.TRIANGLES, terrainSection.indices.length, this.gl.UNSIGNED_BYTE, 0);
         }
-    }
-
-    set sunDirection(vector) {
-        this.sunDirectionUniform.write(vector);
-    }
-
-    set sunColor(vector) {
-        this.sunColorUniform.write(vector);
-    }
-
-    set viewDistance(value) {
-        this.viewDistanceUniform.write(value);
-    }
-
-    set fogFactor(value) {
-        this.fogFactorUniform.write(value);
-    }
-
-    set fogColor(vector) {
-        this.fogColorUniform.write(vector);
     }
 }
 

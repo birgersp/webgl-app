@@ -115,11 +115,6 @@ class SkyboxRenderer extends Renderer {
 
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertices.length / 3);
     }
-
-    set fogColor(color) {
-
-        this.fogColorUniform.write(color);
-    }
 }
 
 SkyboxRenderer.filenames = {

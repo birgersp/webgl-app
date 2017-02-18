@@ -2,6 +2,7 @@ include("Camera");
 
 include("util/InitializableManager");
 include("Renderer");
+include("ObjectRenderer");
 include("TerrainRenderer");
 include("SkyboxRenderer");
 
@@ -38,17 +39,41 @@ class MasterRenderer extends Initializable {
             engine.gl.clearColor(fogColor[0], fogColor[1], fogColor[2], 1);
 
             engine.terrainRenderer.useShaderProgram();
-            engine.terrainRenderer.sunDirection = new Vector3(-1, -1, -1);
-            engine.terrainRenderer.sunColor = new Vector3(1, 1, 1);
-            engine.terrainRenderer.viewDistance = viewDistance;
-            engine.terrainRenderer.fogFactor = 2;
-            engine.terrainRenderer.fogColor = fogColor;
-
-            engine.skyboxRenderer.useShaderProgram();
-            engine.skyboxRenderer.fogColor = fogColor;
+            engine.sunDirection = new Vector3(-1, -1, -1);
+            engine.sunColor = new Vector3(1, 1, 1);
+            engine.viewDistance = viewDistance;
+            engine.fogFactor = 2;
+            engine.fogColor = fogColor;
 
             callback();
         });
+    }
+
+    set sunDirection(vector) {
+        this.terrainRenderer.useShaderProgram();
+        this.terrainRenderer.sunDirectionUniform.write(vector);
+    }
+
+    set sunColor(vector) {
+        this.terrainRenderer.useShaderProgram();
+        this.terrainRenderer.sunColorUniform.write(vector);
+    }
+
+    set viewDistance(value) {
+        this.terrainRenderer.useShaderProgram();
+        this.terrainRenderer.viewDistanceUniform.write(value);
+    }
+
+    set fogFactor(value) {
+        this.terrainRenderer.useShaderProgram();
+        this.terrainRenderer.fogFactorUniform.write(value);
+    }
+
+    set fogColor(vector) {
+        this.terrainRenderer.useShaderProgram();
+        this.terrainRenderer.fogColorUniform.write(vector);
+        this.skyboxRenderer.useShaderProgram();
+        this.skyboxRenderer.fogColorUniform.write(vector);
     }
 
     render() {
