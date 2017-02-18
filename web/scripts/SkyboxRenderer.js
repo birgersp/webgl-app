@@ -4,7 +4,7 @@ class SkyboxRenderer extends Renderer {
 
     static getVertices(size) {
 
-        return [
+        return new Float32Array([
             -size, size, -size,
             -size, -size, -size,
             size, -size, -size,
@@ -46,7 +46,7 @@ class SkyboxRenderer extends Renderer {
             size, -size, -size,
             -size, -size, size,
             size, -size, size
-        ];
+        ]);
     }
 
     constructor(gl, skyboxSize) {

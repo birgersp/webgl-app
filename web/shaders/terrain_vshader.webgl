@@ -1,5 +1,6 @@
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 transform;
 uniform float viewDistance;
 uniform float fogFactor;
 
@@ -15,13 +16,16 @@ varying float vVisibility;
 
 void main() {
 
-  vec4 positionToCamera = view * vec4(position, 1.0);
+  vec4 worldPosition = transform * vec4(position, 1.0);
+  vec4 positionToCamera = view * worldPosition;
   gl_Position = projection * positionToCamera;
   vTextureCoord = textureCoord;
 
+  vSurfaceNormal = (transform * vec4(normal, 1.0)).xyz;
   vPosition = position;
   vNormal = normal;
 
   float distance = length(positionToCamera.xyz);
-  vVisibility = clamp(1.0 - pow(distance / viewDistance, fogFactor), 0.0, 1.0);
+  vVisibility =
+      max(min(1.0 - pow(distance / viewDistance, fogFactor), 1.0), 0.0);
 }

@@ -5,14 +5,16 @@ include("ShaderUniformManager");
 include("Camera");
 include("Skybox");
 
-include("util/Initializable");
+include("util/InitializableManager");
 include("Renderer");
+include("TerrainRenderer");
 include("SkyboxRenderer");
 
-class WebGLEngine {
+class WebGLEngine extends Initializable {
 
-    constructor(gl, skyboxRenderer) {
+    constructor(gl) {
 
+        super();
         this.gl = gl;
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
@@ -31,87 +33,51 @@ class WebGLEngine {
         this.lastBoundTexture = null;
         this.camera = new Camera();
 
-        this.skyboxRenderer = skyboxRenderer;
+        this.vertexShaderSource = null;
+        this.fragmentShaderSource = null;
+
+        this.skyboxRenderer = new SkyboxRenderer(this.gl, 64);
+        this.terrainRenderer = new TerrainRenderer(this.gl);
     }
 
-    initializeMainShaders(vertexShaderSource, fragmentShaderSource) {
+    initialize(callback) {
 
-        this.mainShaderProgram = this.gl.createProgram();
+        let engine = this;
 
-        // Compile vertex shader
-        var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
-        this.gl.shaderSource(vertexShader, vertexShaderSource);
-        this.gl.compileShader(vertexShader);
-        this.gl.attachShader(this.mainShaderProgram, vertexShader);
+        let initializableManager = new InitializableManager();
+        initializableManager.add(this.skyboxRenderer);
+        initializableManager.add(this.terrainRenderer);
+        initializableManager.initialize(function() {
 
-        // Compile fragment shader
-        var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
-        this.gl.shaderSource(fragmentShader, fragmentShaderSource);
-        this.gl.compileShader(fragmentShader);
-        this.gl.attachShader(this.mainShaderProgram, fragmentShader);
+            engine.mainShaderProgram = engine.terrainRenderer.shaderProgram;
 
-        // Link and use shader program
-        this.gl.linkProgram(this.mainShaderProgram);
-        this.gl.useProgram(this.mainShaderProgram);
+            engine.terrainRenderer.useShaderProgram();
 
-        // Set vertex attribute pointer for position
-        this.positionAttribL = this.gl.getAttribLocation(this.mainShaderProgram, "position");
-        this.normalAttribL = this.gl.getAttribLocation(this.mainShaderProgram, "normal");
-        this.textureCoordinateAttribL = this.gl.getAttribLocation(this.mainShaderProgram, "textureCoord");
+            let mainUniformManager = new ShaderUniformManager(engine.gl, engine.mainShaderProgram);
 
-        let mainUniformManager = new ShaderUniformManager(this.gl, this.mainShaderProgram);
+            engine.mainUniforms = {
+                view: mainUniformManager.locateMatrix("view"),
+                transform: mainUniformManager.locateMatrix("transform"),
+                projection: mainUniformManager.locateMatrix("projection"),
 
-        this.mainUniforms = {
-            view: mainUniformManager.locateMatrix("view"),
-            transform: mainUniformManager.locateMatrix("transform"),
-            projection: mainUniformManager.locateMatrix("projection"),
+                sampler0: mainUniformManager.locateInteger("sampler0"),
+                sampler1: mainUniformManager.locateInteger("sampler1"),
 
-            sampler0: mainUniformManager.locateInteger("sampler0"),
-            sampler1: mainUniformManager.locateInteger("sampler1"),
+                sunDirection: mainUniformManager.locateVector3("sunDirection"),
+                sunColor: mainUniformManager.locateVector3("sunColor"),
 
-            sunDirection: mainUniformManager.locateVector3("sunDirection"),
-            sunColor: mainUniformManager.locateVector3("sunColor"),
+                viewDistance: mainUniformManager.locateFloat("viewDistance"),
+                fogFactor: mainUniformManager.locateFloat("fogFactor"),
+                fogColor: mainUniformManager.locateVector3("fogColor"),
 
-            viewDistance: mainUniformManager.locateFloat("viewDistance"),
-            fogFactor: mainUniformManager.locateFloat("fogFactor"),
-            fogColor: mainUniformManager.locateVector3("fogColor"),
+                terrainMode: mainUniformManager.locateFloat("terrainMode")
+            };
 
-            terrainMode: mainUniformManager.locateFloat("terrainMode")
-        };
+            engine.mainUniforms.sampler0.write(0);
+            engine.mainUniforms.sampler1.write(1);
 
-        this.mainUniforms.sampler0.write(0);
-        this.mainUniforms.sampler1.write(1);
-    }
-
-    initializeSkyboxShaders(vertexShaderSource, fragmentShaderSource) {
-
-        this.skyboxShaderProgram = this.gl.createProgram();
-
-        // Compile vertex shader
-        var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
-        this.gl.shaderSource(vertexShader, vertexShaderSource);
-        this.gl.compileShader(vertexShader);
-        this.gl.attachShader(this.skyboxShaderProgram, vertexShader);
-
-        // Compile fragment shader
-        var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
-        this.gl.shaderSource(fragmentShader, fragmentShaderSource);
-        this.gl.compileShader(fragmentShader);
-        this.gl.attachShader(this.skyboxShaderProgram, fragmentShader);
-
-        this.gl.linkProgram(this.skyboxShaderProgram);
-        this.gl.useProgram(this.skyboxShaderProgram);
-
-        // Link and use shader program
-
-        let uniformManager = new ShaderUniformManager(this.gl, this.skyboxShaderProgram);
-        this.skyboxUniforms = {
-            view: uniformManager.locateMatrix("view"),
-            projection: uniformManager.locateMatrix("projection"),
-            fogColor: uniformManager.locateVector3("fogColor")
-        };
-
-        this.skyboxPositionL = this.gl.getAttribLocation(this.skyboxShaderProgram, "position");
+            callback();
+        });
     }
 
     bufferGeometry(geometry) {
@@ -136,12 +102,10 @@ class WebGLEngine {
         if (this.lastBoundGeometry !== bufferedGeometry) {
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, bufferedGeometry.vertexBuffer);
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, bufferedGeometry.indexBuffer);
-            this.gl.vertexAttribPointer(this.positionAttribL, 3, this.gl.FLOAT, false, Vertex.SIZE, 0);
-            this.gl.enableVertexAttribArray(this.positionAttribL);
-            this.gl.vertexAttribPointer(this.normalAttribL, 3, this.gl.FLOAT, true, Vertex.SIZE, 3 * Vertex.BYTES_PER_ELEMENT);
-            this.gl.enableVertexAttribArray(this.normalAttribL);
-            this.gl.vertexAttribPointer(this.textureCoordinateAttribL, 2, this.gl.FLOAT, false, Vertex.SIZE, 6 * Vertex.BYTES_PER_ELEMENT);
-            this.gl.enableVertexAttribArray(this.textureCoordinateAttribL);
+
+            this.terrainRenderer.enableAttributeF(this.terrainRenderer.positionAL, 0, 3, 8);
+            this.terrainRenderer.enableAttributeF(this.terrainRenderer.normalAL, 3, 3, 8, true);
+            this.terrainRenderer.enableAttributeF(this.terrainRenderer.textureCoordAL, 6, 2, 8);
             this.lastBoundGeometry = bufferedGeometry;
         }
     }
@@ -205,21 +169,6 @@ class WebGLEngine {
         this.terrainTexture1 = this.getGLTexture(texture1);
     }
 
-    setSkybox(skybox) {
-
-        this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
-        for (let i = 0; i < skybox.textures.length; i++)
-            this.gl.texImage2D(this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this.gl.RGB, this.gl.RGB, this.gl.UNSIGNED_BYTE, skybox.textures[i].image);
-        this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-        this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-        this.gl.generateMipmap(this.gl.TEXTURE_2D);
-
-        this.skyboxVertexBuffer = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(skybox.vertices), this.gl.STATIC_DRAW);
-        this.skybox = skybox;
-    }
-
     renderGeometry(geometry) {
 
         var bufferedGeometry = this.getBufferedGeometry(geometry);
@@ -229,25 +178,10 @@ class WebGLEngine {
         this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
     }
 
-    renderSkybox() {
-
-        this.gl.useProgram(this.skyboxShaderProgram);
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
-        this.gl.vertexAttribPointer(this.skyboxPositionL, 3, this.gl.FLOAT, false, 0, 0);
-        this.gl.enableVertexAttribArray(this.skyboxPositionL);
-        this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
-        let skyboxViewMatrix = new Matrix4(this.camera.getViewMatrix());
-        skyboxViewMatrix.set([0, 0, 0], 12);
-        this.skyboxUniforms.view.write(skyboxViewMatrix);
-        this.skyboxUniforms.projection.write(this.camera.getProjectionMatrix());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.skybox.vertices.length / 3);
-    }
-
     render() {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-//        this.renderSkybox();
         this.skyboxRenderer.render(this.camera);
 
         this.gl.useProgram(this.mainShaderProgram);
@@ -262,31 +196,6 @@ class WebGLEngine {
         for (let terrainI in this.terrainObjects)
             this.renderGeometry(this.terrainObjects[terrainI].geometry);
         this.mainUniforms.terrainMode.write(0);
-
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.mainUniforms.sampler0.write(0);
-        var transformMatrices = [Matrix4.identity()];
-        var transform = transformMatrices[0];
-
-        let engine = this;
-        function renderObject(object) {
-            transformMatrices.push(object.transform.getMatrix());
-            transform = transform.times(object.transform.getMatrix());
-            engine.mainUniforms.transform.write(transform);
-
-            var glTexture = engine.getGLTexture(object.texture);
-            engine.bindTexture(glTexture);
-
-            engine.renderGeometry(object.geometry);
-
-            for (var childIndex = 0; childIndex < object.children.length; childIndex++)
-                renderObject(object.children[childIndex]);
-
-            transformMatrices.pop();
-            transform = transformMatrices[transformMatrices.length - 1];
-        }
-
-        this.objects.forEach(renderObject);
     }
 
     setViewPort(x, y, width, height) {

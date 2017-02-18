@@ -4,6 +4,7 @@ include("util/Controller");
 
 include("geometry/Vector3");
 
+include("util/Initializable");
 include("WebGLEngine");
 include("User");
 include("TerrainManager");
@@ -28,8 +29,7 @@ class App {
         this.controller.rotation = new Vector3(0, Math.PI / 4, 0);
 //        this.controller.mode = Controller.moveMode.FREE;
 
-        let skyboxRenderer = new SkyboxRenderer(gl, 64);
-        this.engine = new WebGLEngine(gl, skyboxRenderer);
+        this.engine = new WebGLEngine(gl);
         this.paused = true;
 
         let app = this;
@@ -53,29 +53,15 @@ class App {
         // Create file loader
         var loader = new FileLoader();
 
-        // Load shaders
-        var shaderFiles = {};
-        for (var i in App.SHADER_FILENAMES) {
-            shaderFiles[App.SHADER_FILENAMES[i]] = loader.addTextFile(App.SHADER_FILENAMES[i]);
-        }
-
         // Load texture
         var grassImageFile = loader.addImageFile("binaries/grass01.jpg");
         var rockImageFile = loader.addImageFile("binaries/rock01.jpg");
 
         let app = this;
-        this.engine.skyboxRenderer.initialize(function() {
-            loader.load(function() {
-                let engine = app.engine;
-                engine.initializeMainShaders(
-                        shaderFiles[App.SHADER_FILENAMES.VSHADER].text,
-                        shaderFiles[App.SHADER_FILENAMES.FSHADER].text
-                        );
+        loader.load(function() {
+            let engine = app.engine;
 
-//                engine.initializeSkyboxShaders(
-//                        shaderFiles[App.SHADER_FILENAMES.SKYBOX_VSHADER].text,
-//                        shaderFiles[App.SHADER_FILENAMES.SKYBOX_FSHADER].text
-//                        );
+            engine.initialize(function() {
 
                 let viewDistance = 64;
                 engine.camera.setFar = viewDistance;
@@ -97,18 +83,10 @@ class App {
                 engine.skyboxRenderer.useShaderProgram();
                 engine.skyboxRenderer.fogColor = fogColor;
 
-//            engine.gl.useProgram(engine.skyboxShaderProgram);
-//            engine.skyboxUniforms.fogColor.write(fogColor);
-//            let skyboxImages = [];
-//            for (let i in skyboxImageFiles)
-//                skyboxImages.push(skyboxImageFiles[i].image);
-//
-//            let skybox = new Skybox(viewDistance, skyboxImages);
-//            engine.setSkybox(skybox);
-
                 callback();
             });
         });
+
     }
 
     setTerrainMesh(coordinates) {
