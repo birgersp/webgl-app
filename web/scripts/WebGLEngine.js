@@ -5,9 +5,13 @@ include("ShaderUniformManager");
 include("Camera");
 include("Skybox");
 
+include("util/Initializable");
+include("Renderer");
+include("SkyboxRenderer");
+
 class WebGLEngine {
 
-    constructor(gl) {
+    constructor(gl, skyboxRenderer) {
 
         this.gl = gl;
         this.gl.enable(this.gl.DEPTH_TEST);
@@ -15,8 +19,6 @@ class WebGLEngine {
         this.gl.cullFace(this.gl.BACK);
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.enable(this.gl.BLEND);
-
-        this.skyboxTexture = this.gl.createTexture();
 
         this.objects = [];
         this.terrainObjects = [];
@@ -28,6 +30,8 @@ class WebGLEngine {
         this.lastBoundGeometry = null;
         this.lastBoundTexture = null;
         this.camera = new Camera();
+
+        this.skyboxRenderer = skyboxRenderer;
     }
 
     initializeMainShaders(vertexShaderSource, fragmentShaderSource) {
@@ -95,9 +99,10 @@ class WebGLEngine {
         this.gl.compileShader(fragmentShader);
         this.gl.attachShader(this.skyboxShaderProgram, fragmentShader);
 
-        // Link and use shader program
         this.gl.linkProgram(this.skyboxShaderProgram);
         this.gl.useProgram(this.skyboxShaderProgram);
+
+        // Link and use shader program
 
         let uniformManager = new ShaderUniformManager(this.gl, this.skyboxShaderProgram);
         this.skyboxUniforms = {
@@ -242,7 +247,8 @@ class WebGLEngine {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.renderSkybox();
+//        this.renderSkybox();
+        this.skyboxRenderer.render(this.camera);
 
         this.gl.useProgram(this.mainShaderProgram);
         this.mainUniforms.view.write(this.camera.getViewMatrix());
