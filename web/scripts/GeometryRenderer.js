@@ -1,12 +1,11 @@
-class ObjectRenderer extends Renderer {
+class GeometryRenderer extends Renderer {
 
     constructor(gl) {
 
         super(gl);
         this.viewUniform = null;
         this.projectionUniform = null;
-        this.sampler0Uniform = null;
-        this.sampler1Uniform = null;
+        this.samplerUniform = null;
         this.sunDirectionUniform = null;
         this.sunColorUniform = null;
         this.viewDistanceUniform = null;
@@ -18,13 +17,12 @@ class ObjectRenderer extends Renderer {
         this.textureCoordAL = null;
     }
 
-    initialize(callback) {
+    initializeUniforms() {
 
         let uniformManager = this.getUniformManager();
         this.viewUniform = uniformManager.locateMatrix("view");
         this.projectionUniform = uniformManager.locateMatrix("projection");
-        this.sampler0Uniform = uniformManager.locateInteger("sampler0");
-        this.sampler1Uniform = uniformManager.locateInteger("sampler1");
+        this.samplerUniform = uniformManager.locateInteger("sampler");
 
         this.sunDirectionUniform = uniformManager.locateVector3("sunDirection");
         this.sunColorUniform = uniformManager.locateVector3("sunColor");
@@ -35,7 +33,5 @@ class ObjectRenderer extends Renderer {
         this.positionAL = this.getAttributeLocation("position");
         this.normalAL = this.getAttributeLocation("normal");
         this.textureCoordAL = this.getAttributeLocation("textureCoord");
-
-        callback();
     }
 }

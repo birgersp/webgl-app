@@ -1,6 +1,6 @@
 include("util/FileLoader");
 
-class TerrainRenderer extends ObjectRenderer {
+class TerrainRenderer extends GeometryRenderer {
 
     constructor(gl) {
 
@@ -10,11 +10,15 @@ class TerrainRenderer extends ObjectRenderer {
 
         this.grassImage = null;
         this.rockImage = null;
+
+        this.sampler2Uniform = null;
     }
 
-    onInitialized(callback) {
+    initializeUniforms() {
 
-        super.initialize(callback);
+        super.initializeUniforms();
+        let uniformManager = this.getUniformManager();
+        this.sampler2Uniform = uniformManager.locateInteger("sampler2");
     }
 
     initialize(callback) {
@@ -37,7 +41,8 @@ class TerrainRenderer extends ObjectRenderer {
             renderer.rockImage = rockTextureFile.image;
             renderer.bufferTexture(renderer.rockImage);
 
-            renderer.onInitialized(callback);
+            renderer.initializeUniforms();
+            callback();
         });
     }
 
@@ -68,8 +73,8 @@ class TerrainRenderer extends ObjectRenderer {
         this.setActiveTexture(1);
         this.bindTexture(this.rockImage);
 
-        this.sampler0Uniform.write(0);
-        this.sampler1Uniform.write(1);
+        this.samplerUniform.write(0);
+        this.sampler2Uniform.write(1);
 
         for (let terrainSectionI in this.terrainSections) {
             let terrainSection = this.terrainSections[terrainSectionI];

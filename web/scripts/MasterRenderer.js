@@ -2,7 +2,7 @@ include("Camera");
 
 include("util/InitializableManager");
 include("Renderer");
-include("ObjectRenderer");
+include("GeometryRenderer");
 include("TerrainRenderer");
 include("SkyboxRenderer");
 
