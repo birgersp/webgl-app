@@ -1,13 +1,6 @@
-include("Identifyable");
-include("WebGLEngine");
-
-include("geometry/Cube");
-include("geometry/Vector3");
-
 include("App");
 
-include("util/FileLoader");
-include("TerrainGenerator");
+include("util/TerrainGenerator");
 
 function main() {
 

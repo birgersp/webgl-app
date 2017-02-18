@@ -1,11 +1,16 @@
-include("Identifyable");
-include("User");
-include("WebGLEngine");
-include("Controller");
+include("util/Identifyable");
 include("util/FileLoader");
+include("util/Controller");
+
+include("geometry/Vector3");
+
+include("WebGLEngine");
+include("User");
 include("TerrainManager");
-include("geometry/TerrainGridCell");
 include("Skybox");
+
+include("geometry/Cube");
+include("geometry/TerrainGridCell");
 
 class App {
 

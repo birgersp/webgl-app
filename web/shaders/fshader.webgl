@@ -25,7 +25,7 @@ void main() {
   vec4 color = texture2D(sampler0, vTextureCoord);
 
   if (terrainMode == true) {
-    float textureFactor = pow(max(dot(vec3(0, 1, 0), vNormal), 0.0), 3.0);
+    float textureFactor = pow(clamp(dot(vec3(0, 1, 0), vNormal), 0.0, 1.0), 1.0);
     color = mix(texture2D(sampler1, vTextureCoord), color, textureFactor);
   }
   color *= diffuse;
