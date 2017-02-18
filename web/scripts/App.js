@@ -2,12 +2,12 @@ include("util/FileLoader");
 include("util/Controller");
 
 include("geometry/Vector3");
+include("geometry/Vertex");
 
 include("util/Initializable");
 include("MasterRenderer");
 include("User");
 include("TerrainManager");
-include("Skybox");
 
 include("geometry/TerrainGridCell");
 

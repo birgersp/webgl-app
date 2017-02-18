@@ -1,9 +1,4 @@
-include("geometry/Vertex");
-include("geometry/Transform");
-include("ShaderUniformManager");
-
 include("Camera");
-include("Skybox");
 
 include("util/InitializableManager");
 include("Renderer");
