@@ -88,7 +88,7 @@ function main() {
         app.setTerrainMesh(terrainGenerator.getTerrainCoordinates(-offset, offset, size));
     }
 
-    app.load(function() {
+    app.initialize(function() {
         addTerrain();
         app.start();
     });

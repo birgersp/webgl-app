@@ -48,7 +48,7 @@ class App {
         });
     }
 
-    load(onloaded) {
+    initialize(callback) {
 
         // Create file loader
         var loader = new FileLoader();
@@ -106,7 +106,7 @@ class App {
 //            let skybox = new Skybox(viewDistance, skyboxImages);
 //            engine.setSkybox(skybox);
 
-                onloaded();
+                callback();
             });
         });
     }

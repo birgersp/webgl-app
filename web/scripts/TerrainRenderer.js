@@ -29,16 +29,16 @@ class TerrainRenderer extends Renderer {
         let fileLoader = new FileLoader();
         let vShaderFile = fileLoader.addTextFile(TerrainRenderer.filenames.VERTEX_SHADER);
         let fShaderFile = fileLoader.addTextFile(TerrainRenderer.filenames.FRAGMENT_SHADER);
-        let grassTextureFile = fileLoader.addTextFile(TerrainRenderer.filenames.images.GRASS);
-        let rockTextureFile = fileLoader.addTextFile(TerrainRenderer.filenames.images.ROCK);
+        let grassTextureFile = fileLoader.addImageFile(TerrainRenderer.filenames.images.GRASS);
+        let rockTextureFile = fileLoader.addImageFile(TerrainRenderer.filenames.images.ROCK);
 
         let renderer = this;
         fileLoader.load(function() {
 
             renderer.initializeShaders(vShaderFile.text, fShaderFile.text);
 
-            let uniformManager = renderer.getUniformManager();
             renderer.useShaderProgram();
+            let uniformManager = renderer.getUniformManager();
             renderer.viewUniform = uniformManager.locateMatrix("view");
             renderer.projectionUniform = uniformManager.locateMatrix("projection");
             renderer.sampler0Uniform = uniformManager.locateInteger("sampler0");
@@ -65,14 +65,14 @@ class TerrainRenderer extends Renderer {
 
     addTerrain(vertices, indices) {
 
-        this.terrains.push(new TerrainRenderer.TerrainSection(vertices, indices));
+        this.terrainSections.push(new TerrainRenderer.TerrainSection(vertices, indices));
         this.bufferArrayF(vertices);
         this.bufferElementArrayI(indices);
     }
 
     render(camera) {
 
-        this.gl.useProgram(this.mainShaderProgram);
+        this.useShaderProgram();
 
         this.viewUniform.write(camera.getViewMatrix());
         this.projectionUniform.write(camera.getProjectionMatrix());

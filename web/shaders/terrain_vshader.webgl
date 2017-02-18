@@ -19,7 +19,6 @@ void main() {
   gl_Position = projection * positionToCamera;
   vTextureCoord = textureCoord;
 
-  vSurfaceNormal = (transform * vec4(normal, 1.0)).xyz;
   vPosition = position;
   vNormal = normal;
 

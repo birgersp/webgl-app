@@ -1,4 +1,5 @@
 include("util/FileLoader");
+include("ShaderUniformManager");
 
 class Renderer extends Initializable {
 
