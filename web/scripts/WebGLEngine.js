@@ -73,8 +73,8 @@ class WebGLEngine extends Initializable {
                 terrainMode: mainUniformManager.locateFloat("terrainMode")
             };
 
-            engine.mainUniforms.sampler0.write(0);
-            engine.mainUniforms.sampler1.write(1);
+            engine.terrainRenderer.sampler0Uniform.write(0);
+            engine.terrainRenderer.sampler1Uniform.write(1);
 
             callback();
         });
@@ -159,8 +159,9 @@ class WebGLEngine extends Initializable {
 
     addTerrainObject(object) {
 
-        this.getBufferedGeometry(object.geometry);
-        this.terrainObjects.push(object);
+        this.terrainRenderer.addTerrain(object.geometry.vertices, object.geometry.indices);
+//        this.getBufferedGeometry(object.geometry);
+//        this.terrainObjects.push(object);
     }
 
     setTerrainTextures(texture0, texture1) {
@@ -183,19 +184,7 @@ class WebGLEngine extends Initializable {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
         this.skyboxRenderer.render(this.camera);
-
-        this.gl.useProgram(this.mainShaderProgram);
-        this.mainUniforms.view.write(this.camera.getViewMatrix());
-        this.mainUniforms.projection.write(this.camera.getProjectionMatrix());
-        this.mainUniforms.transform.write(Matrix4.identity());
-        this.mainUniforms.terrainMode.write(1);
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.bindTexture(this.terrainTexture0);
-        this.gl.activeTexture(this.gl.TEXTURE1);
-        this.bindTexture(this.terrainTexture1);
-        for (let terrainI in this.terrainObjects)
-            this.renderGeometry(this.terrainObjects[terrainI].geometry);
-        this.mainUniforms.terrainMode.write(0);
+        this.terrainRenderer.render(this.camera);
     }
 
     setViewPort(x, y, width, height) {
@@ -203,57 +192,3 @@ class WebGLEngine extends Initializable {
         this.gl.viewport(x, y, width, height);
     }
 }
-
-WebGLEngine.BufferedGeometry = class {
-
-    constructor(vertexBuffer, indexBuffer) {
-
-        this.vertexBuffer = vertexBuffer;
-        this.indexBuffer = indexBuffer;
-    }
-};
-
-WebGLEngine.Geometry = class extends Identifyable {
-
-    constructor(vertices, indices) {
-
-        super();
-        this.vertices = vertices;
-        this.indices = indices;
-    }
-};
-
-WebGLEngine.Texture = class extends Identifyable {
-
-    constructor(image) {
-
-        super();
-        this.image = image;
-    }
-};
-
-WebGLEngine.Object = class {
-
-    constructor(geometry, texture) {
-
-        this.geometry = geometry;
-        this.texture = texture;
-        this.transform = new Transform();
-        this.children = [];
-    }
-
-    add(object) {
-
-        this.children.push(object);
-    }
-};
-
-WebGLEngine.TerrainObject = class {
-
-    constructor(geometry, texture0, texture1) {
-
-        this.geometry = geometry;
-        this.texture0 = texture0;
-        this.texture1 = texture1;
-    }
-};

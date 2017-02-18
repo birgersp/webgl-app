@@ -94,13 +94,13 @@ class Renderer extends Initializable {
     bufferArrayF(array) {
 
         this.bindArrayBuffer(array);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, array, this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(array), this.gl.STATIC_DRAW);
     }
 
     bufferElementArrayI(array) {
 
         this.bindElementArrayBuffer(array);
-        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, array, this.gl.STATIC_DRAW);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(array), this.gl.STATIC_DRAW);
     }
 
     getGLTexture(image) {

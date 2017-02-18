@@ -10,7 +10,6 @@ include("User");
 include("TerrainManager");
 include("Skybox");
 
-include("geometry/Cube");
 include("geometry/TerrainGridCell");
 
 class App {
@@ -75,10 +74,6 @@ class App {
                 engine.mainUniforms.viewDistance.write(viewDistance);
                 engine.mainUniforms.fogFactor.write(2);
                 engine.mainUniforms.fogColor.write(fogColor);
-
-                app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
-                app.rockTexture = new WebGLEngine.Texture(rockImageFile.image);
-                engine.setTerrainTextures(app.grassTexture, app.rockTexture);
 
                 engine.skyboxRenderer.useShaderProgram();
                 engine.skyboxRenderer.fogColor = fogColor;
@@ -152,9 +147,7 @@ class App {
                         vertices.set(new Vertex(coord[0], coord[1], coord[2], n[0], n[1], n[2], i * uvScale, j * uvScale), vertexIndex++ * Vertex.LENGTH);
                     }
                 }
-                let geometry = new WebGLEngine.Geometry(vertices, indices);
-                let terrainObject = new WebGLEngine.TerrainObject(geometry, this.rockTexture, this.grassTexture);
-                this.engine.addTerrainObject(terrainObject);
+                this.engine.terrainRenderer.addTerrain(vertices, indices);
             }
         }
     }
