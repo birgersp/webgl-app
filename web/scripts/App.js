@@ -1,11 +1,10 @@
-include("util/Identifyable");
 include("util/FileLoader");
 include("util/Controller");
 
 include("geometry/Vector3");
 
 include("util/Initializable");
-include("WebGLEngine");
+include("MasterRenderer");
 include("User");
 include("TerrainManager");
 include("Skybox");
@@ -28,7 +27,7 @@ class App {
         this.controller.rotation = new Vector3(0, Math.PI / 4, 0);
 //        this.controller.mode = Controller.moveMode.FREE;
 
-        this.engine = new WebGLEngine(gl);
+        this.engine = new MasterRenderer(gl);
         this.paused = true;
 
         let app = this;

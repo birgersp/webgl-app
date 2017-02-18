@@ -10,7 +10,7 @@ include("Renderer");
 include("TerrainRenderer");
 include("SkyboxRenderer");
 
-class WebGLEngine extends Initializable {
+class MasterRenderer extends Initializable {
 
     constructor(gl) {
 
