@@ -53,16 +53,15 @@ class App {
         }
 
         // Load texture
-        var crateImageFile = loader.addImageFile("binaries/crate.jpg");
-        var grassImageFile = loader.addImageFile("binaries/grass.jpg");
-        var rockImageFile = loader.addImageFile("binaries/rock.jpg");
+        var grassImageFile = loader.addImageFile("binaries/grass01.jpg");
+        var rockImageFile = loader.addImageFile("binaries/rock01.jpg");
         var skyboxImageFiles = [
-            loader.addImageFile("binaries/skybox/right.png"),
-            loader.addImageFile("binaries/skybox/left.png"),
-            loader.addImageFile("binaries/skybox/top.png"),
-            loader.addImageFile("binaries/skybox/bottom.png"),
-            loader.addImageFile("binaries/skybox/back.png"),
-            loader.addImageFile("binaries/skybox/front.png")
+            loader.addImageFile("binaries/skybox/right.jpg"),
+            loader.addImageFile("binaries/skybox/left.jpg"),
+            loader.addImageFile("binaries/skybox/top.jpg"),
+            loader.addImageFile("binaries/skybox/bottom.jpg"),
+            loader.addImageFile("binaries/skybox/back.jpg"),
+            loader.addImageFile("binaries/skybox/front.jpg")
         ];
 
         let engine = this.engine;
@@ -78,21 +77,23 @@ class App {
                     shaderFiles[App.SHADER_FILENAMES.SKYBOX_FSHADER].text
                     );
 
+            let viewDistance = 64;
+            engine.camera.setFar = viewDistance;
+
             let fogColor = new Vector3(0.8, 0.83, 0.92, 1);
             engine.gl.clearColor(fogColor[0], fogColor[1], fogColor[2], 1);
 
             engine.gl.useProgram(engine.mainShaderProgram);
             engine.mainUniforms.sunDirection.write(new Vector3(-1, -1, -1));
             engine.mainUniforms.sunColor.write(new Vector3(1, 1, 1));
-            engine.mainUniforms.viewDistance.write(engine.camera.f * 3 / 4);
-            engine.mainUniforms.fogFactor.write(3);
+            engine.mainUniforms.viewDistance.write(viewDistance);
+            engine.mainUniforms.fogFactor.write(2);
             engine.mainUniforms.fogColor.write(fogColor);
 
             engine.gl.useProgram(engine.skyboxShaderProgram);
             engine.skyboxUniforms.fogColor.write(fogColor);
 
             app.grassTexture = new WebGLEngine.Texture(grassImageFile.image);
-            app.crateTexture = new WebGLEngine.Texture(crateImageFile.image);
             app.rockTexture = new WebGLEngine.Texture(rockImageFile.image);
 
             engine.setTerrainTextures(app.grassTexture, app.rockTexture);
@@ -101,7 +102,7 @@ class App {
             for (let i in skyboxImageFiles)
                 skyboxImages.push(skyboxImageFiles[i].image);
 
-            let skybox = new Skybox(engine.camera.f, skyboxImages);
+            let skybox = new Skybox(viewDistance, skyboxImages);
             engine.setSkybox(skybox);
 
             onloaded();

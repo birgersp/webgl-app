@@ -16,6 +16,8 @@ class WebGLEngine {
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
         this.gl.enable(this.gl.BLEND);
 
+        this.skyboxTexture = this.gl.createTexture();
+
         this.objects = [];
         this.terrainObjects = [];
         this.terrainTexture0 = null;
@@ -200,11 +202,9 @@ class WebGLEngine {
 
     setSkybox(skybox) {
 
-        this.skyboxTexture = this.gl.createTexture();
         this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
         for (let i = 0; i < skybox.textures.length; i++)
             this.gl.texImage2D(this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this.gl.RGB, this.gl.RGB, this.gl.UNSIGNED_BYTE, skybox.textures[i].image);
-//        this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR);
         this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
         this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
         this.gl.generateMipmap(this.gl.TEXTURE_2D);
@@ -224,18 +224,25 @@ class WebGLEngine {
         this.gl.drawElements(this.gl.TRIANGLES, indices, this.gl.UNSIGNED_BYTE, 0);
     }
 
-    render() {
-
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    renderSkybox() {
 
         this.gl.useProgram(this.skyboxShaderProgram);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.skyboxVertexBuffer);
         this.gl.vertexAttribPointer(this.skyboxPositionL, 3, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(this.skyboxPositionL);
         this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.skyboxTexture);
-        this.skyboxUniforms.view.write(this.camera.getViewMatrix());
+        let skyboxViewMatrix = new Matrix4(this.camera.getViewMatrix());
+        skyboxViewMatrix.set([0, 0, 0], 12);
+        this.skyboxUniforms.view.write(skyboxViewMatrix);
         this.skyboxUniforms.projection.write(this.camera.getProjectionMatrix());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.skybox.vertices.length / 3);
+    }
+
+    render() {
+
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+        this.renderSkybox();
 
         this.gl.useProgram(this.mainShaderProgram);
         this.mainUniforms.view.write(this.camera.getViewMatrix());
