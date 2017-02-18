@@ -49,39 +49,9 @@ class App {
 
     initialize(callback) {
 
-        // Create file loader
-        var loader = new FileLoader();
-
-        // Load texture
-        var grassImageFile = loader.addImageFile("binaries/grass01.jpg");
-        var rockImageFile = loader.addImageFile("binaries/rock01.jpg");
-
-        let app = this;
-        loader.load(function() {
-            let engine = app.engine;
-
-            engine.initialize(function() {
-
-                let viewDistance = 64;
-                engine.camera.setFar = viewDistance;
-
-                let fogColor = new Vector3(0.8, 0.83, 0.92, 1);
-                engine.gl.clearColor(fogColor[0], fogColor[1], fogColor[2], 1);
-
-                engine.gl.useProgram(engine.mainShaderProgram);
-                engine.mainUniforms.sunDirection.write(new Vector3(-1, -1, -1));
-                engine.mainUniforms.sunColor.write(new Vector3(1, 1, 1));
-                engine.mainUniforms.viewDistance.write(viewDistance);
-                engine.mainUniforms.fogFactor.write(2);
-                engine.mainUniforms.fogColor.write(fogColor);
-
-                engine.skyboxRenderer.useShaderProgram();
-                engine.skyboxRenderer.fogColor = fogColor;
-
-                callback();
-            });
+        this.engine.initialize(function() {
+            callback();
         });
-
     }
 
     setTerrainMesh(coordinates) {
