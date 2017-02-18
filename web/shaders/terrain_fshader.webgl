@@ -8,17 +8,15 @@ uniform vec3 sunColor;
 uniform vec3 fogColor;
 
 varying vec2 vTextureCoord;
-varying vec3 vSurfaceNormal;
 varying float vVisibility;
 varying vec3 vPosition;
 varying vec3 vNormal;
 
 void main() {
 
-  vec3 surfaceNormalN = normalize(vSurfaceNormal);
   vec3 sunDirectionN = normalize(sunDirection);
 
-  float nDot1 = dot(surfaceNormalN, -sunDirectionN);
+  float nDot1 = dot(vNormal, -sunDirectionN);
   float brightness = max(nDot1, 0.3);
   vec4 diffuse = vec4(sunColor * brightness, 1);
 

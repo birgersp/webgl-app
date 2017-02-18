@@ -9,7 +9,6 @@ class TerrainRenderer extends Renderer {
         this.terrainSections = [];
 
         this.viewUniform = null;
-        this.transformUniform = null;
         this.projectionUniform = null;
         this.sampler0Uniform = null;
         this.sampler1Uniform = null;
@@ -41,7 +40,6 @@ class TerrainRenderer extends Renderer {
             renderer.useShaderProgram();
             let uniformManager = renderer.getUniformManager();
             renderer.viewUniform = uniformManager.locateMatrix("view");
-            renderer.transformUniform = uniformManager.locateMatrix("transform");
             renderer.projectionUniform = uniformManager.locateMatrix("projection");
             renderer.sampler0Uniform = uniformManager.locateInteger("sampler0");
             renderer.sampler1Uniform = uniformManager.locateInteger("sampler1");
@@ -85,8 +83,6 @@ class TerrainRenderer extends Renderer {
 
         this.sampler0Uniform.write(0);
         this.sampler1Uniform.write(1);
-
-        this.transformUniform.write(Matrix4.identity());
 
         for (let terrainSectionI in this.terrainSections) {
             let terrainSection = this.terrainSections[terrainSectionI];
