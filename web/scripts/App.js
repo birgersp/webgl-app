@@ -11,6 +11,7 @@ include("util/Initializable");
 include("MasterRenderer");
 include("User");
 include("World");
+include("TerrainMeshManager");
 
 include("geometry/TerrainGridCell");
 
@@ -18,8 +19,11 @@ class App {
 
     constructor(gl) {
 
+        this.engine = new MasterRenderer(gl);
+
         this.controller = new Controller();
         this.world = new World();
+        this.terrainManager = new TerrainMeshManager(this.world, this.engine.terrainRenderer);
 
         this.grassTexture = null;
         this.rockTexture = null;
@@ -29,7 +33,6 @@ class App {
         this.userOnGround = false;
 //        this.controller.mode = Controller.moveMode.FREE;
 
-        this.engine = new MasterRenderer(gl);
         this.paused = true;
 
         let app = this;
@@ -64,74 +67,6 @@ class App {
                 callback();
             });
         });
-    }
-
-    setTerrainMesh(coordinates) {
-
-        let size = Math.sqrt(coordinates.length);
-        let sectionSize = 9; // Coordinates^2 per section
-        let sections = Math.ceil(size / sectionSize);
-        let uvScale = 1 / (sectionSize - 1);
-
-        let sectionI, sectionJ;
-        function getSectionCoordinateIndex(i, j) {
-            let index = sectionJ * size * (sectionSize - 1) + sectionI * (sectionSize - 1) + j * size + i;
-            return index;
-        }
-
-        function getSectionCoordinate(i, j) {
-
-            let index = getSectionCoordinateIndex(i, j);
-            if (index >= 0 && index < coordinates.length)
-                return coordinates[index];
-            else
-                return null;
-        }
-
-        for (sectionJ = 0; sectionJ < sections; sectionJ++) {
-            for (sectionI = 0; sectionI < sections; sectionI++) {
-
-                let vertexIndex = 0;
-                let indexIndex = 0;
-                let vertices = new Float32Array(Math.pow(sectionSize, 2) * Vertex.LENGTH);
-                let indices = new Uint8Array(Math.pow(sectionSize - 1, 2) * 6);
-
-                for (let j = 0; j < sectionSize; j++) {
-                    for (let i = 0; i < sectionSize; i++) {
-
-                        let coord = getSectionCoordinate(i, j);
-
-                        let left = getSectionCoordinate(i - 1, j);
-                        let heightLeft = left ? left[1] : coord[1];
-
-                        let right = getSectionCoordinate(i + 1, j);
-                        let heightRight = right ? right[1] : coord[1];
-
-                        let top = getSectionCoordinate(i, j + 1);
-                        let heightTop = top ? top[1] : coord[1];
-
-                        let bottom = getSectionCoordinate(i, j - 1);
-                        let heightBottom = bottom ? bottom[1] : coord[1];
-
-                        if (i > 0 && j > 0) {
-                            let bottomleft = getSectionCoordinate(i - 1, j - 1);
-                            this.terrainManager.addGridCell(new TerrainGridCell(left, coord, bottomleft, bottom));
-
-                            let b = j * sectionSize + i;
-                            let a = b - 1;
-                            let d = b - sectionSize;
-                            let c = d - 1;
-
-                            indices.set([a, c, b, b, c, d], indexIndex++ * 6);
-                        }
-
-                        let n = new Vector3(heightLeft - heightRight, 2, heightBottom - heightTop).normalize();
-                        vertices.set(new Vertex(coord[0], coord[1], coord[2], n[0], n[1], n[2], i * uvScale, j * uvScale), vertexIndex++ * Vertex.LENGTH);
-                    }
-                }
-                this.engine.terrainRenderer.addGeometry(new Geometry(vertices, indices));
-            }
-        }
     }
 
     start(frameCallback) {

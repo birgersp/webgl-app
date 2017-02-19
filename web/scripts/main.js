@@ -85,7 +85,7 @@ function main() {
 
         let size = 64;
         let offset = Math.floor(size / 2);
-        app.addTerrain(terrainGenerator.getTerrainCoordinates(-offset, offset, size));
+        app.terrainManager.addTerrain(terrainGenerator.getTerrainCoordinates(-offset, offset, size));
     }
 
     app.initialize(function() {

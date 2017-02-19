@@ -44,11 +44,11 @@ class TerrainRenderer extends GeometryRenderer {
 
     setTerrainIndices(indices) {
 
-        let section;
-        for (let i = 0; i < this.geometries.length && !section; i++)
+        let geometry;
+        for (let i = 0; i < this.geometries.length && !geometry; i++)
             if (this.geometries[i].indices === indices)
-                section = this.geometries[i];
-        this.bufferElementArrayI(section.indices);
+                geometry = this.geometries[i];
+        this.bufferElementArrayI(geometry.indices);
     }
 
     render(camera) {
