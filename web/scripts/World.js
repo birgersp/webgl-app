@@ -1,51 +1,51 @@
-class TerrainManager {
+class World {
 
     constructor() {
 
-        this.collidables = {};
+        this.blocks = {};
     }
 
-    setCollidableYInterval(origin, endY, collidable) {
+    setBlockYInterval(origin, endY, collidable) {
 
         let vector = origin.getCopy();
         for (let y = origin[1]; y < endY; y += 1) {
-            this.setCollidable(vector, collidable);
+            this.setBlock(vector, collidable);
             vector[1] = y;
         }
         vector[1] = endY;
-        this.setCollidable(vector, collidable);
+        this.setBlock(vector, collidable);
     }
 
-    getCollidableOnYInterval(origin, endY) {
+    getBlockYInterval(origin, endY) {
 
         let collidable;
         let vector = origin.getCopy();
         for (let y = origin[1]; !collidable && y < endY; y += 1) {
-            collidable = this.getCollidable(vector);
+            collidable = this.getBlock(vector);
             vector[1] = y;
         }
 
         if (!collidable) {
             vector[1] = endY;
-            collidable = this.getCollidable(vector);
+            collidable = this.getBlock(vector);
         }
         return collidable;
     }
 
-    getTerrainIntersectionY(origin, dY) {
+    getBlockIntersectionYInterval(origin, dY) {
 
         let collidable;
         let vector = origin.getCopy();
         let endY = origin[1] + dY;
 
         while (!collidable && vector[1] < endY) {
-            collidable = this.getCollidable(vector);
+            collidable = this.getBlock(vector);
             vector[1]++;
         }
 
         if (!collidable) {
             vector[1] = endY;
-            collidable = this.getCollidable(vector);
+            collidable = this.getBlock(vector);
         }
 
         if (collidable) {
@@ -57,7 +57,7 @@ class TerrainManager {
         return null;
     }
 
-    addGridCell(gridCell) {
+    addTerrainCell(gridCell) {
 
         let yMin = gridCell.bottomleft[1];
         yMin = gridCell.topleft[1] < yMin ? gridCell.topleft[1] : yMin;
@@ -71,32 +71,32 @@ class TerrainManager {
 
         let origin = gridCell.bottomleft.getCopy();
         origin[1] = yMin;
-        this.setCollidableYInterval(origin, yMax, gridCell);
+        this.setBlockYInterval(origin, yMax, gridCell);
     }
 
-    setCollidable(coordinate, collidable, overwrite) {
+    setBlock(coordinate, collidable, overwrite) {
 
         let xIndex = this.getXIndex(coordinate[0]);
-        if (!this.collidables[xIndex])
-            this.collidables[xIndex] = {};
+        if (!this.blocks[xIndex])
+            this.blocks[xIndex] = {};
 
         let yIndex = this.getYIndex(coordinate[1]);
-        if (!this.collidables[xIndex][yIndex])
-            this.collidables[xIndex][yIndex] = {};
+        if (!this.blocks[xIndex][yIndex])
+            this.blocks[xIndex][yIndex] = {};
 
         let zIndex = this.getZIndex(coordinate[2]);
-        if (!this.collidables[xIndex][yIndex][zIndex] || overwrite)
-            this.collidables[xIndex][yIndex][zIndex] = collidable;
+        if (!this.blocks[xIndex][yIndex][zIndex] || overwrite)
+            this.blocks[xIndex][yIndex][zIndex] = collidable;
     }
 
-    getCollidable(coordinate) {
+    getBlock(coordinate) {
 
         let xIndex = this.getXIndex(coordinate[0]);
-        if (this.collidables[xIndex]) {
+        if (this.blocks[xIndex]) {
             let yIndex = this.getYIndex(coordinate[1]);
-            if (this.collidables[xIndex][yIndex]) {
+            if (this.blocks[xIndex][yIndex]) {
                 let zIndex = this.getZIndex(coordinate[2]);
-                return this.collidables[xIndex][yIndex][zIndex];
+                return this.blocks[xIndex][yIndex][zIndex];
             }
         }
         return null;

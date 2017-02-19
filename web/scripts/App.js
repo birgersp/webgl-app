@@ -10,7 +10,7 @@ include("geometry/Cube");
 include("util/Initializable");
 include("MasterRenderer");
 include("User");
-include("TerrainManager");
+include("World");
 
 include("geometry/TerrainGridCell");
 
@@ -19,7 +19,7 @@ class App {
     constructor(gl) {
 
         this.controller = new Controller();
-        this.terrainManager = new TerrainManager();
+        this.world = new World();
 
         this.grassTexture = null;
         this.rockTexture = null;
@@ -172,9 +172,10 @@ class App {
         this.userOnGround = false;
 
         // Check collision
-        let terrainUserCollisionY = this.terrainManager.getTerrainIntersectionY(this.user.position, User.HEIGHT);
+        let terrainUserCollisionY = this.world.getBlockIntersectionYInterval(this.user.position, User.HEIGHT);
         if (terrainUserCollisionY !== null) {
             this.user.position[1] = terrainUserCollisionY;
+
             if (this.controller.mode !== Controller.moveMode.FREE) {
                 if (this.user.velocity[1] < 0)
                     this.user.velocity[1] = 0;
