@@ -3,50 +3,50 @@ class World extends CoordinateSystem {
     constructor() {
 
         super(1);
-        this.blocks = {};
+        this.terrainCells = {};
     }
 
-    setBlockYInterval(origin, endY, collidable) {
+    setTerrainCellYInterval(origin, endY, collidable) {
 
         let vector = origin.getCopy();
         for (let y = origin[1]; y < endY; y += 1) {
-            this.setBlock(vector, collidable);
+            this.setTerrainCell(vector, collidable);
             vector[1] = y;
         }
         vector[1] = endY;
-        this.setBlock(vector, collidable);
+        this.setTerrainCell(vector, collidable);
     }
 
-    getBlockYInterval(origin, endY) {
+    getTerrainCellYInterval(origin, endY) {
 
         let collidable;
         let vector = origin.getCopy();
         for (let y = origin[1]; !collidable && y < endY; y += 1) {
-            collidable = this.getBlock(vector);
+            collidable = this.getTerrainCell(vector);
             vector[1] = y;
         }
 
         if (!collidable) {
             vector[1] = endY;
-            collidable = this.getBlock(vector);
+            collidable = this.getTerrainCell(vector);
         }
         return collidable;
     }
 
-    getBlockIntersectionYInterval(origin, dY) {
+    getTerrainCellIntersectionYInterval(origin, dY) {
 
         let collidable;
         let vector = origin.getCopy();
         let endY = origin[1] + dY;
 
         while (!collidable && vector[1] < endY) {
-            collidable = this.getBlock(vector);
+            collidable = this.getTerrainCell(vector);
             vector[1]++;
         }
 
         if (!collidable) {
             vector[1] = endY;
-            collidable = this.getBlock(vector);
+            collidable = this.getTerrainCell(vector);
         }
 
         if (collidable) {
@@ -72,32 +72,32 @@ class World extends CoordinateSystem {
 
         let origin = gridCell.bottomleft.getCopy();
         origin[1] = yMin;
-        this.setBlockYInterval(origin, yMax, gridCell);
+        this.setTerrainCellYInterval(origin, yMax, gridCell);
     }
 
-    setBlock(coordinate, collidable) {
+    setTerrainCell(coordinate, cell) {
 
         let xIndex = this.getXIndex(coordinate[0]);
-        if (!this.blocks[xIndex])
-            this.blocks[xIndex] = {};
+        if (!this.terrainCells[xIndex])
+            this.terrainCells[xIndex] = {};
 
         let yIndex = this.getYIndex(coordinate[1]);
-        if (!this.blocks[xIndex][yIndex])
-            this.blocks[xIndex][yIndex] = {};
+        if (!this.terrainCells[xIndex][yIndex])
+            this.terrainCells[xIndex][yIndex] = {};
 
         let zIndex = this.getZIndex(coordinate[2]);
-        if (!this.blocks[xIndex][yIndex][zIndex])
-            this.blocks[xIndex][yIndex][zIndex] = collidable;
+        if (!this.terrainCells[xIndex][yIndex][zIndex])
+            this.terrainCells[xIndex][yIndex][zIndex] = cell;
     }
 
-    getBlock(coordinate) {
+    getTerrainCell(coordinate) {
 
         let xIndex = this.getXIndex(coordinate[0]);
-        if (this.blocks[xIndex]) {
+        if (this.terrainCells[xIndex]) {
             let yIndex = this.getYIndex(coordinate[1]);
-            if (this.blocks[xIndex][yIndex]) {
+            if (this.terrainCells[xIndex][yIndex]) {
                 let zIndex = this.getZIndex(coordinate[2]);
-                return this.blocks[xIndex][yIndex][zIndex];
+                return this.terrainCells[xIndex][yIndex][zIndex];
             }
         }
         return null;
