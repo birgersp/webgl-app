@@ -25,13 +25,13 @@ class TerrainMeshManager {
     addTerrain(coordinates) {
 
         let size = Math.sqrt(coordinates.length);
-        let sectionSize = TerrainMeshManager.SECTION_SIZE;
-        let sections = Math.ceil(size / sectionSize);
-        let uvScale = 1 / (sectionSize - 1);
+        let verticesPerSection = TerrainMeshManager.SECTION_SIZE + 1;
+        let sections = Math.ceil(size / verticesPerSection);
+        let uvScale = 1 / (verticesPerSection - 1);
 
         let sectionI, sectionJ;
         function getSectionCoordinateIndex(i, j) {
-            let index = sectionJ * size * (sectionSize - 1) + sectionI * (sectionSize - 1) + j * size + i;
+            let index = sectionJ * size * (verticesPerSection - 1) + sectionI * (verticesPerSection - 1) + j * size + i;
             return index;
         }
 
@@ -49,11 +49,11 @@ class TerrainMeshManager {
 
                 let vertexIndex = 0;
                 let indexIndex = 0;
-                let vertices = new Float32Array(Math.pow(sectionSize, 2) * Vertex.LENGTH);
-                let indices = new Uint8Array(Math.pow(sectionSize - 1, 2) * 6);
+                let vertices = new Float32Array(Math.pow(verticesPerSection, 2) * Vertex.LENGTH);
+                let indices = new Uint8Array(Math.pow(verticesPerSection - 1, 2) * 6);
 
-                for (let j = 0; j < sectionSize; j++) {
-                    for (let i = 0; i < sectionSize; i++) {
+                for (let j = 0; j < verticesPerSection; j++) {
+                    for (let i = 0; i < verticesPerSection; i++) {
 
                         let coord = getSectionCoordinate(i, j);
 
@@ -73,9 +73,9 @@ class TerrainMeshManager {
                             let bottomleft = getSectionCoordinate(i - 1, j - 1);
                             this.world.addTerrainCell(new TerrainGridCell(left, coord, bottomleft, bottom));
 
-                            let b = j * sectionSize + i;
+                            let b = j * verticesPerSection + i;
                             let a = b - 1;
-                            let d = b - sectionSize;
+                            let d = b - verticesPerSection;
                             let c = d - 1;
 
                             indices.set([a, c, b, b, c, d], indexIndex++ * 6);
@@ -102,4 +102,4 @@ class TerrainMeshManager {
     }
 }
 
-TerrainMeshManager.SECTION_SIZE = 9;
+TerrainMeshManager.SECTION_SIZE = 8;
