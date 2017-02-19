@@ -4,17 +4,28 @@ class TerrainMeshManager {
 
         this.world = world;
         this.renderer = renderer;
-        this.sectionGeometries = {};
+        this.geometries = {};
+        this.coordinateHeights = {};
+    }
+
+    addTerrainCoordinate(coordinate) {
+
+        let xIndex = Math.floor(coordinate[0]);
+        if (!this.coordinateHeights[xIndex])
+            this.coordinateHeights[xIndex] = {};
+
+        let zIndex = Math.ceil(coordinate[2]);
+        this.coordinateHeights[xIndex][zIndex] = coordinate[1];
     }
 
     getSectionXIndex(x) {
 
-        return Math.floor(x / TerrainMeshManager.SECTION_SIZE);
+        return Math.floor(x / TerrainMeshManager.GEOMETRIES_SIZE);
     }
 
     getSectionZIndex(z) {
 
-        return Math.ceil(z / TerrainMeshManager.SECTION_SIZE);
+        return Math.ceil(z / TerrainMeshManager.GEOMETRIES_SIZE);
     }
 
     updateSectionGeometry(geometry) {
@@ -27,11 +38,11 @@ class TerrainMeshManager {
         let sectionXIndex = this.getSectionXIndex(x);
         let sectionZIndex = this.getSectionZIndex(z);
 
-        let xIndex = Math.floor(x - sectionXIndex * TerrainMeshManager.SECTION_SIZE);
-        let zIndex = Math.floor(sectionZIndex * TerrainMeshManager.SECTION_SIZE - z);
-        let indexIndex = (zIndex * TerrainMeshManager.SECTION_SIZE + xIndex) * 6;
+        let xIndex = Math.floor(x - sectionXIndex * TerrainMeshManager.GEOMETRIES_SIZE);
+        let zIndex = Math.floor(sectionZIndex * TerrainMeshManager.GEOMETRIES_SIZE - z);
+        let indexIndex = (zIndex * TerrainMeshManager.GEOMETRIES_SIZE + xIndex) * 6;
 
-        let indices = this.sectionGeometries[sectionXIndex][sectionZIndex].indices;
+        let indices = this.geometries[sectionXIndex][sectionZIndex].indices;
         indices.splice(indexIndex, 6);
         this.renderer.setTerrainIndices(indices);
     }
@@ -39,13 +50,13 @@ class TerrainMeshManager {
     addTerrain(coordinates) {
 
         let size = Math.sqrt(coordinates.length);
-        let verticesPerSection = TerrainMeshManager.SECTION_SIZE + 1;
-        let sections = Math.ceil(size / verticesPerSection);
-        let uvScale = 1 / (verticesPerSection - 1);
+        let verticesPerGeometry = TerrainMeshManager.GEOMETRIES_SIZE + 1;
+        let sections = Math.ceil(size / verticesPerGeometry);
+        let uvScale = 1 / (verticesPerGeometry - 1);
 
         let sectionI, sectionJ;
         function getSectionCoordinateIndex(i, j) {
-            let index = sectionJ * size * (verticesPerSection - 1) + sectionI * (verticesPerSection - 1) + j * size + i;
+            let index = sectionJ * size * (verticesPerGeometry - 1) + sectionI * (verticesPerGeometry - 1) + j * size + i;
             return index;
         }
 
@@ -64,8 +75,8 @@ class TerrainMeshManager {
                 let vertices = [];
                 let indices = [];
 
-                for (let j = 0; j < verticesPerSection; j++) {
-                    for (let i = 0; i < verticesPerSection; i++) {
+                for (let j = 0; j < verticesPerGeometry; j++) {
+                    for (let i = 0; i < verticesPerGeometry; i++) {
 
                         let coord = getSectionCoordinate(i, j);
 
@@ -85,9 +96,9 @@ class TerrainMeshManager {
                             let bottomleft = getSectionCoordinate(i - 1, j - 1);
                             this.world.addTerrainCell(new TerrainGridCell(left, coord, bottomleft, bottom));
 
-                            let b = j * verticesPerSection + i;
+                            let b = j * verticesPerGeometry + i;
                             let a = b - 1;
-                            let d = b - verticesPerSection;
+                            let d = b - verticesPerGeometry;
                             let c = d - 1;
 
                             indices = indices.concat([a, c, b, b, c, d]);
@@ -101,17 +112,17 @@ class TerrainMeshManager {
                 let sectionPosition = getSectionCoordinate(0, 0);
 
                 let xIndex = this.getSectionXIndex(sectionPosition[0]);
-                if (!this.sectionGeometries[xIndex])
-                    this.sectionGeometries[xIndex] = {};
+                if (!this.geometries[xIndex])
+                    this.geometries[xIndex] = {};
 
                 let zIndex = this.getSectionZIndex(sectionPosition[2]);
 
                 let geometry = new Geometry(vertices, indices);
-                this.sectionGeometries[xIndex][zIndex] = geometry;
+                this.geometries[xIndex][zIndex] = geometry;
                 this.renderer.addGeometry(geometry);
             }
         }
     }
 }
 
-TerrainMeshManager.SECTION_SIZE = 8;
+TerrainMeshManager.GEOMETRIES_SIZE = 8;
