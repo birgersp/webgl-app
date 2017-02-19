@@ -81,7 +81,7 @@ class App {
                 let vertexIndex = 0;
                 let indexIndex = 0;
                 let vertices = new Float32Array(Math.pow(sectionSize, 2) * Vertex.LENGTH);
-                let indices = new Uint16Array(Math.pow(sectionSize - 1, 2) * 6);
+                let indices = new Uint8Array(Math.pow(sectionSize - 1, 2) * 6);
 
                 for (let j = 0; j < sectionSize; j++) {
                     for (let i = 0; i < sectionSize; i++) {
@@ -116,7 +116,7 @@ class App {
                         vertices.set(new Vertex(coord[0], coord[1], coord[2], n[0], n[1], n[2], i * uvScale, j * uvScale), vertexIndex++ * Vertex.LENGTH);
                     }
                 }
-                this.engine.terrainRenderer.addTerrain(vertices, indices);
+                this.engine.terrainRenderer.addGeometry(new Geometry(vertices, indices));
             }
         }
     }

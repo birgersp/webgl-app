@@ -11,7 +11,7 @@ class Renderer extends Initializable {
         this.shadersInitialized = 0;
         this.shadersLinked = false;
 
-        this.bufferedObjects = [];
+        this.bufferedArrays = [];
         this.buffers = [];
         this.lastBoundArrayBuffer = null;
         this.lastBoundElementArrayBuffer = null;
@@ -62,13 +62,18 @@ class Renderer extends Initializable {
         return this.gl.getAttribLocation(this.shaderProgram, name);
     }
 
+    hasArrayBuffered(array) {
+
+        return this.bufferedArrays.indexOf(array) !== -1;
+    }
+
     getGLBuffer(array) {
 
-        let id = this.bufferedObjects.indexOf(array);
+        let id = this.bufferedArrays.indexOf(array);
         if (id === -1) {
             id = this.buffers.length;
             this.buffers.push(this.gl.createBuffer());
-            this.bufferedObjects.push(array);
+            this.bufferedArrays.push(array);
         }
         return this.buffers[id];
     }
@@ -101,6 +106,11 @@ class Renderer extends Initializable {
 
         this.bindElementArrayBuffer(array);
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(array), this.gl.STATIC_DRAW);
+    }
+
+    hasImageBuffered(image) {
+
+        return this.textureImages.indexOf(image) !== -1;
     }
 
     getGLTexture(image) {

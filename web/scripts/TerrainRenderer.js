@@ -6,8 +6,6 @@ class TerrainRenderer extends GeometryRenderer {
 
         super(gl);
 
-        this.terrainSections = [];
-
         this.grassImage = null;
         this.rockImage = null;
 
@@ -46,19 +44,12 @@ class TerrainRenderer extends GeometryRenderer {
         });
     }
 
-    addTerrain(vertices, indices) {
-
-        this.terrainSections.push(new TerrainRenderer.TerrainSection(vertices, indices));
-        this.bufferArrayF(vertices);
-        this.setTerrainIndices(indices);
-    }
-
     setTerrainIndices(indices) {
 
         let section;
-        for (let i = 0; i < this.terrainSections.length && !section; i++)
-            if (this.terrainSections[i].indices === indices)
-                section = this.terrainSections[i];
+        for (let i = 0; i < this.geometries.length && !section; i++)
+            if (this.geometries[i].indices === indices)
+                section = this.geometries[i];
         this.bufferElementArrayI(section.indices);
     }
 
@@ -76,15 +67,8 @@ class TerrainRenderer extends GeometryRenderer {
         this.samplerUniform.write(0);
         this.sampler2Uniform.write(1);
 
-        for (let terrainSectionI in this.terrainSections) {
-            let terrainSection = this.terrainSections[terrainSectionI];
-            this.bindArrayBuffer(terrainSection.vertices);
-            this.enableAttributeF(this.positionAL, 0, 3, 8);
-            this.enableAttributeF(this.normalAL, 3, 3, 8, true);
-            this.enableAttributeF(this.textureCoordAL, 6, 2, 8);
-            this.bindElementArrayBuffer(terrainSection.indices);
-            this.gl.drawElements(this.gl.TRIANGLES, terrainSection.indices.length, this.gl.UNSIGNED_BYTE, 0);
-        }
+        for (let i in this.geometries)
+            this.renderGeometry(this.geometries[i]);
     }
 }
 
@@ -94,14 +78,5 @@ TerrainRenderer.filenames = {
     images: {
         GRASS: "binaries/grass01.jpg",
         ROCK: "binaries/rock01.jpg"
-    }
-};
-
-TerrainRenderer.TerrainSection = class {
-
-    constructor(vertices, indices) {
-
-        this.vertices = vertices;
-        this.indices = indices;
     }
 };

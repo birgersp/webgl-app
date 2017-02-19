@@ -1,8 +1,13 @@
+include("Geometry");
+
 class GeometryRenderer extends Renderer {
 
     constructor(gl) {
 
         super(gl);
+
+        this.geometries = [];
+
         this.viewUniform = null;
         this.projectionUniform = null;
         this.samplerUniform = null;
@@ -33,5 +38,26 @@ class GeometryRenderer extends Renderer {
         this.positionAL = this.getAttributeLocation("position");
         this.normalAL = this.getAttributeLocation("normal");
         this.textureCoordAL = this.getAttributeLocation("textureCoord");
+    }
+
+    addGeometry(geometry) {
+
+        if (!this.hasArrayBuffered(geometry.vertices))
+            this.bufferArrayF(geometry.vertices);
+
+        if (!this.hasArrayBuffered(geometry.indices))
+            this.bufferElementArrayI(geometry.indices);
+
+        this.geometries.push(geometry);
+    }
+
+    renderGeometry(geometry) {
+
+        this.bindArrayBuffer(geometry.vertices);
+        this.enableAttributeF(this.positionAL, 0, 3, 8);
+        this.enableAttributeF(this.normalAL, 3, 3, 8, true);
+        this.enableAttributeF(this.textureCoordAL, 6, 2, 8);
+        this.bindElementArrayBuffer(geometry.indices);
+        this.gl.drawElements(this.gl.TRIANGLES, geometry.indices.length, this.gl.UNSIGNED_BYTE, 0);
     }
 }

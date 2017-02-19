@@ -1,5 +1,5 @@
 
-class Cube extends WebGLEngine.Geometry {
+class Cube extends Geometry {
 
     constructor() {
 
