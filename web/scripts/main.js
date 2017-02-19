@@ -80,12 +80,12 @@ function main() {
 
     // Demo
 
-    let terrainGenerator = new TerrainGenerator();
     function addTerrain() {
 
-        let size = 64;
+        let size = 192;
         let offset = Math.floor(size / 2);
-        app.terrainManager.addTerrain(terrainGenerator.getTerrainCoordinates(-offset, offset, size));
+        let terrainGenerator = new TerrainGenerator(app.terrainManager);
+        terrainGenerator.getTerrainCoordinates(-offset, offset, size);
     }
 
     app.initialize(function() {

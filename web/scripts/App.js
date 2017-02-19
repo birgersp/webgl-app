@@ -78,6 +78,8 @@ class App {
 
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
 
+        this.terrainManager.initializeTerrainSection(-TerrainMeshManager.SECTION_SIZE / 2, TerrainMeshManager.SECTION_SIZE / 2);
+
         let app = this;
         app.engine.render();
         function render() {
