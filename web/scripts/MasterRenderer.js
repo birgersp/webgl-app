@@ -20,7 +20,7 @@ class MasterRenderer extends Initializable {
         this.gl.enable(this.gl.BLEND);
 
         this.camera = new Camera();
-        this.skyboxRenderer = new SkyboxRenderer(this.gl, 64);
+        this.skyboxRenderer = new SkyboxRenderer(this.gl, TerrainMeshManager.SECTION_SIZE);
         this.terrainRenderer = new TerrainRenderer(this.gl);
         this.entityRenderer = new EntityRenderer(this.gl);
     }
@@ -35,7 +35,7 @@ class MasterRenderer extends Initializable {
         initializableManager.add(this.entityRenderer);
         initializableManager.initialize(function() {
 
-            let viewDistance = 64;
+            let viewDistance = TerrainMeshManager.SECTION_SIZE;
             engine.camera.setFar = viewDistance;
 
             let fogColor = new Vector3(0.8, 0.83, 0.92, 1);
