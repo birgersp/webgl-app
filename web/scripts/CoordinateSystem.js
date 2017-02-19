@@ -10,6 +10,11 @@ class CoordinateSystem {
         return x - this.getXIndex(x) * this.scale;
     }
 
+    getLocalY(y) {
+
+        return y - this.getYIndex(y) * this.scale;
+    }
+
     getLocalZ(z) {
 
         return z - this.getZIndex(z) * this.scale;
@@ -18,6 +23,11 @@ class CoordinateSystem {
     getXIndex(x) {
 
         return Math.floor(x / this.scale);
+    }
+
+    getYIndex(y) {
+
+        return Math.floor(y / this.scale);
     }
 
     getZIndex(z) {

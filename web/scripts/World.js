@@ -1,7 +1,8 @@
-class World {
+class World extends CoordinateSystem {
 
     constructor() {
 
+        super(1);
         this.blocks = {};
     }
 
@@ -100,20 +101,5 @@ class World {
             }
         }
         return null;
-    }
-
-    getXIndex(x) {
-
-        return Math.floor(x);
-    }
-
-    getYIndex(y) {
-
-        return Math.floor(y);
-    }
-
-    getZIndex(z) {
-
-        return Math.ceil(z);
     }
 }

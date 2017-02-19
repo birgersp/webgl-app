@@ -10,8 +10,8 @@ include("geometry/Cube");
 include("util/Initializable");
 include("MasterRenderer");
 include("User");
-include("World");
 include("CoordinateSystem");
+include("World");
 include("TerrainMeshManager");
 
 include("geometry/TerrainGridCell");
