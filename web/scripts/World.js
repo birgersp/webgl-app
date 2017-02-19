@@ -92,23 +92,23 @@ class World extends CoordinateSystem {
         if (!this.terrainCells[xIndex])
             this.terrainCells[xIndex] = {};
 
-        let yIndex = this.getYIndex(coordinate[1]);
-        if (!this.terrainCells[xIndex][yIndex])
-            this.terrainCells[xIndex][yIndex] = {};
-
         let zIndex = this.getZIndex(coordinate[2]);
-        if (!this.terrainCells[xIndex][yIndex][zIndex])
-            this.terrainCells[xIndex][yIndex][zIndex] = cell;
+        if (!this.terrainCells[xIndex][zIndex])
+            this.terrainCells[xIndex][zIndex] = {};
+
+        let yIndex = this.getYIndex(coordinate[1]);
+        if (!this.terrainCells[xIndex][zIndex][yIndex])
+            this.terrainCells[xIndex][zIndex][yIndex] = cell;
     }
 
     getTerrainCell(coordinate) {
 
         let xIndex = this.getXIndex(coordinate[0]);
         if (this.terrainCells[xIndex]) {
-            let yIndex = this.getYIndex(coordinate[1]);
-            if (this.terrainCells[xIndex][yIndex]) {
-                let zIndex = this.getZIndex(coordinate[2]);
-                return this.terrainCells[xIndex][yIndex][zIndex];
+            let zIndex = this.getZIndex(coordinate[2]);
+            if (this.terrainCells[xIndex][zIndex]) {
+                let yIndex = this.getYIndex(coordinate[1]);
+                return this.terrainCells[xIndex][zIndex][yIndex];
             }
         }
         return null;

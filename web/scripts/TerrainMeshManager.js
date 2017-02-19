@@ -87,6 +87,7 @@ class TerrainMeshManager extends CoordinateSystem {
                 for (let j = 0; j <= TerrainSection.GEOMETRY_SIZE; j++) {
                     let z2 = z - j;
                     for (let i = 0; i <= TerrainSection.GEOMETRY_SIZE; i++) {
+
                         let x2 = x + i;
                         let coord = new Vector3(x2, this.world.terrainHeights[x2][z2], z2);
                         let leftHeight = this.world.terrainHeights[x2 - 1][z2];
@@ -96,10 +97,16 @@ class TerrainMeshManager extends CoordinateSystem {
 
                         if (i > 0 && j > 0) {
 
-                            let b = j * verticesPerGeometry + i;
-                            let a = b - 1;
-                            let d = b - verticesPerGeometry;
-                            let c = d - 1;
+                            let a = 0, b = 0, c = 0, d = 0;
+
+                            let xIndex = this.world.getXIndex(x2 - .5);
+                            let zIndex = this.world.getZIndex(z2 + .5);
+                            if (this.world.terrainCells[xIndex] && this.world.terrainCells[xIndex][zIndex]) {
+                                b = j * verticesPerGeometry + i;
+                                a = b - 1;
+                                d = b - verticesPerGeometry;
+                                c = d - 1;
+                            }
 
                             indices = indices.concat([a, c, b, b, c, d]);
                         }
