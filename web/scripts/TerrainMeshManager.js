@@ -89,15 +89,12 @@ class TerrainMeshManager extends CoordinateSystem {
                     for (let i = 0; i <= TerrainSection.GEOMETRY_SIZE; i++) {
                         let x2 = x + i;
                         let coord = new Vector3(x2, this.coordinateHeights[x2][z2], z2);
-                        let left = new Vector3(x2 - 1, this.coordinateHeights[x2 - 1][z2], z2);
+                        let leftHeight = this.coordinateHeights[x2 - 1][z2];
                         let rightHeight = this.coordinateHeights[x2 + 1][z2];
-                        let bottom = new Vector3(x2, this.coordinateHeights[x2][z2 + 1], z2 + 1);
-                        let bottomleft = new Vector3(x2 - 1, this.coordinateHeights[x2 - 1][z2 + 1], z2 + 1);
+                        let bottomHeight = this.coordinateHeights[x2][z2 + 1];
                         let topHeight = this.coordinateHeights[x2][z2 - 1];
 
                         if (i > 0 && j > 0) {
-
-                            this.world.addTerrainCell(new TerrainGridCell(left, coord, bottomleft, bottom));
 
                             let b = j * verticesPerGeometry + i;
                             let a = b - 1;
@@ -107,7 +104,7 @@ class TerrainMeshManager extends CoordinateSystem {
                             indices = indices.concat([a, c, b, b, c, d]);
                         }
 
-                        let n = new Vector3(left[1] - rightHeight, 2, bottom[1] - topHeight).normalize();
+                        let n = new Vector3(leftHeight - rightHeight, 2, bottomHeight - topHeight).normalize();
                         vertices = vertices.concat([coord[0], coord[1], coord[2], n[0], n[1], n[2], i * uvScale, j * uvScale]);
                     }
                 }
