@@ -59,6 +59,7 @@ class SkyboxRenderer extends Renderer {
         this.viewUniform = null;
         this.fogColorUniform = null;
         this.projectionUniform = null;
+        this.yRotation = 0;
     }
 
     initialize(callback) {
@@ -109,6 +110,8 @@ class SkyboxRenderer extends Renderer {
 
         let viewMatrix = new Matrix4(camera.getViewMatrix());
         viewMatrix.set([0, 0, 0], 12);
+        viewMatrix.multiply(Matrix4.rotationXYZ(0, this.yRotation, 0));
+
         this.viewUniform.write(viewMatrix);
         this.projectionUniform.write(camera.getProjectionMatrix());
 

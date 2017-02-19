@@ -186,6 +186,8 @@ class App {
         newTopCenter[1] += User.HEIGHT;
         this.engine.camera.setTranslation(newTopCenter);
         this.engine.camera.setRotation(this.controller.rotation);
+
+        this.engine.skyboxRenderer.yRotation += 0.0001;
     }
 
     pause() {
