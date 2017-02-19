@@ -5,13 +5,12 @@
 
 class TerrainGenerator {
 
-    constructor(coordinateHandler) {
+    constructor() {
 
         this.amplitude = 50;
         this.octaves = 4;
         this.roughness = 0.5;
         this.generatedNoise = {};
-        this.coordinateHandler = coordinateHandler;
     }
 
     getNoise(x, z) {
@@ -67,18 +66,5 @@ class TerrainGenerator {
             y += this.getInterpolatedNoise(x * freq, z * freq) * amp;
         }
         return y;
-    }
-
-    getTerrainCoordinates(xOffset, zOffset, size) {
-        let i = 0;
-//        let terrainCoordinates = new Array(Math.pow(size, 2));
-        for (let z = 0; z <= size; z++)
-            for (let x = 0; x <= size; x++) {
-                let coordinate = new Vector3(xOffset + x, 0, zOffset - z);
-                coordinate[1] = this.generateY(coordinate[0], coordinate[2]);
-                this.coordinateHandler.addTerrainCoordinate(coordinate);
-//                terrainCoordinates[i++] = coordinate;
-            }
-//        return terrainCoordinates;
     }
 }
