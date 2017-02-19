@@ -82,9 +82,10 @@ class Renderer extends Initializable {
 
         let buffer = this.getGLBuffer(array);
         if (this.lastBoundArrayBuffer === buffer)
-            return;
+            return false;
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.lastBoundArrayBuffer = buffer;
+        return true;
     }
 
     bindElementArrayBuffer(array) {

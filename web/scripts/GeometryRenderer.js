@@ -51,12 +51,18 @@ class GeometryRenderer extends Renderer {
         this.geometries.push(geometry);
     }
 
+    bindArrayBuffer(array) {
+
+        if (super.bindArrayBuffer(array)) {
+            this.enableAttributeF(this.positionAL, 0, 3, 8);
+            this.enableAttributeF(this.normalAL, 3, 3, 8, true);
+            this.enableAttributeF(this.textureCoordAL, 6, 2, 8);
+        }
+    }
+
     renderGeometry(geometry) {
 
         this.bindArrayBuffer(geometry.vertices);
-        this.enableAttributeF(this.positionAL, 0, 3, 8);
-        this.enableAttributeF(this.normalAL, 3, 3, 8, true);
-        this.enableAttributeF(this.textureCoordAL, 6, 2, 8);
         this.bindElementArrayBuffer(geometry.indices);
         this.gl.drawElements(this.gl.TRIANGLES, geometry.indices.length, this.gl.UNSIGNED_BYTE, 0);
     }
