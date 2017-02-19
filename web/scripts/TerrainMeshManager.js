@@ -22,6 +22,20 @@ class TerrainMeshManager {
         this.renderer.setTerrainIndices(geometry.indices);
     }
 
+    removeTerrainCoordinate(x, z) {
+
+        let sectionXIndex = this.getSectionXIndex(x);
+        let sectionZIndex = this.getSectionZIndex(z);
+
+        let xIndex = Math.floor(x - sectionXIndex * TerrainMeshManager.SECTION_SIZE);
+        let zIndex = Math.floor(sectionZIndex * TerrainMeshManager.SECTION_SIZE - z);
+        let indexIndex = (zIndex * TerrainMeshManager.SECTION_SIZE + xIndex) * 6;
+
+        let indices = this.sectionGeometries[sectionXIndex][sectionZIndex].indices;
+        indices.splice(indexIndex, 6);
+        this.renderer.setTerrainIndices(indices);
+    }
+
     addTerrain(coordinates) {
 
         let size = Math.sqrt(coordinates.length);

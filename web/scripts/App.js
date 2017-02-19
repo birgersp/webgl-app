@@ -49,6 +49,11 @@ class App {
             if (app.userOnGround)
                 app.user.velocity[1] = App.JUMP_SPEED;
         });
+
+        this.controller.addKeyDownEvent(Controller.keys.Q, function() {
+
+            app.terrainManager.removeTerrainCoordinate(Math.random() * 64 - 32, Math.random() * 64 - 32);
+        });
     }
 
     initialize(callback) {

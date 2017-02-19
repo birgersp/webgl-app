@@ -153,6 +153,7 @@ Controller.keys = {
     A: 65,
     S: 83,
     D: 68,
+    Q: 81,
     SHIFT: 16,
     SPACE: 32,
     LEFT: 37,
