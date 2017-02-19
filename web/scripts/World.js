@@ -74,7 +74,7 @@ class World {
         this.setBlockYInterval(origin, yMax, gridCell);
     }
 
-    setBlock(coordinate, collidable, overwrite) {
+    setBlock(coordinate, collidable) {
 
         let xIndex = this.getXIndex(coordinate[0]);
         if (!this.blocks[xIndex])
@@ -85,7 +85,7 @@ class World {
             this.blocks[xIndex][yIndex] = {};
 
         let zIndex = this.getZIndex(coordinate[2]);
-        if (!this.blocks[xIndex][yIndex][zIndex] || overwrite)
+        if (!this.blocks[xIndex][yIndex][zIndex])
             this.blocks[xIndex][yIndex][zIndex] = collidable;
     }
 
