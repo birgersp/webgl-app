@@ -5,6 +5,7 @@ include("Renderer");
 include("GeometryRenderer");
 include("TerrainRenderer");
 include("SkyboxRenderer");
+include("EntityRenderer");
 
 class MasterRenderer extends Initializable {
 
@@ -21,6 +22,7 @@ class MasterRenderer extends Initializable {
         this.camera = new Camera();
         this.skyboxRenderer = new SkyboxRenderer(this.gl, 64);
         this.terrainRenderer = new TerrainRenderer(this.gl);
+        this.entityRenderer = new EntityRenderer(this.gl);
     }
 
     initialize(callback) {
@@ -30,6 +32,7 @@ class MasterRenderer extends Initializable {
         let initializableManager = new InitializableManager();
         initializableManager.add(this.skyboxRenderer);
         initializableManager.add(this.terrainRenderer);
+        initializableManager.add(this.entityRenderer);
         initializableManager.initialize(function() {
 
             let viewDistance = 64;
@@ -52,21 +55,29 @@ class MasterRenderer extends Initializable {
     set sunDirection(vector) {
         this.terrainRenderer.useShaderProgram();
         this.terrainRenderer.sunDirectionUniform.write(vector);
+        this.entityRenderer.useShaderProgram();
+        this.entityRenderer.sunDirectionUniform.write(vector);
     }
 
     set sunColor(vector) {
         this.terrainRenderer.useShaderProgram();
         this.terrainRenderer.sunColorUniform.write(vector);
+        this.entityRenderer.useShaderProgram();
+        this.entityRenderer.sunColorUniform.write(vector);
     }
 
     set viewDistance(value) {
         this.terrainRenderer.useShaderProgram();
         this.terrainRenderer.viewDistanceUniform.write(value);
+        this.entityRenderer.useShaderProgram();
+        this.entityRenderer.viewDistanceUniform.write(value);
     }
 
     set fogFactor(value) {
         this.terrainRenderer.useShaderProgram();
         this.terrainRenderer.fogFactorUniform.write(value);
+        this.entityRenderer.useShaderProgram();
+        this.entityRenderer.fogFactorUniform.write(value);
     }
 
     set fogColor(vector) {
@@ -74,6 +85,8 @@ class MasterRenderer extends Initializable {
         this.terrainRenderer.fogColorUniform.write(vector);
         this.skyboxRenderer.useShaderProgram();
         this.skyboxRenderer.fogColorUniform.write(vector);
+        this.entityRenderer.useShaderProgram();
+        this.entityRenderer.fogColorUniform.write(vector);
     }
 
     render() {
@@ -82,6 +95,7 @@ class MasterRenderer extends Initializable {
 
         this.skyboxRenderer.render(this.camera);
         this.terrainRenderer.render(this.camera);
+        this.entityRenderer.render(this.camera);
     }
 
     setViewPort(x, y, width, height) {

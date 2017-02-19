@@ -77,7 +77,6 @@ class SkyboxRenderer extends Renderer {
 
             renderer.initializeShaders(vertexShaderSourceFile.text, fragmentShaderSourceFile.text);
 
-            renderer.useShaderProgram();
             renderer.positionAL = renderer.getAttributeLocation("position");
             let uniformManager = renderer.getUniformManager();
             renderer.viewUniform = uniformManager.locateMatrix("view");

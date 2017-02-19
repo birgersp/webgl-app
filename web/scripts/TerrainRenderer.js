@@ -32,8 +32,6 @@ class TerrainRenderer extends GeometryRenderer {
 
             renderer.initializeShaders(vShaderFile.text, fShaderFile.text);
 
-            renderer.useShaderProgram();
-
             renderer.grassImage = grassTextureFile.image;
             renderer.bufferTexture(renderer.grassImage);
             renderer.rockImage = rockTextureFile.image;
@@ -57,8 +55,7 @@ class TerrainRenderer extends GeometryRenderer {
 
         this.useShaderProgram();
 
-        this.viewUniform.write(camera.getViewMatrix());
-        this.projectionUniform.write(camera.getProjectionMatrix());
+        this.writeViewProjection(camera);
         this.setActiveTexture(0);
         this.bindTexture(this.grassImage);
         this.setActiveTexture(1);

@@ -4,6 +4,9 @@ include("util/Controller");
 include("geometry/Vector3");
 include("geometry/Vertex");
 
+include("Geometry");
+include("geometry/Cube");
+
 include("util/Initializable");
 include("MasterRenderer");
 include("User");
@@ -24,7 +27,6 @@ class App {
         this.user = new User();
         this.user.position = new Vector3(0, 55, 0);
         this.userOnGround = false;
-        this.controller.rotation = new Vector3(0, Math.PI / 4, 0);
 //        this.controller.mode = Controller.moveMode.FREE;
 
         this.engine = new MasterRenderer(gl);
@@ -48,8 +50,19 @@ class App {
 
     initialize(callback) {
 
-        this.engine.initialize(function() {
-            callback();
+        let fileLoader = new FileLoader();
+        let crateImageFile = fileLoader.addImageFile("binaries/crate01.jpg");
+
+        let app = this;
+        fileLoader.load(function() {
+
+            let crate = new Entity(new Cube(), crateImageFile.image);
+            crate.transform.setTranslation(new Vector3(0, 55, -10));
+            app.engine.entityRenderer.addEntity(crate);
+
+            app.engine.initialize(function() {
+                callback();
+            });
         });
     }
 

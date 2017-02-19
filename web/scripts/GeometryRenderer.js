@@ -66,4 +66,10 @@ class GeometryRenderer extends Renderer {
         this.bindElementArrayBuffer(geometry.indices);
         this.gl.drawElements(this.gl.TRIANGLES, geometry.indices.length, this.gl.UNSIGNED_BYTE, 0);
     }
+
+    writeViewProjection(camera) {
+
+        this.viewUniform.write(camera.getViewMatrix());
+        this.projectionUniform.write(camera.getProjectionMatrix());
+    }
 }

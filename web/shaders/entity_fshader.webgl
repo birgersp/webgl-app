@@ -1,0 +1,29 @@
+precision mediump float;
+
+uniform bool terrainMode;
+uniform sampler2D sampler;
+uniform vec3 sunDirection;
+uniform vec3 sunColor;
+uniform vec3 fogColor;
+
+varying vec2 vTextureCoord;
+varying vec3 vSurfaceNormal;
+varying float vVisibility;
+varying vec3 vPosition;
+varying vec3 vNormal;
+
+void main() {
+
+  vec3 surfaceNormalN = normalize(vSurfaceNormal);
+  vec3 sunDirectionN = normalize(sunDirection);
+
+  float nDot1 = dot(surfaceNormalN, -sunDirectionN);
+  float brightness = max(nDot1, 0.3);
+  vec4 diffuse = vec4(sunColor * brightness, 1);
+
+  vec4 color = texture2D(sampler, vTextureCoord);
+  color *= diffuse;
+
+  color = vec4(fogColor * (1.0 - vVisibility) + color.xyz * vVisibility, 1);
+  gl_FragColor = color;
+}

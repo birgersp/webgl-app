@@ -34,6 +34,7 @@ class Renderer extends Initializable {
         this.gl.attachShader(this.shaderProgram, fragmentShader);
 
         this.gl.linkProgram(this.shaderProgram);
+        this.useShaderProgram();
     }
 
     useShaderProgram() {
