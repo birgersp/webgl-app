@@ -11,6 +11,7 @@ include("util/Initializable");
 include("MasterRenderer");
 include("User");
 include("World");
+include("CoordinateSystem");
 include("TerrainMeshManager");
 
 include("geometry/TerrainGridCell");
@@ -52,7 +53,7 @@ class App {
 
         this.controller.addKeyDownEvent(Controller.keys.Q, function() {
 
-            app.terrainManager.removeTerrainCoordinate(Math.random() * 64 - 32, Math.random() * 64 - 32);
+            app.terrainManager.removeTerrainCoordinate(app.user.position[0], app.user.position[2]);
         });
     }
 
@@ -78,7 +79,7 @@ class App {
 
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
 
-        this.terrainManager.initializeTerrainSection(-TerrainMeshManager.SECTION_SIZE / 2, TerrainMeshManager.SECTION_SIZE / 2);
+        this.terrainManager.initializeTerrainSection(0, 0);
 
         let app = this;
         app.engine.render();

@@ -1,11 +1,15 @@
-class TerrainMeshManager {
+include("TerrainSection");
+include("TerrainGeometry");
+
+class TerrainMeshManager extends CoordinateSystem {
 
     constructor(world, renderer) {
 
+        super(TerrainMeshManager.SECTION_SIZE);
         this.world = world;
         this.renderer = renderer;
-        this.geometries = {};
         this.coordinateHeights = {};
+        this.sections = {};
     }
 
     addTerrainCoordinate(coordinate) {
@@ -18,52 +22,69 @@ class TerrainMeshManager {
         this.coordinateHeights[xIndex][zIndex] = coordinate[1];
     }
 
-    getGeometryXIndex(x) {
-
-        return Math.floor(x / TerrainMeshManager.GEOMETRIES_SIZE);
-    }
-
-    getGeometryZIndex(z) {
-
-        return Math.ceil(z / TerrainMeshManager.GEOMETRIES_SIZE);
-    }
-
     updateSectionGeometry(geometry) {
 
         this.renderer.setTerrainIndices(geometry.indices);
     }
 
+    setSection(x, z, section) {
+
+        let xIndex = this.getXIndex(x);
+        if (!this.sections[xIndex])
+            this.sections[xIndex] = {};
+
+        let zIndex = this.getZIndex(z);
+        this.sections[xIndex][zIndex] = section;
+    }
+
+    getSection(x, z) {
+
+        return this.sections[this.getXIndex(x)][this.getZIndex(z)];
+    }
+
     removeTerrainCoordinate(x, z) {
 
-        let sectionXIndex = this.getGeometryXIndex(x);
-        let sectionZIndex = this.getGeometryZIndex(z);
+        let section = this.getSection(x, z);
 
-        let xIndex = Math.floor(x - sectionXIndex * TerrainMeshManager.GEOMETRIES_SIZE);
-        let zIndex = Math.floor(sectionZIndex * TerrainMeshManager.GEOMETRIES_SIZE - z);
-        let indexIndex = (zIndex * TerrainMeshManager.GEOMETRIES_SIZE + xIndex) * 6;
+        let xInSection = this.getLocalX(x);
+        let zInSection = this.getLocalZ(z);
 
-        let indices = this.geometries[sectionXIndex][sectionZIndex].indices;
-        indices.splice(indexIndex, 6);
+        let geometry = section.getGeometry(xInSection, zInSection);
+
+        let xInGeometry = section.getLocalX(xInSection);
+        let zInGeometry = section.getLocalZ(zInSection);
+
+        let faceIndexX = geometry.getXIndex(xInGeometry);
+        let faceIndexZ = -geometry.getZIndex(zInGeometry);
+
+        let indexIndex = (faceIndexZ * TerrainSection.GEOMETRY_SIZE + faceIndexX) * 6;
+
+        let indices = geometry.indices;
+        indices.splice(indexIndex, 6, 0, 0, 0, 0, 0, 0);
         this.renderer.setTerrainIndices(indices);
     }
 
-    initializeTerrainSection(targetX, targetZ) {
+    initializeTerrainSection(originX, originZ) {
 
-        let verticesPerGeometry = TerrainMeshManager.GEOMETRIES_SIZE + 1;
+        let targetX = this.getXIndex(originX);
+        let targetZ = this.getZIndex(originZ);
+
+        let verticesPerGeometry = TerrainSection.GEOMETRY_SIZE + 1;
         let uvScale = TerrainMeshManager.UV_SCALE;
 
         let endX = targetX + TerrainMeshManager.SECTION_SIZE;
         let endZ = targetZ - TerrainMeshManager.SECTION_SIZE;
 
-        for (let z = targetZ; z > endZ; z -= TerrainMeshManager.GEOMETRIES_SIZE) {
-            for (let x = targetX; x < endX; x += TerrainMeshManager.GEOMETRIES_SIZE) {
+        let section = new TerrainSection();
+        for (let z = targetZ; z > endZ; z -= TerrainSection.GEOMETRY_SIZE) {
+            for (let x = targetX; x < endX; x += TerrainSection.GEOMETRY_SIZE) {
 
                 let vertices = [];
                 let indices = [];
 
-                for (let j = 0; j <= TerrainMeshManager.GEOMETRIES_SIZE; j++) {
+                for (let j = 0; j <= TerrainSection.GEOMETRY_SIZE; j++) {
                     let z2 = z - j;
-                    for (let i = 0; i <= TerrainMeshManager.GEOMETRIES_SIZE; i++) {
+                    for (let i = 0; i <= TerrainSection.GEOMETRY_SIZE; i++) {
                         let x2 = x + i;
                         let coord = new Vector3(x2, this.coordinateHeights[x2][z2], z2);
                         let left = new Vector3(x2 - 1, this.coordinateHeights[x2 - 1][z2], z2);
@@ -89,20 +110,14 @@ class TerrainMeshManager {
                     }
                 }
 
-                let xIndex = this.getGeometryXIndex(x);
-                if (!this.geometries[xIndex])
-                    this.geometries[xIndex] = {};
-
-                let zIndex = this.getGeometryZIndex(z);
-
-                let geometry = new Geometry(vertices, indices);
-                this.geometries[xIndex][zIndex] = geometry;
+                let geometry = new TerrainGeometry(vertices, indices);
+                section.setGeometry(this.getLocalX(x), this.getLocalZ(z), geometry);
                 this.renderer.addGeometry(geometry);
             }
         }
+        this.setSection(originX, originZ, section);
     }
 }
 
-TerrainMeshManager.GEOMETRIES_SIZE = 8;
 TerrainMeshManager.SECTION_SIZE = 64;
 TerrainMeshManager.UV_SCALE = 1 / 8;
