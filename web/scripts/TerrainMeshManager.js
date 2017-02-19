@@ -47,10 +47,8 @@ class TerrainMeshManager {
         for (sectionJ = 0; sectionJ < sections; sectionJ++) {
             for (sectionI = 0; sectionI < sections; sectionI++) {
 
-                let vertexIndex = 0;
-                let indexIndex = 0;
-                let vertices = new Float32Array(Math.pow(verticesPerSection, 2) * Vertex.LENGTH);
-                let indices = new Uint8Array(Math.pow(verticesPerSection - 1, 2) * 6);
+                let vertices = [];
+                let indices = [];
 
                 for (let j = 0; j < verticesPerSection; j++) {
                     for (let i = 0; i < verticesPerSection; i++) {
@@ -78,11 +76,11 @@ class TerrainMeshManager {
                             let d = b - verticesPerSection;
                             let c = d - 1;
 
-                            indices.set([a, c, b, b, c, d], indexIndex++ * 6);
+                            indices = indices.concat([a, c, b, b, c, d]);
                         }
 
                         let n = new Vector3(heightLeft - heightRight, 2, heightBottom - heightTop).normalize();
-                        vertices.set(new Vertex(coord[0], coord[1], coord[2], n[0], n[1], n[2], i * uvScale, j * uvScale), vertexIndex++ * Vertex.LENGTH);
+                        vertices = vertices.concat([coord[0], coord[1], coord[2], n[0], n[1], n[2], i * uvScale, j * uvScale]);
                     }
                 }
 
