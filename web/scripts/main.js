@@ -93,7 +93,7 @@ function main() {
                 let x = i - offset;
                 let coordinate = new Vector3(x, 0, z);
                 coordinate[1] = terrainGenerator.generateY(coordinate[0], coordinate[2]);
-                app.terrainManager.addTerrainCoordinate(coordinate);
+                app.world.addTerrainHeight(coordinate);
 
                 if (!coordinates[x])
                     coordinates[x] = {};

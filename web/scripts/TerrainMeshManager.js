@@ -8,19 +8,19 @@ class TerrainMeshManager extends CoordinateSystem {
         super(TerrainMeshManager.SECTION_SIZE);
         this.world = world;
         this.renderer = renderer;
-        this.coordinateHeights = {};
+//        this.world.terrainHeights = {};
         this.sections = {};
     }
 
-    addTerrainCoordinate(coordinate) {
-
-        let xIndex = coordinate[0];
-        if (!this.coordinateHeights[xIndex])
-            this.coordinateHeights[xIndex] = {};
-
-        let zIndex = coordinate[2];
-        this.coordinateHeights[xIndex][zIndex] = coordinate[1];
-    }
+//    addTerrainCoordinate(coordinate) {
+//
+//        let xIndex = coordinate[0];
+//        if (!this.world.terrainHeights[xIndex])
+//            this.world.terrainHeights[xIndex] = {};
+//
+//        let zIndex = coordinate[2];
+//        this.world.terrainHeights[xIndex][zIndex] = coordinate[1];
+//    }
 
     updateSectionGeometry(geometry) {
 
@@ -88,11 +88,11 @@ class TerrainMeshManager extends CoordinateSystem {
                     let z2 = z - j;
                     for (let i = 0; i <= TerrainSection.GEOMETRY_SIZE; i++) {
                         let x2 = x + i;
-                        let coord = new Vector3(x2, this.coordinateHeights[x2][z2], z2);
-                        let leftHeight = this.coordinateHeights[x2 - 1][z2];
-                        let rightHeight = this.coordinateHeights[x2 + 1][z2];
-                        let bottomHeight = this.coordinateHeights[x2][z2 + 1];
-                        let topHeight = this.coordinateHeights[x2][z2 - 1];
+                        let coord = new Vector3(x2, this.world.terrainHeights[x2][z2], z2);
+                        let leftHeight = this.world.terrainHeights[x2 - 1][z2];
+                        let rightHeight = this.world.terrainHeights[x2 + 1][z2];
+                        let bottomHeight = this.world.terrainHeights[x2][z2 + 1];
+                        let topHeight = this.world.terrainHeights[x2][z2 - 1];
 
                         if (i > 0 && j > 0) {
 

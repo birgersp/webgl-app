@@ -4,6 +4,7 @@ class World extends CoordinateSystem {
 
         super(1);
         this.terrainCells = {};
+        this.terrainHeights = {};
     }
 
     setTerrainCellYInterval(origin, endY, collidable) {
@@ -73,6 +74,16 @@ class World extends CoordinateSystem {
         let origin = gridCell.bottomleft.getCopy();
         origin[1] = yMin;
         this.setTerrainCellYInterval(origin, yMax, gridCell);
+    }
+
+    addTerrainHeight(coordinate) {
+
+        let xIndex = this.getXIndex(coordinate[0]);
+        if (!this.terrainHeights[xIndex])
+            this.terrainHeights[xIndex] = {};
+
+        let zIndex = this.getZIndex(coordinate[2]);
+        this.terrainHeights[xIndex][zIndex] = coordinate[1];
     }
 
     setTerrainCell(coordinate, cell) {
