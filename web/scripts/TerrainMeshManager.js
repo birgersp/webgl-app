@@ -39,7 +39,9 @@ class TerrainMeshManager extends CoordinateSystem {
 
     getSection(x, z) {
 
-        return this.sections[this.getXIndex(x)][this.getZIndex(z)];
+        let xIndex = this.getXIndex(x);
+        if (this.sections[xIndex])
+            return this.sections[this.getXIndex(x)][this.getZIndex(z)];
     }
 
     removeTerrainCoordinate(x, z) {
@@ -66,8 +68,8 @@ class TerrainMeshManager extends CoordinateSystem {
 
     initializeTerrainSection(originX, originZ) {
 
-        let targetX = this.getXIndex(originX);
-        let targetZ = this.getZIndex(originZ);
+        let targetX = this.getXIndex(originX) * TerrainMeshManager.SECTION_SIZE;
+        let targetZ = this.getZIndex(originZ) * TerrainMeshManager.SECTION_SIZE;
 
         let verticesPerGeometry = TerrainSection.GEOMETRY_SIZE + 1;
         let uvScale = TerrainMeshManager.UV_SCALE;

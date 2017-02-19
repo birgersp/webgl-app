@@ -79,8 +79,6 @@ class App {
 
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
 
-        this.terrainManager.initializeTerrainSection(0, 0);
-
         let app = this;
         app.engine.render();
         function render() {
@@ -132,6 +130,9 @@ class App {
         this.engine.camera.setRotation(this.controller.rotation);
 
         this.engine.skyboxRenderer.yRotation += 0.0001;
+
+        if (!this.terrainManager.getSection(this.user.position[0], this.user.position[2]))
+            this.terrainManager.initializeTerrainSection(this.user.position[0], this.user.position[2]);
     }
 
     pause() {
