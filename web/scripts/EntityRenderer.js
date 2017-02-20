@@ -30,7 +30,7 @@ class EntityRenderer extends GeometryRenderer {
 
         this.addGeometry(entity.geometry);
 
-        if (!this.hasImageBuffered(entity.textureImage))
+        if (!this.imageTextures.contains(entity.textureImage))
             this.bufferTexture(entity.textureImage);
 
         this.entities.push(entity);

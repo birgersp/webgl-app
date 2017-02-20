@@ -1,6 +1,5 @@
 include("App");
 
-include("TerrainCell");
 include("util/TerrainGenerator");
 
 function main() {

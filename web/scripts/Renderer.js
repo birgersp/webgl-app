@@ -1,4 +1,6 @@
 include("util/FileLoader");
+include("util/Map");
+
 include("ShaderUniformManager");
 
 class Renderer extends Initializable {
@@ -11,13 +13,17 @@ class Renderer extends Initializable {
         this.shadersInitialized = 0;
         this.shadersLinked = false;
 
-        this.bufferedArrays = [];
-        this.buffers = [];
+        this.arrayBuffers = new Map();
+
+//        this.bufferedArrays = [];
+//        this.buffers = [];
         this.lastBoundArrayBuffer = null;
         this.lastBoundElementArrayBuffer = null;
 
-        this.textureImages = [];
-        this.textures = [];
+        this.imageTextures = new Map();
+
+//        this.textureImages = [];
+//        this.textures = [];
         this.lastBoundTexture = null;
     }
 
@@ -63,20 +69,14 @@ class Renderer extends Initializable {
         return this.gl.getAttribLocation(this.shaderProgram, name);
     }
 
-    hasArrayBuffered(array) {
-
-        return this.bufferedArrays.indexOf(array) !== -1;
-    }
-
     getGLBuffer(array) {
 
-        let id = this.bufferedArrays.indexOf(array);
-        if (id === -1) {
-            id = this.buffers.length;
-            this.buffers.push(this.gl.createBuffer());
-            this.bufferedArrays.push(array);
+        let buffer = this.arrayBuffers.get(array);
+        if (buffer === null) {
+            buffer = this.gl.createBuffer();
+            this.arrayBuffers.put(array, buffer);
         }
-        return this.buffers[id];
+        return buffer;
     }
 
     bindArrayBuffer(array) {
@@ -110,20 +110,14 @@ class Renderer extends Initializable {
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(array), this.gl.STATIC_DRAW);
     }
 
-    hasImageBuffered(image) {
-
-        return this.textureImages.indexOf(image) !== -1;
-    }
-
     getGLTexture(image) {
 
-        let id = this.textureImages.indexOf(image);
-        if (id === -1) {
-            id = this.textures.length;
-            this.textures.push(this.gl.createTexture());
-            this.textureImages.push(image);
+        let texture = this.imageTextures.get(image);
+        if (texture === null) {
+            texture = this.gl.createTexture();
+            this.imageTextures.put(image, texture);
         }
-        return this.textures[id];
+        return texture;
     }
 
     bindTexture(image) {

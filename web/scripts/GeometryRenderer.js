@@ -42,10 +42,10 @@ class GeometryRenderer extends Renderer {
 
     addGeometry(geometry) {
 
-        if (!this.hasArrayBuffered(geometry.vertices))
+        if (!this.arrayBuffers.contains(geometry.vertices))
             this.bufferArrayF(geometry.vertices);
 
-        if (!this.hasArrayBuffered(geometry.indices))
+        if (!this.arrayBuffers.contains(geometry.indices))
             this.bufferElementArrayI(geometry.indices);
 
         this.geometries.push(geometry);
