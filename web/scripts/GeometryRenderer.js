@@ -60,6 +60,14 @@ class GeometryRenderer extends Renderer {
         }
     }
 
+    prepareRendering(camera) {
+
+        this.useShaderProgram();
+        this.writeViewProjection(camera);
+        this.samplerUniform.write(0);
+        this.setActiveTexture(0);
+    }
+
     renderGeometry(geometry) {
 
         this.bindArrayBuffer(geometry.vertices);

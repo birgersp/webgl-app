@@ -51,19 +51,20 @@ class TerrainRenderer extends GeometryRenderer {
         this.bufferElementArrayI(geometry.indices);
     }
 
-    render(camera) {
+    prepareRendering(camera) {
 
-        this.useShaderProgram();
+        super.prepareRendering(camera);
 
-        this.writeViewProjection(camera);
-        this.setActiveTexture(0);
         this.bindTexture(this.grassImage);
         this.setActiveTexture(1);
         this.bindTexture(this.rockImage);
 
-        this.samplerUniform.write(0);
         this.sampler2Uniform.write(1);
+    }
 
+    render(camera) {
+
+        this.prepareRendering(camera);
         for (let i in this.geometries)
             this.renderGeometry(this.geometries[i]);
     }

@@ -36,12 +36,14 @@ class EntityRenderer extends GeometryRenderer {
         this.entities.push(entity);
     }
 
+    prepareRendering(camera) {
+
+        super.prepareRendering(camera);
+    }
+
     render(camera) {
 
-        this.useShaderProgram();
-        this.setActiveTexture(0);
-        this.samplerUniform.write(0);
-        this.writeViewProjection(camera);
+        this.prepareRendering(camera);
 
         let transformations = [Matrix4.identity()];
         let transform = transformations[0];
