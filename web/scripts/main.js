@@ -94,7 +94,7 @@ function main() {
                 let x = i - offset;
                 let coordinate = new Vector3(x, 0, z);
                 coordinate[1] = terrainGenerator.generateY(coordinate[0], coordinate[2]);
-                app.world.addTerrainHeight(coordinate);
+                app.world.addTerrainCoordinate(coordinate);
 
                 if (!coordinates[x])
                     coordinates[x] = {};
@@ -102,15 +102,14 @@ function main() {
                 coordinates[x][z] = coordinate;
 
                 if (i > 0 && j > 0) {
-                    let left = coordinates[x - 1][z];
-                    let bottom = coordinates[x][z + 1];
-                    let bottomleft = coordinates[x - 1][z + 1];
-                    app.world.addTerrainCell(new TerrainCell(left, coordinate, bottomleft, bottom));
+                    let faceCoordinate = coordinate.getCopy();
+                    faceCoordinate[0] -= .5;
+                    faceCoordinate[2] += .5;
+                    app.world.enableTerrainCell(faceCoordinate);
                 }
             }
         }
     }
-
     app.initialize(function() {
         addTerrain();
         app.start();

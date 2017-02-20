@@ -57,8 +57,8 @@ class TerrainMeshManager extends CoordinateSystem {
 
     initializeTerrainSection(originX, originZ) {
 
-        let terrainHeights = this.world.terrainHeights;
-        let terrainCells = this.world.terrainCells;
+        let terrainHeights = this.world.terrainManager.terrainHeights;
+        let terrainCells = this.world.terrainManager.terrainCellIndices;
 
         let targetX = this.getXIndex(originX) * TerrainMeshManager.SECTION_SIZE;
         let targetZ = this.getZIndex(originZ) * TerrainMeshManager.SECTION_SIZE;

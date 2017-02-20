@@ -111,7 +111,7 @@ class App {
         this.userOnGround = false;
 
         // Check collision
-        let terrainUserCollisionY = this.world.getTerrainCellIntersectionYInterval(this.user.position, User.HEIGHT);
+        let terrainUserCollisionY = this.world.getTerrainIntersection(this.user.position, User.HEIGHT);
         if (terrainUserCollisionY !== null) {
             this.user.position[1] = terrainUserCollisionY;
 
