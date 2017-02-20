@@ -1,4 +1,4 @@
-include("TerrainSection");
+include("Section");
 include("TerrainGeometry");
 
 class TerrainMeshManager extends CoordinateSystem {
@@ -59,7 +59,7 @@ class TerrainMeshManager extends CoordinateSystem {
         let faceIndexX = geometry.getXIndex(xInGeometry);
         let faceIndexZ = -geometry.getZIndex(zInGeometry);
 
-        let indexIndex = (faceIndexZ * TerrainSection.GEOMETRY_SIZE + faceIndexX) * 6;
+        let indexIndex = (faceIndexZ * Section.TERRAIN_GEOMETRY_SIZE + faceIndexX) * 6;
 
         let indices = geometry.indices;
         indices.splice(indexIndex, 6, 0, 0, 0, 0, 0, 0);
@@ -71,22 +71,22 @@ class TerrainMeshManager extends CoordinateSystem {
         let targetX = this.getXIndex(originX) * TerrainMeshManager.SECTION_SIZE;
         let targetZ = this.getZIndex(originZ) * TerrainMeshManager.SECTION_SIZE;
 
-        let verticesPerGeometry = TerrainSection.GEOMETRY_SIZE + 1;
+        let verticesPerGeometry = Section.TERRAIN_GEOMETRY_SIZE + 1;
         let uvScale = TerrainMeshManager.UV_SCALE;
 
         let endX = targetX + TerrainMeshManager.SECTION_SIZE;
         let endZ = targetZ - TerrainMeshManager.SECTION_SIZE;
 
-        let section = new TerrainSection();
-        for (let z = targetZ; z > endZ; z -= TerrainSection.GEOMETRY_SIZE) {
-            for (let x = targetX; x < endX; x += TerrainSection.GEOMETRY_SIZE) {
+        let section = new Section();
+        for (let z = targetZ; z > endZ; z -= Section.TERRAIN_GEOMETRY_SIZE) {
+            for (let x = targetX; x < endX; x += Section.TERRAIN_GEOMETRY_SIZE) {
 
                 let vertices = [];
                 let indices = [];
 
-                for (let j = 0; j <= TerrainSection.GEOMETRY_SIZE; j++) {
+                for (let j = 0; j <= Section.TERRAIN_GEOMETRY_SIZE; j++) {
                     let z2 = z - j;
-                    for (let i = 0; i <= TerrainSection.GEOMETRY_SIZE; i++) {
+                    for (let i = 0; i <= Section.TERRAIN_GEOMETRY_SIZE; i++) {
 
                         let x2 = x + i;
                         let coord = new Vector3(x2, this.world.terrainHeights[x2][z2], z2);

@@ -1,4 +1,4 @@
-class TerrainGridCell {
+class TerrainCell {
 
     constructor(topleft, topright, bottomleft, bottomright) {
 

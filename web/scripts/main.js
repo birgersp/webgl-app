@@ -1,5 +1,6 @@
 include("App");
 
+include("TerrainCell");
 include("util/TerrainGenerator");
 
 function main() {
@@ -104,7 +105,7 @@ function main() {
                     let left = coordinates[x - 1][z];
                     let bottom = coordinates[x][z + 1];
                     let bottomleft = coordinates[x - 1][z + 1];
-                    app.world.addTerrainCell(new TerrainGridCell(left, coordinate, bottomleft, bottom));
+                    app.world.addTerrainCell(new TerrainCell(left, coordinate, bottomleft, bottom));
                 }
             }
         }

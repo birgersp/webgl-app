@@ -20,38 +20,38 @@ class World extends CoordinateSystem {
 
     getTerrainCellYInterval(origin, endY) {
 
-        let collidable;
+        let cell;
         let vector = origin.getCopy();
-        for (let y = origin[1]; !collidable && y < endY; y += 1) {
-            collidable = this.getTerrainCell(vector);
+        for (let y = origin[1]; !cell && y < endY; y += 1) {
+            cell = this.getTerrainCell(vector);
             vector[1] = y;
         }
 
-        if (!collidable) {
+        if (!cell) {
             vector[1] = endY;
-            collidable = this.getTerrainCell(vector);
+            cell = this.getTerrainCell(vector);
         }
-        return collidable;
+        return cell;
     }
 
     getTerrainCellIntersectionYInterval(origin, dY) {
 
-        let collidable;
+        let cell;
         let vector = origin.getCopy();
         let endY = origin[1] + dY;
 
-        while (!collidable && vector[1] < endY) {
-            collidable = this.getTerrainCell(vector);
+        while (!cell && vector[1] < endY) {
+            cell = this.getTerrainCell(vector);
             vector[1]++;
         }
 
-        if (!collidable) {
+        if (!cell) {
             vector[1] = endY;
-            collidable = this.getTerrainCell(vector);
+            cell = this.getTerrainCell(vector);
         }
 
-        if (collidable) {
-            let intersectionY = collidable.getY(origin[0], origin[2]);
+        if (cell) {
+            let intersectionY = cell.getY(origin[0], origin[2]);
             if (intersectionY >= origin[1] && intersectionY <= endY)
                 return intersectionY;
         }

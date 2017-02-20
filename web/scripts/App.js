@@ -14,8 +14,6 @@ include("CoordinateSystem");
 include("World");
 include("TerrainMeshManager");
 
-include("geometry/TerrainGridCell");
-
 class App {
 
     constructor(gl) {
