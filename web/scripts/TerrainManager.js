@@ -7,18 +7,19 @@ class TerrainManager extends CoordinateSystem {
         this.terrainHeights = {};
     }
 
-    getTerrainCellIntersectionYInterval(origin, dY) {
+    getIntersection(origin, dY) {
 
         let xI = this.getXIndex(origin[0]);
         let yI = this.getYIndex(origin[1]);
         let zI = this.getZIndex(origin[2]);
 
-        let isTerrainCell = false;
+        let isTerrainCell = this.isTerrainCell(xI, yI, zI);
         let endY = this.getYIndex(origin[1] + dY);
 
-        while (!isTerrainCell && yI < endY) {
+        while (yI < endY && !isTerrainCell) {
             isTerrainCell = this.isTerrainCell(xI, yI, zI);
-            yI++;
+            if (!isTerrainCell)
+                yI++;
         }
 
         if (!isTerrainCell) {
@@ -64,10 +65,10 @@ class TerrainManager extends CoordinateSystem {
         let xI = this.getXIndex(coordinate[0]);
         let zI = this.getZIndex(coordinate[2]);
 
-        let tlY = this.terrainHeights[xI - 1][zI];
-        let trY = this.terrainHeights[xI][zI];
-        let blY = this.terrainHeights[xI - 1][zI + 1];
-        let brY = this.terrainHeights[xI][zI + 1];
+        let tlY = this.terrainHeights[xI][zI - 1];
+        let trY = this.terrainHeights[xI + 1][zI - 1];
+        let blY = this.terrainHeights[xI][zI];
+        let brY = this.terrainHeights[xI + 1][zI];
 
         let minY = this.getYIndex(Math.min(tlY, trY, blY, brY));
         let maxY = this.getYIndex(Math.max(tlY, trY, blY, brY));
