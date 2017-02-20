@@ -1,11 +1,29 @@
+include("Section");
 include("TerrainManager");
 
 class World extends CoordinateSystem {
 
     constructor() {
 
-        super(1);
+        super(World.SECTION_SIZE);
         this.terrainManager = new TerrainManager();
+        this.sections = {};
+    }
+
+    addSection(x, z) {
+
+        let xIndex = this.getXIndex(x);
+        let zIndex = this.getZIndex(z);
+        if (!this.sections[xIndex])
+            this.sections[xIndex] = {};
+        this.sections[xIndex][zIndex] = new Section();
+    }
+
+    getSection(x, z) {
+
+        let xIndex = this.getXIndex(x);
+        if (this.sections[xIndex])
+            return this.sections[this.getXIndex(x)][this.getZIndex(z)];
     }
 
     getTerrainIntersection(origin, dY) {
@@ -23,3 +41,5 @@ class World extends CoordinateSystem {
         this.terrainManager.enableTerrainCell(coordinate);
     }
 }
+
+World.SECTION_SIZE = 64;
