@@ -75,6 +75,12 @@ class App {
 
     start(frameCallback) {
 
+
+        this.terrainManager.initializeTerrainSection(this.user.position[0], this.user.position[2]);
+        this.terrainManager.initializeTerrainSection(this.user.position[0] - World.SECTION_SIZE, this.user.position[2]);
+        this.terrainManager.initializeTerrainSection(this.user.position[0], this.user.position[2] + World.SECTION_SIZE);
+        this.terrainManager.initializeTerrainSection(this.user.position[0] - World.SECTION_SIZE, this.user.position[2] + World.SECTION_SIZE);
+
         frameCallback = frameCallback !== undefined ? frameCallback : function() {};
 
         let app = this;
@@ -128,9 +134,6 @@ class App {
         this.engine.camera.setRotation(this.controller.rotation);
 
         this.engine.skyboxRenderer.yRotation += 0.0001;
-
-        if (!this.terrainManager.getSection(this.user.position[0], this.user.position[2]))
-            this.terrainManager.initializeTerrainSection(this.user.position[0], this.user.position[2]);
     }
 
     pause() {
