@@ -1,6 +1,5 @@
-include("App");
-
-include("util/TerrainGenerator");
+include("App.js");
+include("util/TerrainGenerator.js");
 
 function main() {
 

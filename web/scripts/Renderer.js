@@ -1,7 +1,7 @@
-include("util/FileLoader");
-include("util/Map");
+include("lib/utiljs/FileLoader.js");
+include("util/Map.js");
 
-include("ShaderUniformManager");
+include("ShaderUniformManager.js");
 
 class Renderer extends Initializable {
 

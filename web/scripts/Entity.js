@@ -1,4 +1,4 @@
-include("geometry/Transform");
+include("geometry/Transform.js");
 
 class Entity {
 

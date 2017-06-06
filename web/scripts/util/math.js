@@ -1,4 +1,4 @@
-include("../geometry/Vector3");
+include("../geometry/Vector3.js");
 function getNormalVector(u, v, w) {
 
     let uv = v.minus(u);

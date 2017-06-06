@@ -1,11 +1,11 @@
-include("Camera");
+include("Camera.js");
 
-include("util/InitializableManager");
-include("Renderer");
-include("GeometryRenderer");
-include("TerrainRenderer");
-include("SkyboxRenderer");
-include("EntityRenderer");
+include("util/InitializableManager.js");
+include("Renderer.js");
+include("GeometryRenderer.js");
+include("TerrainRenderer.js");
+include("SkyboxRenderer.js");
+include("EntityRenderer.js");
 
 class MasterRenderer extends Initializable {
 

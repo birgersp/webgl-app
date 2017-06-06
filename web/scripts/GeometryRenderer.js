@@ -1,4 +1,4 @@
-include("Geometry");
+include("Geometry.js");
 
 class GeometryRenderer extends Renderer {
 

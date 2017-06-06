@@ -1,5 +1,4 @@
-include("Entity");
-include("util/FileLoader");
+include("Entity.js");
 
 class EntityRenderer extends GeometryRenderer {
 

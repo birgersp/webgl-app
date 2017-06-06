@@ -1,5 +1,5 @@
-include("geometry/Matrix4");
-include("geometry/Vector3");
+include("geometry/Matrix4.js");
+include("geometry/Vector3.js");
 
 class Camera {
 

@@ -1,5 +1,5 @@
-include("Section");
-include("TerrainManager");
+include("Section.js");
+include("TerrainManager.js");
 
 class World extends CoordinateSystem {
 

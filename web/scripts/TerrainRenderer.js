@@ -1,5 +1,3 @@
-include("util/FileLoader");
-
 class TerrainRenderer extends GeometryRenderer {
 
     constructor(gl) {

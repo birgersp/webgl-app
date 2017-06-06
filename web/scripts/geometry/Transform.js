@@ -1,5 +1,5 @@
-include("Matrix4");
-include("Vector3");
+include("Matrix4.js");
+include("Vector3.js");
 
 class Transform {
 
@@ -31,15 +31,15 @@ class Transform {
     }
 
     updateMatrix() {
-        
+
         var crX = Math.cos(this.r[0]);
         var crY = Math.cos(this.r[1]);
         var crZ = Math.cos(this.r[2]);
-        
+
         var srX = Math.sin(this.r[0]);
         var srY = Math.sin(this.r[1]);
         var srZ = Math.sin(this.r[2]);
-        
+
         this.m.set([
             this.s[0] * crY * crZ,
             this.s[0] * (crX * srZ + crZ * srX * srY),

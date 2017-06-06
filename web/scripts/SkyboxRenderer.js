@@ -1,5 +1,3 @@
-include("util/FileLoader");
-
 class SkyboxRenderer extends Renderer {
 
     static getVertices(size) {

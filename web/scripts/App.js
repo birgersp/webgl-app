@@ -1,18 +1,18 @@
-include("util/FileLoader");
-include("util/Controller");
+include("lib/utiljs/FileLoader.js");
+include("util/Controller.js");
 
-include("geometry/Vector3");
-include("geometry/Vertex");
+include("geometry/Vector3.js");
+include("geometry/Vertex.js");
 
-include("Geometry");
-include("geometry/Cube");
+include("Geometry.js");
+include("geometry/Cube.js");
 
-include("util/Initializable");
-include("MasterRenderer");
-include("User");
-include("CoordinateSystem");
-include("World");
-include("TerrainMeshManager");
+include("util/Initializable.js");
+include("MasterRenderer.js");
+include("User.js");
+include("CoordinateSystem.js");
+include("World.js");
+include("TerrainMeshManager.js");
 
 class App {
 

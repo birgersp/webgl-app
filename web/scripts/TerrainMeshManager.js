@@ -1,5 +1,5 @@
-include("Section");
-include("TerrainGeometry");
+include("Section.js");
+include("TerrainGeometry.js");
 
 class TerrainMeshManager extends CoordinateSystem {
 

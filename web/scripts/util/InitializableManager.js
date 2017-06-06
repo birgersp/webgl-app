@@ -1,4 +1,4 @@
-include("Initializable");
+include("Initializable.js");
 
 class InitializableManager {
 
