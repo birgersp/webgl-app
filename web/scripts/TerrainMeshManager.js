@@ -81,6 +81,11 @@ class TerrainMeshManager extends CoordinateSystem {
                     for (let i = 0; i <= Section.TERRAIN_GEOMETRY_SIZE; i++) {
 
                         let x2 = x + i;
+
+                        if (terrainHeights[x2 - 1] === undefined) {
+                            console.log("stop");
+                        }
+
                         let coord = new Vector3(x2, terrainHeights[x2][z2], z2);
                         let leftHeight = terrainHeights[x2 - 1][z2];
                         let rightHeight = terrainHeights[x2 + 1][z2];
@@ -117,5 +122,5 @@ class TerrainMeshManager extends CoordinateSystem {
     }
 }
 
-TerrainMeshManager.SECTION_SIZE = 64;
+TerrainMeshManager.SECTION_SIZE = World.SECTION_SIZE;
 TerrainMeshManager.UV_SCALE = 1 / 8;

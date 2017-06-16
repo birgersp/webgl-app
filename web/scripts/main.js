@@ -81,7 +81,8 @@ function main() {
 
     function addTerrain() {
 
-        let size = 192;
+        let size = World.SECTION_SIZE * 2;
+        size += 2;
         let offset = Math.floor(size / 2);
 
         let coordinates = {};
@@ -108,8 +109,27 @@ function main() {
             }
         }
     }
+
+    function startAmbience() {
+        let audioContext = new AudioContext();
+        let source = audioContext.createBufferSource();
+        source.loop = true;
+        source.connect(audioContext.destination);
+        let request = new XMLHttpRequest();
+        request.open("GET", "binaries/mountains.wav", true);
+        request.responseType = 'arraybuffer';
+        request.onload = function() {
+            audioContext.decodeAudioData(request.response, function(buffer) {
+                source.buffer = buffer;
+                source.start();
+            }, alert);
+        };
+        request.send();
+    }
+
     app.initialize(function() {
         addTerrain();
         app.start();
+        startAmbience();
     });
 }

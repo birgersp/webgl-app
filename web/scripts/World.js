@@ -42,4 +42,4 @@ class World extends CoordinateSystem {
     }
 }
 
-World.SECTION_SIZE = 64;
+World.SECTION_SIZE = 96;
