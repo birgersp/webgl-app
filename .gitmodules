@@ -2,7 +2,3 @@
 	path = web/binaries
 	url = git@bitbucket.org:birgersp/webgl-app-bin.git
 	branch = master
-[submodule "web/scripts/lib/utiljs"]
-	path = web/scripts/lib/utiljs
-	url = git@github.com:birgersp/utiljs.git
-	branch = master
